@@ -2,7 +2,7 @@
 name: Feature request
 about: 프로젝트를 위한 아이디어를 제안해주세요
 title: "[Feature Request]"
-labels: ''
+labels: feature request
 assignees: ''
 
 ---
