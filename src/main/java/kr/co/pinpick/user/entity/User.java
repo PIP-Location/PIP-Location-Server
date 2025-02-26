@@ -3,6 +3,7 @@ package kr.co.pinpick.user.entity;
 import jakarta.persistence.*;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.oauth.OAuth2Attributes;
 import kr.co.pinpick.user.entity.enumerated.RoleType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -58,5 +59,11 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public String getUsername() {
         return null;
+    }
+
+    public static User from(OAuth2Attributes attributes) {
+        return builder()
+                .email(attributes.getEmail())
+                .build();
     }
 }

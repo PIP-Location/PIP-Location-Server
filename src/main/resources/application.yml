@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: secret, storage, oauth
+    include: secret, oauth
   datasource:
     url: jdbc:mysql://localhost:3307/pipdb?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true
     username: root
