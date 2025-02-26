@@ -1,10 +1,10 @@
-package kr.co.pip;
+package kr.co.pinpick;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PipApplicationTests {
+class PinpickApplicationTests {
 
 	@Test
 	void contextLoads() {
