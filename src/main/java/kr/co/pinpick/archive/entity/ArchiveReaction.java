@@ -33,5 +33,4 @@ public class ArchiveReaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "reaction_type", nullable = false)
     private ReactionType reactionType;
-
 }

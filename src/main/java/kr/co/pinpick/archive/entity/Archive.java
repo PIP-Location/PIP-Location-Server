@@ -8,7 +8,7 @@ import kr.co.pinpick.user.entity.FolderArchive;
 import kr.co.pinpick.user.entity.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.Set;
 @Table(name = "archives")
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Archive extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

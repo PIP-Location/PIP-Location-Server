@@ -25,5 +25,4 @@ public class Tag extends BaseEntity {
 
     @Column(name = "count")
     private Integer count;
-
 }
