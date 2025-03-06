@@ -1,5 +1,6 @@
 package kr.co.pinpick.archive.repository.archive;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,10 +24,13 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     @Override
     public List<Archive> retrieve(User user, ArchiveRetrieveRequest request) {
         var query = queryFactory.select(archive).from(archive)
-                .where(JPAExpressions.selectFrom(block1)
-                        .where(block1.author.eq(user))
-                        .where(block1.block.eq(archive.author))
-                        .notExists());
+                .where(
+                        ltArchiveId(request.getArchiveId()),
+                        JPAExpressions.selectFrom(block1)
+                                .where(block1.author.eq(user))
+                                .where(block1.block.eq(archive.author))
+                                .notExists()
+                );
 
         // 위치 검색
         if (
@@ -69,5 +73,13 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         }
 
         return query.orderBy(archive.createdAt.desc()).fetch();
+    }
+
+    private BooleanExpression ltArchiveId(Long archiveId) {
+        if (archiveId == null) {
+            return null;
+        }
+
+        return archive.id.lt(archiveId);
     }
 }

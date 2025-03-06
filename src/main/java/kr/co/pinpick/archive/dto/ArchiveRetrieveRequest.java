@@ -25,4 +25,6 @@ public class ArchiveRetrieveRequest {
     private Boolean follow = null;
 
     private String tag = null;
+
+    private Long archiveId;
 }
