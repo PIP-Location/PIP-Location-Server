@@ -3,7 +3,7 @@ package kr.co.pinpick.common.argumenthandler;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
 import kr.co.pinpick.archive.repository.ArchiveCommentRepository;
-import kr.co.pinpick.archive.repository.ArchiveRepository;
+import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.error.EntityNotFoundException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.common.extension.NativeWebRequestExtension;

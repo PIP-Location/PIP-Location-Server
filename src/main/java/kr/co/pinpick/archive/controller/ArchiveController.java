@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.co.pinpick.archive.dto.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.ArchiveResponse;
+import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.CreateArchiveRequest;
 import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.user.entity.User;
@@ -13,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,5 +39,15 @@ public class ArchiveController {
     ) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.create(author, request ,attaches));
+    }
+
+    @Operation(summary = "아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "archives")
+    public ResponseEntity<ArchiveCollectResponse> retrieve(
+            @AuthenticationPrincipal User user,
+            @ModelAttribute ArchiveRetrieveRequest request
+    ) {
+        return ResponseEntity.ok(service.retrieve(user, request));
     }
 }

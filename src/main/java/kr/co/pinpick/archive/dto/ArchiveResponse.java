@@ -31,11 +31,13 @@ public class ArchiveResponse {
 
     private Boolean isPublic;
 
-    private int likeCount;
-
     private boolean isLike;
 
+    private int likeCount;
+
     private int commentCount;
+
+    private int shareCount;
 
     private LocalDateTime createdAt;
 
@@ -43,7 +45,7 @@ public class ArchiveResponse {
 
     private List<ArchiveTagResponse> tags;
 
-    public static ArchiveResponse fromEntity(Archive archive, boolean isFollow, boolean isLike) {
+    public static ArchiveResponse from(Archive archive, boolean isFollow, boolean isLike) {
         return builder()
                 .id(archive.getId())
                 .author(UserResponse.fromEntity(archive.getAuthor(), isFollow))
@@ -53,14 +55,18 @@ public class ArchiveResponse {
                 .name(archive.getName())
                 .content(archive.getContent())
                 .isPublic(archive.getIsPublic())
+                .isLike(isLike)
                 .likeCount(Optional.ofNullable(archive.getArchiveReactions())
                         .orElse(Collections.emptySet()).stream()
                         .filter(ar -> ar.getReactionType() == ReactionType.LIKE)
                         .toList().size())
-                .isLike(isLike)
                 .commentCount(Optional.ofNullable(archive.getArchiveComments())
                         .orElse(Collections.emptySet())
                         .size())
+                .shareCount(Optional.ofNullable(archive.getArchiveReactions())
+                        .orElse(Collections.emptySet()).stream()
+                        .filter(ar -> ar.getReactionType() == ReactionType.SHARE)
+                        .toList().size())
                 .createdAt(archive.getCreatedAt())
                 .archiveAttaches(archive.getArchiveAttaches().stream().map(AttachResponse::fromEntity).toList())
                 .tags(archive.getTags().stream().map(ArchiveTagResponse::fromEntity).toList())
