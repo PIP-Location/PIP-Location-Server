@@ -45,8 +45,7 @@ public class ArchiveComment extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private List<ArchiveComment> subComments = new ArrayList<>();
 
-    @NotNull
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
 

@@ -27,12 +27,4 @@ public class ArchiveTag extends BaseEntity {
     @NotNull
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
-
-    public static ArchiveTag from(Archive archive, String name, Integer sequence) {
-        return builder()
-                .archive(archive)
-                .name(name)
-                .sequence(sequence)
-                .build();
-    }
 }

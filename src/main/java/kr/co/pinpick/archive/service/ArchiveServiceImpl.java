@@ -5,7 +5,6 @@ import kr.co.pinpick.archive.dto.ArchiveResponse;
 import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.CreateArchiveRequest;
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.archive.entity.ArchiveReaction;
 import kr.co.pinpick.archive.entity.ArchiveTag;
 import kr.co.pinpick.archive.entity.enumerated.ReactionType;
 import kr.co.pinpick.archive.repository.ArchiveReactionRepository;
@@ -24,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -67,12 +68,17 @@ public class ArchiveServiceImpl implements ArchiveService {
         var index = new AtomicInteger();
         List<ArchiveTag> archiveTags = request.getTags()
                 .stream()
-                .map(o -> ArchiveTag.from(archive, o.getName(), index.getAndIncrement()))
-                .toList();
+                .map(o -> ArchiveTag.builder()
+                        .archive(archive)
+                        .name(o.getName())
+                        .sequence(index.getAndIncrement())
+                        .build())
+                .collect(toList());
+
         archiveTagRepository.saveAll(archiveTags);
         archive.setTags(archiveTags);
 
-        return ArchiveResponse.from(archive, false, false);
+        return ArchiveResponse.fromEntity(archive, false, false);
     }
 
     @Override
@@ -93,7 +99,7 @@ public class ArchiveServiceImpl implements ArchiveService {
         return ArchiveCollectResponse.builder()
                 .collect(archives
                         .stream()
-                        .map(a -> ArchiveResponse.from(a, isFollowMap.containsKey(a.getAuthor().getId()), isLikeMap.containsKey(a.getId())))
+                        .map(a -> ArchiveResponse.fromEntity(a, isFollowMap.containsKey(a.getAuthor().getId()), isLikeMap.containsKey(a.getId())))
                         .toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
                 .build();

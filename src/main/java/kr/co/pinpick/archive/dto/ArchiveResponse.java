@@ -45,7 +45,7 @@ public class ArchiveResponse {
 
     private List<ArchiveTagResponse> tags;
 
-    public static ArchiveResponse from(Archive archive, boolean isFollow, boolean isLike) {
+    public static ArchiveResponse fromEntity(Archive archive, boolean isFollow, boolean isLike) {
         return builder()
                 .id(archive.getId())
                 .author(UserResponse.fromEntity(archive.getAuthor(), isFollow))
