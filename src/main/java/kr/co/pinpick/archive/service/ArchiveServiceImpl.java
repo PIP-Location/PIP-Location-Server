@@ -114,4 +114,10 @@ public class ArchiveServiceImpl implements ArchiveService {
         var follows = followerRepository.findByFollowerAndFollowIdIn(author, authorIds);
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
     }
+
+    @Override
+    @Transactional
+    public void delete(Archive archive) {
+        archiveRepository.delete(archive);
+    }
 }

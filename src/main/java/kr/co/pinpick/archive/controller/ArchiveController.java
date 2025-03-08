@@ -8,7 +8,9 @@ import kr.co.pinpick.archive.dto.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.ArchiveResponse;
 import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.CreateArchiveRequest;
+import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.service.ArchiveService;
+import kr.co.pinpick.common.argumenthandler.Entity;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,5 +51,15 @@ public class ArchiveController {
             @ModelAttribute ArchiveRetrieveRequest request
     ) {
         return ResponseEntity.ok(service.retrieve(user, request));
+    }
+
+    @Operation(summary = "아카이브 삭제")
+    @ApiResponse(responseCode = "204")
+    @DeleteMapping("/archives/{archiveId}")
+    public ResponseEntity<Void> deleteArchive(@AuthenticationPrincipal User ignoreduser,
+                                              @Entity(name = "archiveId") Archive archive,
+                                              @PathVariable(name = "archiveId") long ignoredAuthorId) {
+        service.delete(archive);
+        return ResponseEntity.noContent().build();
     }
 }
