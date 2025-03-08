@@ -2,6 +2,7 @@ package kr.co.pinpick.archive.aspect;
 
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
+import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.EntityNotFoundException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.entity.User;
@@ -11,7 +12,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 
+import java.lang.reflect.Parameter;
 import java.util.Objects;
 
 @Aspect
@@ -27,32 +31,51 @@ public class ArchiveAspect {
         var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         var parameters = method.getParameters();
 
-        Archive archive = null;
-        User user = null;
-        for (int i = 0; i < args.length; i++) {
-            var arg = args[i];
-            if (arg instanceof Archive a) {
-                archive = a;
-            } else if (arg instanceof User u && parameters[i].getAnnotation(AuthenticationPrincipal.class) != null) {
-                // 로그인 된 유저
-                user = u;
-            }
-        }
+        ArchiveUserData data = extractArchiveAndUser(args, parameters);
 
-        if (archive == null) {
+        if (data.archive() == null || data.archive().getIsPublic()) {
             return joinPoint.proceed();
         }
 
-        if (archive.getIsPublic()) {
-            return joinPoint.proceed();
-        }
-
-        if (user == null || !archive.getAuthor().getId().equals(user.getId())) {
-            throw new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND, String.format("archive (%s) is private", archive.getId()));
+        if (data.user() == null || !data.archive().getAuthor().getId().equals(data.user().getId())) {
+            throw new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND,
+                    String.format("archive (%s) is private", data.archive().getId()));
         }
 
         return joinPoint.proceed();
     }
+
+    @Around("execution(* kr.co.pinpick.archive.controller.ArchiveController.*(..))")
+    public Object hasAuthority(ProceedingJoinPoint joinPoint) throws Throwable {
+        var args = joinPoint.getArgs();
+        var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        var parameters = method.getParameters();
+
+        ArchiveUserData data = extractArchiveAndUser(args, parameters);
+
+        if (method.isAnnotationPresent(DeleteMapping.class) || method.isAnnotationPresent(PatchMapping.class)) {
+            if (data.user() != null && data.archive() != null && !data.user().getId().equals(data.archive().getAuthor().getId())) {
+                throw new BusinessException(ErrorCode.UNAUTHORIZED);
+            }
+        }
+
+        return joinPoint.proceed();
+    }
+
+    private ArchiveUserData extractArchiveAndUser(Object[] args, Parameter[] parameters) {
+        Archive archive = null;
+        User user = null;
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Archive a) {
+                archive = a;
+            } else if (args[i] instanceof User u && parameters[i].getAnnotation(AuthenticationPrincipal.class) != null) {
+                user = u;
+            }
+        }
+        return new ArchiveUserData(archive, user);
+    }
+
+    private record ArchiveUserData(Archive archive, User user) {}
 
     /**
      * 아카이브에 포함된 리소스인지
@@ -81,5 +104,4 @@ public class ArchiveAspect {
 
         return joinPoint.proceed();
     }
-
 }

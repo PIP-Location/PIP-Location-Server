@@ -16,4 +16,10 @@ public interface ArchiveService {
     ArchiveCollectResponse retrieve(User user, ArchiveRetrieveRequest request);
 
     void delete(Archive archive);
+
+    Boolean changeIsPublic(Archive archive, boolean isPublic);
+
+    void like(User user, Archive archive);
+
+    void dislike(User user, Archive archive);
 }

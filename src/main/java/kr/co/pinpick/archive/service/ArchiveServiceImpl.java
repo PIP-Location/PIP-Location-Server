@@ -5,12 +5,15 @@ import kr.co.pinpick.archive.dto.ArchiveResponse;
 import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.CreateArchiveRequest;
 import kr.co.pinpick.archive.entity.Archive;
+import kr.co.pinpick.archive.entity.ArchiveReaction;
 import kr.co.pinpick.archive.entity.ArchiveTag;
 import kr.co.pinpick.archive.entity.enumerated.ReactionType;
 import kr.co.pinpick.archive.repository.ArchiveReactionRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.common.error.BusinessException;
+import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -119,5 +122,30 @@ public class ArchiveServiceImpl implements ArchiveService {
     @Transactional
     public void delete(Archive archive) {
         archiveRepository.delete(archive);
+    }
+
+    @Override
+    public Boolean changeIsPublic(Archive archive, boolean isPublic) {
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void like(User user, Archive archive) {
+        Optional<ArchiveReaction> archiveReactionOptional = archiveReactionRepository.findByAuthorAndArchive(user, archive);
+        if (archiveReactionOptional.isPresent()) {
+            throw new BusinessException(ErrorCode.ALREADY_LIKE_ARCHIVE);
+        }
+        archiveReactionRepository.save(new ArchiveReaction(archive, user, ReactionType.LIKE));
+    }
+
+    @Override
+    @Transactional
+    public void dislike(User user, Archive archive) {
+        Optional<ArchiveReaction> archiveReactionOptional = archiveReactionRepository.findByAuthorAndArchive(user, archive);
+        if (archiveReactionOptional.isEmpty()) {
+            throw new BusinessException(ErrorCode.ALREADY_DISLIKE_ARCHIVE);
+        }
+        archiveReactionRepository.delete(archiveReactionOptional.get());
     }
 }
