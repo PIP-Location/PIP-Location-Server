@@ -1,4 +1,4 @@
-package kr.co.pinpick.archive.dto;
+package kr.co.pinpick.archive.dto.response;
 
 import kr.co.pinpick.archive.entity.ArchiveComment;
 import lombok.Getter;

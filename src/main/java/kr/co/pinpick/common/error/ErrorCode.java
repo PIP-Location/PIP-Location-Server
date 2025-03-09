@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+
     // Common
     INVALID_TYPE_VALUE(400, "C001", "Invalid type value"),
     INVALID_INPUT_VALUE(400, "C003", "Invalid input value"),
@@ -29,14 +30,16 @@ public enum ErrorCode {
     FOLDERARCHIVE_ALREADY_REMOVED(400, "FA002", "Already removed archive"),
     ONLY_ADDABLE_FOLLOWERS_ARCHIVE(400, "FA003", "Only addable follower's archive"),
 
+
     // Archive
     ARCHIVE_NOT_FOUND(404, "A001", "Archive not found"),
     ALREADY_LIKE_ARCHIVE(400, "A002", "Already like archive"),
     ALREADY_DISLIKE_ARCHIVE(400, "A003", "Already dislike archive"),
 
+
     // 차단
-    USER_ALREADY_BLOCKED(400, "B001", "Already Blocked user"),
-    USER_ALREADY_UNBLOCKED(400, "U002", "Already unblocked user"),
+    USER_ALREADY_LINKED(400, "B001", "Already linked user"),
+    USER_ALREADY_UNLINKED(400, "U002", "Already unlinked user"),
 
 
     // Auth

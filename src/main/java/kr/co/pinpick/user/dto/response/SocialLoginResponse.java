@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Builder
 public class SocialLoginResponse {
-
     private String accessToken;
 
     private HttpStatus status;

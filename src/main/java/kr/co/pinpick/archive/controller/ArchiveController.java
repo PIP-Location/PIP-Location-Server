@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.co.pinpick.archive.dto.ArchiveCollectResponse;
-import kr.co.pinpick.archive.dto.ArchiveResponse;
-import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
-import kr.co.pinpick.archive.dto.CreateArchiveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.common.argumenthandler.Entity;
@@ -51,6 +51,17 @@ public class ArchiveController {
             @ModelAttribute ArchiveRetrieveRequest request
     ) {
         return ResponseEntity.ok(service.retrieve(user, request));
+    }
+
+    @Operation(summary = "ID로 아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "archives/{archiveId}")
+    public ResponseEntity<ArchiveResponse> retrieve(
+            @AuthenticationPrincipal User user,
+            @Entity(name = "archiveId") Archive archive,
+            @PathVariable(name = "archiveId") String ignoredAuthorId
+    ) {
+        return ResponseEntity.ok(service.get(user, archive));
     }
 
     @Operation(summary = "아카이브 삭제")

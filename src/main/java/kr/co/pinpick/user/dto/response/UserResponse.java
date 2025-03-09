@@ -12,9 +12,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class UserResponse {
     private Long id;
+
     private String name;
+
     private String email;
+
     private String profileImage;
+
     private boolean isFollow;
 
     public static UserResponse fromEntity(User user) {

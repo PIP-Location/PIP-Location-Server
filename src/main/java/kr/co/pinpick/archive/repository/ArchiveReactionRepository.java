@@ -15,4 +15,6 @@ public interface ArchiveReactionRepository extends JpaRepository<ArchiveReaction
     List<ArchiveReaction> findByAuthorAndReactionTypeAndArchiveIdIn(@Param(value = "author") User author, @Param(value = "reactionType") ReactionType reactionType, @Param("archiveIds") Set<Long> archiveIds);
 
     Optional<ArchiveReaction> findByAuthorAndArchive(User user, Archive archive);
+
+    boolean existsByAuthorAndReactionTypeAndArchive(User user, ReactionType like, Archive archive);
 }

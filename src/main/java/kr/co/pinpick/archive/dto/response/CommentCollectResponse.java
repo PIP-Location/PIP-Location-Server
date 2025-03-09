@@ -1,4 +1,4 @@
-package kr.co.pinpick.archive.dto;
+package kr.co.pinpick.archive.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.co.pinpick.common.dto.CollectResponse;

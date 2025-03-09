@@ -17,34 +17,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @Tag(name = "인증 관련 API")
 public class AuthUserController {
+    private final AuthUserService service;
 
-    private final AuthUserService authUserService;
     private final GoogleRequestBodyFactory googleRequestBodyFactory;
+
     private final KakaoRequestBodyFactory kakaoRequestBodyFactory;
 
     @PostMapping("/kakao/login")
     public ResponseEntity<SocialLoginResponse> kakaoLogin(@RequestBody SocialLoginRequest requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(authUserService.login(requestDto.getAccessToken(), kakaoRequestBodyFactory));
+                .body(service.login(requestDto.getAccessToken(), kakaoRequestBodyFactory));
     }
 
     @PostMapping("/google/login")
     public ResponseEntity<SocialLoginResponse> googleLogin(@RequestBody SocialLoginRequest requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(authUserService.login(requestDto.getAccessToken(), googleRequestBodyFactory));
+                .body(service.login(requestDto.getAccessToken(), googleRequestBodyFactory));
     }
 
     @GetMapping("/user/kakao/callback")
     public ResponseEntity<SocialLoginResponse> kakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
-        String accessToken = authUserService.getToken(code, kakaoRequestBodyFactory);
+        String accessToken = service.getToken(code, kakaoRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(authUserService.login(accessToken, kakaoRequestBodyFactory));
+                .body(service.login(accessToken, kakaoRequestBodyFactory));
     }
 
     @GetMapping("/user/google/callback")
     public ResponseEntity<SocialLoginResponse> googleLogin(@RequestParam("code") String code) throws JsonProcessingException {
-        String accessToken = authUserService.getToken(code, googleRequestBodyFactory);
+        String accessToken = service.getToken(code, googleRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(authUserService.login(accessToken, googleRequestBodyFactory));
+                .body(service.login(accessToken, googleRequestBodyFactory));
     }
 }

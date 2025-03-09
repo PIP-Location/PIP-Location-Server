@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateFolderRequest {
-
     private String name;
 
     @Builder.Default

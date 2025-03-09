@@ -23,7 +23,7 @@ import java.util.Objects;
 public class ArchiveAspect {
 
     /**
-     * 비공개 아카이브 다른사람이 접근했을때 404 반환
+     * 비공개 아카이브 다른사람이 접근했을 때 404 반환
      */
     @Around("execution(* kr.co.pinpick.archive.controller.*.*(..))")
     public Object isOwnerIsPrivate(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -45,6 +45,9 @@ public class ArchiveAspect {
         return joinPoint.proceed();
     }
 
+    /**
+     * 권한이 없는 아카이브를 다른사람이 수정 또는 삭제하려고 했을 때 401 반환
+     */
     @Around("execution(* kr.co.pinpick.archive.controller.ArchiveController.*(..))")
     public Object hasAuthority(ProceedingJoinPoint joinPoint) throws Throwable {
         var args = joinPoint.getArgs();

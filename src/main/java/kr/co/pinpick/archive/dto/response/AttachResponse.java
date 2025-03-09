@@ -1,4 +1,4 @@
-package kr.co.pinpick.archive.dto;
+package kr.co.pinpick.archive.dto.response;
 
 import kr.co.pinpick.archive.entity.ArchiveAttach;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttachResponse {
-
     private String name;
 
     private String path;

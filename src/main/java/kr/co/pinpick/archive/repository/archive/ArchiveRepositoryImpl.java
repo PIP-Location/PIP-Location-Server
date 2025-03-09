@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.co.pinpick.archive.dto.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package kr.co.pinpick.archive.dto;
+package kr.co.pinpick.archive.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

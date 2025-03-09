@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SocialLoginRequest {
-
     private String accessToken;
 
     private String providerType;
