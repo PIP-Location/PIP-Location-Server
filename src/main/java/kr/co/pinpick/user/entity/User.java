@@ -58,7 +58,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     public static User from(OAuth2Attributes attributes) {

@@ -11,15 +11,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@IdClass(FollowerId.class)
 public class Follower {
-    @Id
+
+    @EmbeddedId
+    private FollowerId id;
+
+    @MapsId("follower")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "follower_id", nullable = false)
     private User follower;
 
-    @Id
+    @MapsId("follow")
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "follow_id", nullable = false)

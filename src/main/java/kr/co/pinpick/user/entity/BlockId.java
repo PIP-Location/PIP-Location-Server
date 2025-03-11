@@ -1,5 +1,6 @@
 package kr.co.pinpick.user.entity;
 
+import jakarta.persistence.Embeddable;
 import lombok.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -8,6 +9,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Embeddable
 public class BlockId implements Serializable {
     private Long author;
     private Long block;

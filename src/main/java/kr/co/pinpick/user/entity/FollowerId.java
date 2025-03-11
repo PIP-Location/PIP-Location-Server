@@ -1,5 +1,6 @@
 package kr.co.pinpick.user.entity;
 
+import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Embeddable
 public class FollowerId implements Serializable {
     private Long follower;
     private Long follow;

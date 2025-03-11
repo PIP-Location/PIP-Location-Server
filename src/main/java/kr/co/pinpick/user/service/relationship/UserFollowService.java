@@ -1,6 +1,5 @@
 package kr.co.pinpick.user.service.relationship;
 
-import kr.co.pinpick.user.entity.Follower;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +15,7 @@ public class UserFollowService implements IUserRelationshipService {
     @Override
     @Transactional
     public void link(User source, User target) {
-        var block = Follower.builder()
-                .follower(source)
-                .follow(target)
-                .build();
-        followerRepository.save(block);
+        followerRepository.saveWithNativeQuery(source.getId(), target.getId());
     }
 
     @Override

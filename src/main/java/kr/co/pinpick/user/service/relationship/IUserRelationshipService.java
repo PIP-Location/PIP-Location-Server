@@ -1,6 +1,5 @@
 package kr.co.pinpick.user.service.relationship;
 
-
 import kr.co.pinpick.user.entity.User;
 
 public interface IUserRelationshipService {

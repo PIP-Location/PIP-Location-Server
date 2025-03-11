@@ -7,6 +7,7 @@ import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
+import kr.co.pinpick.user.service.relationship.UserBlockService;
 import kr.co.pinpick.user.service.relationship.UserFollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ public class UserController {
     private final UserService service;
 
     private final UserFollowService userFollowService;
+
+    private final UserBlockService userBlockService;
 
     //region 조회
     @Operation(summary = "로그인된 회원 조회")
@@ -40,6 +43,30 @@ public class UserController {
             @Entity(name = "userId") User target
     ) {
         return ResponseEntity.ok(service.find(user, target));
+    }
+    //endregion
+
+    //region 차단
+    @Operation(summary = "회원 차단")
+    @PostMapping("/{userId}/block")
+    public ResponseEntity<UserResponse> block(
+            @PathVariable(name = "userId") long ignoredUserId,
+            @Entity(name = "userId") User user,
+            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+    ) {
+        userBlockService.link(author, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "회원 차단해제")
+    @DeleteMapping("/{userId}/unblock")
+    public ResponseEntity<UserResponse> unblock(
+            @PathVariable(name = "userId") long ignoredUserId,
+            @Entity(name = "userId") User user,
+            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+    ) {
+        userBlockService.unlink(author, user);
+        return ResponseEntity.noContent().build();
     }
     //endregion
 

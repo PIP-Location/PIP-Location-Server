@@ -1,6 +1,5 @@
 package kr.co.pinpick.user.service.relationship;
 
-import kr.co.pinpick.user.entity.Block;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.BlockRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +15,7 @@ public class UserBlockService implements IUserRelationshipService {
     @Override
     @Transactional
     public void link(User source, User target) {
-        var block = Block.builder()
-                .author(source)
-                .block(target)
-                .build();
-        blockRepository.save(block);
+        blockRepository.saveWithNativeQuery(source.getId(), target.getId());
     }
 
     @Override
