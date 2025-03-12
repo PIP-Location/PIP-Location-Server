@@ -25,11 +25,4 @@ public class FolderArchive extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "archive_id")
     private Archive archive;
-
-    public static FolderArchive of(Folder folder, Archive archive) {
-        return builder()
-                .folder(folder)
-                .archive(archive)
-                .build();
-    }
 }

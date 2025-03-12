@@ -60,10 +60,4 @@ public class User extends BaseEntity implements UserDetails {
     public String getUsername() {
         return email;
     }
-
-    public static User from(OAuth2Attributes attributes) {
-        return builder()
-                .email(attributes.getEmail())
-                .build();
-    }
 }

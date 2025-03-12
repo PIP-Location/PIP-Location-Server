@@ -3,11 +3,9 @@ package kr.co.pinpick.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import kr.co.pinpick.common.BaseEntity;
-import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,13 +31,4 @@ public class Folder extends BaseEntity {
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.REMOVE)
     private List<FolderArchive> folderArchives;
-
-    public static Folder of(User user, CreateFolderRequest request) {
-        return builder()
-                .user(user)
-                .name(request.getName())
-                .isPublic(request.isPublic())
-                .folderArchives(new ArrayList<>())
-                .build();
-    }
 }

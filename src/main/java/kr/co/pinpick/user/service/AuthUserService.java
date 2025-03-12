@@ -48,18 +48,31 @@ public class AuthUserService {
     }
 
     private SocialLoginResponse buildLoginResponse(User user) {
-        return SocialLoginResponse.from(jwtUtil.createToken(user), HttpStatus.OK, 200);
+        return SocialLoginResponse.builder()
+                .accessToken(jwtUtil.createToken(user))
+                .status(HttpStatus.OK)
+                .code(200)
+                .build();
     }
 
     private SocialLoginResponse buildNewUserResponse(OAuth2Attributes attributes) {
         User user = registerNewUser(attributes);
-        return SocialLoginResponse.from(jwtUtil.createToken(user), HttpStatus.CREATED, 201);
+        return SocialLoginResponse.builder()
+                .accessToken(jwtUtil.createToken(user))
+                .status(HttpStatus.CREATED)
+                .code(201)
+                .build();
     }
 
     private User registerNewUser(OAuth2Attributes attributes) {
-        User user = userRepository.save(User.from(attributes));
-        UserProvider userProvider = UserProvider.of(attributes.getProviderType(), user, attributes.getProviderUserId());
-        userProviderRepository.save(userProvider);
+        User user = userRepository.save(User.builder()
+                .email(attributes.getEmail())
+                .build());
+        userProviderRepository.save(UserProvider.builder()
+                .providerType(attributes.getProviderType())
+                .user(user)
+                .providerUserId(attributes.getProviderUserId())
+                .build());
         return user;
     }
 
