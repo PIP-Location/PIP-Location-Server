@@ -1,5 +1,6 @@
-package kr.co.pinpick.user.service.relationship;
+package kr.co.pinpick.user.service;
 
+import kr.co.pinpick.common.service.IUserLinkService;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.BlockRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserBlockService implements IUserRelationshipService {
+public class UserBlockService implements IUserLinkService<User> {
 
     private final BlockRepository blockRepository;
 

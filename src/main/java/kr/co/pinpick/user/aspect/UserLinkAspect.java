@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class UserRelationshipAspect {
+public class UserLinkAspect {
 
     /**
      * 이미 링크되어 있을때 에러 렌더링
      */
-    @Around("execution(* kr.co.pinpick.user.service.relationship.IUserRelationshipService.link(..))")
+    @Around("execution(* kr.co.pinpick.common.service.IUserLinkService.link(..))")
     public Object link(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             return joinPoint.proceed();
@@ -27,7 +27,7 @@ public class UserRelationshipAspect {
     /**
      * 링크 안되어 있을떄 있을때 에러 렌더링
      */
-    @Around("execution(* kr.co.pinpick.user.service.relationship.IUserRelationshipService.unlink(..))")
+    @Around("execution(* kr.co.pinpick.common.service.IUserLinkService.unlink(..))")
     public Object unlink(ProceedingJoinPoint joinPoint) throws Throwable {
         var result = (int) joinPoint.proceed();
         if (result == 0) {

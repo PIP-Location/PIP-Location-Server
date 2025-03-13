@@ -18,7 +18,7 @@ public interface FollowerRepository extends JpaRepository<Follower, FollowerId> 
 
     int deleteByFollowerAndFollow(User source, User target);
 
-    @Query(value = "insert into followers(follower_id, follow_id) values(:followerId, :followId)",nativeQuery = true)
+    @Query(value = "insert into followers(follower_id, follow_id) values(:followerId, :followId)", nativeQuery = true)
     @Modifying
     void saveWithNativeQuery(@Param("followerId") Long followerId, @Param("followId") Long followId);
 }

@@ -1,7 +1,6 @@
 package kr.co.pinpick.archive.dto.response;
 
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.archive.entity.enumerated.ReactionType;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import lombok.*;
 
@@ -37,8 +36,6 @@ public class ArchiveResponse {
 
     private int commentCount;
 
-    private int shareCount;
-
     private LocalDateTime createdAt;
 
     private List<AttachResponse> archiveAttaches;
@@ -56,17 +53,12 @@ public class ArchiveResponse {
                 .content(archive.getContent())
                 .isPublic(archive.getIsPublic())
                 .isLike(isLike)
-                .likeCount(Optional.ofNullable(archive.getArchiveReactions())
-                        .orElse(Collections.emptySet()).stream()
-                        .filter(ar -> ar.getReactionType() == ReactionType.LIKE)
-                        .toList().size())
+                .likeCount(Optional.ofNullable(archive.getArchiveLikes())
+                        .orElse(Collections.emptySet())
+                        .size())
                 .commentCount(Optional.ofNullable(archive.getArchiveComments())
                         .orElse(Collections.emptySet())
                         .size())
-                .shareCount(Optional.ofNullable(archive.getArchiveReactions())
-                        .orElse(Collections.emptySet()).stream()
-                        .filter(ar -> ar.getReactionType() == ReactionType.SHARE)
-                        .toList().size())
                 .createdAt(archive.getCreatedAt())
                 .archiveAttaches(archive.getArchiveAttaches().stream().map(AttachResponse::fromEntity).toList())
                 .tags(archive.getTags().stream().map(ArchiveTagResponse::fromEntity).toList())

@@ -38,8 +38,8 @@ public enum ErrorCode {
 
 
     // 차단
-    USER_ALREADY_LINKED(400, "B001", "Already linked user"),
-    USER_ALREADY_UNLINKED(400, "U002", "Already unlinked user"),
+    USER_ALREADY_LINKED(400, "B001", "Already linked"),
+    USER_ALREADY_UNLINKED(400, "U002", "Already unlinked"),
 
 
     // Auth

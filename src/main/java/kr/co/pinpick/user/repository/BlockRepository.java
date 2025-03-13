@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 public interface BlockRepository extends JpaRepository<Block, BlockId> {
     int deleteByAuthorAndBlock(User source, User target);
 
-    @Query(value = "insert into blocks(author_id, block_id) values(:authorId, :blockId)",nativeQuery = true)
+    @Query(value = "insert into blocks(author_id, block_id) values(:authorId, :blockId)", nativeQuery = true)
     @Modifying
     void saveWithNativeQuery(@Param("authorId") Long authorId, @Param("blockId") Long blockId);
 }

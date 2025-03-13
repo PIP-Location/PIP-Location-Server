@@ -7,8 +7,8 @@ import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
-import kr.co.pinpick.user.service.relationship.UserBlockService;
-import kr.co.pinpick.user.service.relationship.UserFollowService;
+import kr.co.pinpick.user.service.UserBlockService;
+import kr.co.pinpick.user.service.UserFollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,8 +48,8 @@ public class UserController {
 
     //region 차단
     @Operation(summary = "회원 차단")
-    @PostMapping("/{userId}/block")
-    public ResponseEntity<UserResponse> block(
+    @PostMapping("{userId}/block")
+    public ResponseEntity<Void> block(
             @PathVariable(name = "userId") long ignoredUserId,
             @Entity(name = "userId") User user,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
@@ -59,8 +59,8 @@ public class UserController {
     }
 
     @Operation(summary = "회원 차단해제")
-    @DeleteMapping("/{userId}/unblock")
-    public ResponseEntity<UserResponse> unblock(
+    @DeleteMapping("{userId}/unblock")
+    public ResponseEntity<Void> unblock(
             @PathVariable(name = "userId") long ignoredUserId,
             @Entity(name = "userId") User user,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
@@ -73,7 +73,7 @@ public class UserController {
     //region 팔로우
     @Operation(summary = "회원 팔로우")
     @PostMapping("{userId}/follow")
-    public ResponseEntity<UserResponse> follow(
+    public ResponseEntity<Void> follow(
             @PathVariable(name = "userId") long ignoredUserId,
             @Entity(name = "userId") User user,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
@@ -84,7 +84,7 @@ public class UserController {
 
     @Operation(summary = "회원 팔로우 해제")
     @DeleteMapping("{userId}/unfollow")
-    public ResponseEntity<UserResponse> unfollow(
+    public ResponseEntity<Void> unfollow(
             @PathVariable(name = "userId") long ignoredUserId,
             @Entity(name = "userId") User user,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author

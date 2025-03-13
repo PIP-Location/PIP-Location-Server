@@ -5,15 +5,11 @@ import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.archive.entity.ArchiveReaction;
 import kr.co.pinpick.archive.entity.ArchiveTag;
-import kr.co.pinpick.archive.entity.enumerated.ReactionType;
-import kr.co.pinpick.archive.repository.ArchiveReactionRepository;
+import kr.co.pinpick.archive.repository.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.common.dto.PaginateResponse;
-import kr.co.pinpick.common.error.BusinessException;
-import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +33,7 @@ public class ArchiveService {
 
     private final ArchiveTagRepository archiveTagRepository;
 
-    private final ArchiveReactionRepository archiveReactionRepository;
+    private final ArchiveLikeRepository archiveLikeRepository;
 
     private final FollowerRepository followerRepository;
 
@@ -107,7 +103,7 @@ public class ArchiveService {
     }
 
     private Map<Long, Boolean> getIsLikeMap(User author, Set<Long> archiveIds) {
-        var likes = archiveReactionRepository.findByAuthorAndReactionTypeAndArchiveIdIn(author, ReactionType.LIKE, archiveIds);
+        var likes = archiveLikeRepository.findByAuthorAndArchiveIdIn(author, archiveIds);
         return likes.stream().collect(Collectors.toMap(k -> k.getArchive().getId(), v -> true));
     }
 
@@ -119,7 +115,7 @@ public class ArchiveService {
     @Transactional
     public ArchiveResponse get(User user, Archive archive) {
         var isFollow = followerRepository.existsByFollowerAndFollow(user, archive.getAuthor());
-        var isLike = archiveReactionRepository.existsByAuthorAndReactionTypeAndArchive(user, ReactionType.LIKE, archive);
+        var isLike = archiveLikeRepository.existsByAuthorAndArchive(user, archive);
         return ArchiveResponse.fromEntity(archive, isFollow, isLike);
     }
 
@@ -132,23 +128,5 @@ public class ArchiveService {
     public Boolean changeIsPublic(Archive archive, boolean isPublic) {
         archive.setIsPublic(isPublic);
         return archive.getIsPublic();
-    }
-
-    @Transactional
-    public void like(User user, Archive archive) {
-        Optional<ArchiveReaction> archiveReactionOptional = archiveReactionRepository.findByAuthorAndArchive(user, archive);
-        if (archiveReactionOptional.isPresent()) {
-            throw new BusinessException(ErrorCode.ALREADY_LIKE_ARCHIVE);
-        }
-        archiveReactionRepository.save(new ArchiveReaction(archive, user, ReactionType.LIKE));
-    }
-
-    @Transactional
-    public void dislike(User user, Archive archive) {
-        Optional<ArchiveReaction> archiveReactionOptional = archiveReactionRepository.findByAuthorAndArchive(user, archive);
-        if (archiveReactionOptional.isEmpty()) {
-            throw new BusinessException(ErrorCode.ALREADY_DISLIKE_ARCHIVE);
-        }
-        archiveReactionRepository.delete(archiveReactionOptional.get());
     }
 }
