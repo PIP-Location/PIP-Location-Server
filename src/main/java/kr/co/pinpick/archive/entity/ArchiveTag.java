@@ -3,7 +3,7 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

@@ -12,6 +12,7 @@ import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.common.argumenthandler.Entity;
+import kr.co.pinpick.common.aspect.CheckArchiveAuthorization;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,7 @@ import java.util.List;
 @RequestMapping("/api/archives")
 @Tag(name = "아카이브 API")
 public class ArchiveController {
-
     private final ArchiveService archiveService;
-
     private final ArchiveLikeService archiveLikeService;
 
     @Operation(summary = "아카이브 생성")
@@ -70,6 +69,7 @@ public class ArchiveController {
 
     @Operation(summary = "아카이브 삭제")
     @ApiResponse(responseCode = "204")
+    @CheckArchiveAuthorization
     @DeleteMapping("{archiveId}")
     public ResponseEntity<Void> deleteArchive(
             @AuthenticationPrincipal User ignoredAuthor,
@@ -82,6 +82,7 @@ public class ArchiveController {
 
     @Operation(summary = "공개/비공개 전환")
     @ApiResponse(responseCode = "200")
+    @CheckArchiveAuthorization
     @PatchMapping("{archiveId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
             @AuthenticationPrincipal User ignoredAuthor,

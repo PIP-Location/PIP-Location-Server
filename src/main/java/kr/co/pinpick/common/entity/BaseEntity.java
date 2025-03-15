@@ -1,4 +1,4 @@
-package kr.co.pinpick.common;
+package kr.co.pinpick.common.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

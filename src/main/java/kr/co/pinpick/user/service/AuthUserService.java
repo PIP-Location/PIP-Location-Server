@@ -26,11 +26,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthUserService {
-
     private final JwtUtil jwtUtil;
-
     private final UserRepository userRepository;
-
     private final UserProviderRepository userProviderRepository;
 
     @Transactional

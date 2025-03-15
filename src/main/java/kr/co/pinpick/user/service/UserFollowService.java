@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserFollowService implements IUserLinkService<User> {
-
     private final FollowerRepository followerRepository;
 
     @Override

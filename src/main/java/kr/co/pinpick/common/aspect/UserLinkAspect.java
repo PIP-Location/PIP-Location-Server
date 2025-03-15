@@ -1,4 +1,4 @@
-package kr.co.pinpick.user.aspect;
+package kr.co.pinpick.common.aspect;
 
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;

@@ -28,15 +28,10 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class ArchiveService {
-
     private final ArchiveRepository archiveRepository;
-
     private final ArchiveTagRepository archiveTagRepository;
-
     private final ArchiveLikeRepository archiveLikeRepository;
-
     private final FollowerRepository followerRepository;
-
     private final GeometryFactory geometryFactory;
 
     @Transactional

@@ -2,8 +2,7 @@ package kr.co.pinpick.user.entity;
 
 import jakarta.persistence.*;
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.common.BaseEntity;
-import kr.co.pinpick.common.oauth.OAuth2Attributes;
+import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.enumerated.RoleType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

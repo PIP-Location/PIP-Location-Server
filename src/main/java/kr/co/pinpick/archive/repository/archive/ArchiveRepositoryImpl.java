@@ -18,7 +18,6 @@ import static kr.co.pinpick.user.entity.QFollower.follower1;
 
 @RequiredArgsConstructor
 public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
-
     private final JPAQueryFactory queryFactory;
 
     @Override

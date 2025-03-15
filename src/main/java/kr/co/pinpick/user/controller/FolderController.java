@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/folders")
 @Tag(name = "폴더 API")
 public class FolderController {
-
     private final FolderService folderService;
 
     @Operation(summary = "폴더 생성")

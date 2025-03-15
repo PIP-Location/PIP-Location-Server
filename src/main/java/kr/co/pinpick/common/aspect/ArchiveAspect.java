@@ -1,4 +1,4 @@
-package kr.co.pinpick.archive.aspect;
+package kr.co.pinpick.common.aspect;
 
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
@@ -9,6 +9,7 @@ import kr.co.pinpick.user.entity.User;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class ArchiveAspect {
         var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         var parameters = method.getParameters();
 
-        ArchiveUserData data = extractArchiveAndUser(args, parameters);
+        var data = extractArchiveAndUser(args, parameters);
 
         if (data.archive() == null || data.archive().getIsPublic()) {
             return joinPoint.proceed();
@@ -48,18 +49,16 @@ public class ArchiveAspect {
     /**
      * 권한이 없는 아카이브를 다른사람이 수정 또는 삭제하려고 했을 때 401 반환
      */
-    @Around("execution(* kr.co.pinpick.archive.controller.ArchiveController.*(..))")
-    public Object hasAuthority(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(checkArchiveAuthorization)")
+    public Object hasAuthority(ProceedingJoinPoint joinPoint, CheckArchiveAuthorization checkArchiveAuthorization) throws Throwable {
         var args = joinPoint.getArgs();
         var method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         var parameters = method.getParameters();
 
-        ArchiveUserData data = extractArchiveAndUser(args, parameters);
+        var data = extractArchiveAndUser(args, parameters);
 
-        if (method.isAnnotationPresent(DeleteMapping.class) || method.isAnnotationPresent(PatchMapping.class)) {
-            if (data.user() != null && data.archive() != null && !data.user().getId().equals(data.archive().getAuthor().getId())) {
-                throw new BusinessException(ErrorCode.UNAUTHORIZED);
-            }
+        if (data.user() != null && data.archive() != null && !data.user().getId().equals(data.archive().getAuthor().getId())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
         return joinPoint.proceed();

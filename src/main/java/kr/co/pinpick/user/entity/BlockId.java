@@ -12,6 +12,7 @@ import java.util.Objects;
 @Embeddable
 public class BlockId implements Serializable {
     private Long author;
+
     private Long block;
 
     @Override

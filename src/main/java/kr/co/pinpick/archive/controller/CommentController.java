@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/archives/{archiveId}/comments")
 @Tag(name = "댓글 API")
 public class CommentController {
-
     private final CommentService service;
 
     @Operation(summary = "댓글 작성")

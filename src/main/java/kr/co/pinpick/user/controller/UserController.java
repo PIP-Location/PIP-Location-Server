@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.pinpick.common.argumenthandler.Entity;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
-import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
 import kr.co.pinpick.user.service.UserBlockService;
@@ -19,11 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @Tag(name = "유저 관련 API")
 public class UserController {
-
     private final UserService service;
-
     private final UserFollowService userFollowService;
-
     private final UserBlockService userBlockService;
 
     //region 조회

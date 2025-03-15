@@ -14,7 +14,6 @@ import java.util.Optional;
 @AllArgsConstructor
 @SuperBuilder
 public class FolderResponse {
-
     private Long id;
 
     private String name;

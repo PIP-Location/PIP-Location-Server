@@ -16,7 +16,6 @@ import java.util.Map;
 @AllArgsConstructor
 @SuperBuilder
 public class FolderDetailResponse extends FolderResponse {
-
     private List<ArchiveResponse> archiveResponses;
 
     public static FolderDetailResponse fromEntity(Folder folder, User user, Map<Long, Boolean> isLikeMap) {

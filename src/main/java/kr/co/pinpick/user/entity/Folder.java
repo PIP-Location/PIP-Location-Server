@@ -2,7 +2,7 @@ package kr.co.pinpick.user.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Folder extends BaseEntity {
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

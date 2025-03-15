@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Follower {
-
     @EmbeddedId
     private FollowerId id;
 

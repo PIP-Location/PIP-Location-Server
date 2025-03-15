@@ -19,11 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class FolderService {
-
     private final FolderRepository folderRepository;
-
     private final FolderArchiveRepository folderArchiveRepository;
-
     private final FollowerRepository followerRepository;
 
     @Transactional

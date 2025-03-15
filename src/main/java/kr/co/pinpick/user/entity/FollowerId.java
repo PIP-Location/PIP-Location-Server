@@ -13,6 +13,7 @@ import java.util.Objects;
 @Embeddable
 public class FollowerId implements Serializable {
     private Long follower;
+
     private Long follow;
 
     @Override

@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ArchiveLikeService implements IUserLinkService<Archive> {
-
     private final ArchiveLikeRepository archiveLikeRepository;
 
     @Override

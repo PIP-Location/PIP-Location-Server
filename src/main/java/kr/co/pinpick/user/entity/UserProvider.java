@@ -3,7 +3,7 @@ package kr.co.pinpick.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.enumerated.ProviderType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "user_providers")
 public class UserProvider extends BaseEntity {
-
     @NotNull
     @Column(name = "provider_type", nullable = false)
     @Enumerated(EnumType.STRING)

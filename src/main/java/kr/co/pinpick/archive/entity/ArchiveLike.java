@@ -12,7 +12,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArchiveLike {
-
     @EmbeddedId
     private ArchiveLIkeId id;
 

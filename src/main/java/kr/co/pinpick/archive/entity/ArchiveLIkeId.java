@@ -13,6 +13,7 @@ import java.util.Objects;
 @Embeddable
 public class ArchiveLIkeId implements Serializable {
     private Long author;
+
     private Long archive;
 
     @Override

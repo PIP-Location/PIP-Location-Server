@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "인증 관련 API")
 public class AuthUserController {
     private final AuthUserService service;
-
     private final GoogleRequestBodyFactory googleRequestBodyFactory;
-
     private final KakaoRequestBodyFactory kakaoRequestBodyFactory;
 
     @PostMapping("/kakao/login")
