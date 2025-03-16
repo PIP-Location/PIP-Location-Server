@@ -62,9 +62,20 @@ public class ArchiveController {
     public ResponseEntity<ArchiveResponse> retrieve(
             @AuthenticationPrincipal User user,
             @Entity(name = "archiveId") Archive archive,
-            @PathVariable(name = "archiveId") String ignoredArchiveId
+            @PathVariable(name = "archiveId") long ignoredArchiveId
     ) {
         return ResponseEntity.ok(archiveService.get(user, archive));
+    }
+
+    @Operation(summary = "작성자로 아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "users/{authorId}")
+    public ResponseEntity<ArchiveCollectResponse> getByAuthor(
+            @AuthenticationPrincipal User user,
+            @Entity(name = "authorId") User author,
+            @PathVariable(name = "authorId") long ignoredAuthorId
+    ) {
+        return ResponseEntity.ok(archiveService.getByUser(user, author));
     }
 
     @Operation(summary = "아카이브 삭제")

@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FolderService {
@@ -35,8 +37,14 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public FolderCollectResponse getFolderList(User user) {
-        var folders = folderRepository.findAllByUser(user);
+    public FolderCollectResponse getFolderList(User user, User author) {
+        var isAuthor = user.getId().equals(author.getId());
+        List<Folder> folders;
+        if (isAuthor) {
+            folders = folderRepository.findAllByUser(author);
+        } else {
+            folders = folderRepository.findAllByUserAndIsPublic(author, true);
+        }
         return FolderCollectResponse.builder()
                 .folders(folders.stream().map(FolderResponse::fromEntity).toList())
                 .build();

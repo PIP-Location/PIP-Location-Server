@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -107,11 +108,30 @@ public class ArchiveService {
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ArchiveResponse get(User user, Archive archive) {
         var isFollow = followerRepository.existsByFollowerAndFollow(user, archive.getAuthor());
         var isLike = archiveLikeRepository.existsByAuthorAndArchive(user, archive);
         return ArchiveResponse.fromEntity(archive, isFollow, isLike);
+    }
+
+    @Transactional(readOnly = true)
+    public ArchiveCollectResponse getByUser(User user, User author) {
+        var isAuthor = user.getId().equals(author.getId());
+        List<Archive> archives;
+        if (isAuthor) {
+            archives = archiveRepository.findAllByAuthor(author);
+        } else {
+            archives = archiveRepository.findAllByAuthorAndIsPublic(author, true);
+        }
+
+        Set<Long> archiveIds = archives.stream().map(Archive::getId).collect(toSet());
+        var isFollow = followerRepository.existsByFollowerAndFollow(user, author);
+        var isLikeMap = getIsLikeMap(user, archiveIds);
+        return ArchiveCollectResponse.builder()
+                .collect(archives.stream().map(a -> ArchiveResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
+                .meta(PaginateResponse.builder().count(archives.size()).build())
+                .build();
     }
 
     @Transactional

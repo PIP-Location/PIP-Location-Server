@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.common.argumenthandler.Entity;
+import kr.co.pinpick.common.aspect.CheckFolderAuthorization;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
@@ -37,11 +38,13 @@ public class FolderController {
 
     @Operation(summary = "폴더 리스트 조회")
     @ApiResponse(responseCode = "200")
-    @GetMapping
+    @GetMapping("users/{authorId}")
     public ResponseEntity<FolderCollectResponse> getFolderList(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @Entity(name = "authorId") User author,
+            @PathVariable(name = "authorId") long ignoredAuthorId
     ) {
-        return ResponseEntity.ok(folderService.getFolderList(user));
+        return ResponseEntity.ok(folderService.getFolderList(user, author));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
@@ -74,6 +77,7 @@ public class FolderController {
 
     @Operation(summary = "폴더 공개/비공개 전환")
     @ApiResponse(responseCode = "200")
+    @CheckFolderAuthorization
     @PatchMapping("/{folderId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
             @AuthenticationPrincipal User ignoreUser,
@@ -86,6 +90,7 @@ public class FolderController {
 
     @Operation(summary = "폴더 삭제")
     @ApiResponse(responseCode = "204")
+    @CheckFolderAuthorization
     @DeleteMapping("/{folderId}")
     public ResponseEntity<Void> deleteFolder(
             @AuthenticationPrincipal User ignoreUser,
