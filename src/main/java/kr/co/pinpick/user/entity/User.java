@@ -19,13 +19,14 @@ import static java.util.stream.Collectors.toList;
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class User extends BaseEntity implements UserDetails {
     private String email;
 
-    private String nickname;
+    private String nickName;
 
     private String password;
 
@@ -41,7 +42,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false)
-    @Setter
     @Builder.Default
     private RoleType role = RoleType.USER;
 

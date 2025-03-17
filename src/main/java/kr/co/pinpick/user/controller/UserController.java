@@ -2,7 +2,9 @@ package kr.co.pinpick.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import kr.co.pinpick.common.argumenthandler.Entity;
+import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
@@ -12,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @Tag(name = "유저 관련 API")
 public class UserController {
-    private final UserService service;
+    private final UserService userService;
     private final UserFollowService userFollowService;
     private final UserBlockService userBlockService;
 
@@ -28,9 +31,8 @@ public class UserController {
     public ResponseEntity<UserDetailResponse> me(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
     ) {
-        return ResponseEntity.ok(service.find(user, user));
+        return ResponseEntity.ok(userService.find(user, user));
     }
-
     @Operation(summary = "회원 상세 조회")
     @GetMapping("{userId}")
     public ResponseEntity<UserDetailResponse> getUserDetail(
@@ -38,9 +40,19 @@ public class UserController {
             @PathVariable(name = "userId") long ignoredUserId,
             @Entity(name = "userId") User target
     ) {
-        return ResponseEntity.ok(service.find(user, target));
+        return ResponseEntity.ok(userService.find(user, target));
     }
     //endregion
+
+    @Operation(summary = "회원정보 수정")
+    @PatchMapping
+    public ResponseEntity<UserDetailResponse> update(
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
+            @RequestPart(required = false, name = "attaches") MultipartFile profileImage
+    ) {
+        return ResponseEntity.ok(userService.update(user, request, profileImage));
+    }
 
     //region 차단
     @Operation(summary = "회원 차단")

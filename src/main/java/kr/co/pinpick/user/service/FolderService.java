@@ -15,6 +15,7 @@ import kr.co.pinpick.user.repository.FollowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,12 +27,14 @@ public class FolderService {
     private final FollowerRepository followerRepository;
 
     @Transactional
-    public FolderResponse createFolder(User user, CreateFolderRequest request) {
+    public FolderResponse create(User user, CreateFolderRequest request, MultipartFile attach) {
         var folder = Folder.builder()
                 .user(user)
                 .name(request.getName())
                 .isPublic(request.isPublic())
                 .build();
+
+        // TODO: 라이브러리 타이틀 이미지 저장
 
         return FolderResponse.fromEntity(folderRepository.save(folder));
     }

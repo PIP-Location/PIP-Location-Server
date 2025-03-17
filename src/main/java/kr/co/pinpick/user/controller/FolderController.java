@@ -18,22 +18,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/folders")
 @Tag(name = "폴더 API")
 public class FolderController {
-    private final FolderService folderService;
+    private final FolderService service;
 
     @Operation(summary = "폴더 생성")
     @ApiResponse(responseCode = "201")
     @PostMapping
-    public ResponseEntity<FolderResponse> createFolder(
+    public ResponseEntity<FolderResponse> create(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @RequestBody @Valid CreateFolderRequest request
+            @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
+            @RequestPart(required = false, name = "attaches") MultipartFile attach
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(folderService.createFolder(user, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(user, request, attach));
     }
 
     @Operation(summary = "폴더 리스트 조회")
@@ -44,7 +46,7 @@ public class FolderController {
             @Entity(name = "authorId") User author,
             @PathVariable(name = "authorId") long ignoredAuthorId
     ) {
-        return ResponseEntity.ok(folderService.getFolderList(user, author));
+        return ResponseEntity.ok(service.getFolderList(user, author));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
@@ -57,7 +59,7 @@ public class FolderController {
             @PathVariable(name = "archiveId") long ignoredArchiveId,
             @Entity(name = "archiveId") Archive archive
     ) {
-        folderService.addArchiveToFolder(user, folder, archive);
+        service.addArchiveToFolder(user, folder, archive);
         return ResponseEntity.noContent().build();
     }
 
@@ -71,7 +73,7 @@ public class FolderController {
             @PathVariable(name = "archiveId") long ignoredArchiveId,
             @Entity(name = "archiveId") Archive archive
     ) {
-        folderService.removeArchiveFromFolder(folder, archive);
+        service.removeArchiveFromFolder(folder, archive);
         return ResponseEntity.noContent().build();
     }
 
@@ -85,7 +87,7 @@ public class FolderController {
             @PathVariable(name = "folderId") long ignoredFolderId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(folderService.changeIsPublic(folder, isPublic));
+        return ResponseEntity.ok(service.changeIsPublic(folder, isPublic));
     }
 
     @Operation(summary = "폴더 삭제")
@@ -97,7 +99,7 @@ public class FolderController {
             @Entity(name = "folderId") Folder folder,
             @PathVariable(name = "folderId") long ignoredFolderId
     ) {
-        folderService.deleteFolder(folder);
+        service.deleteFolder(folder);
         return ResponseEntity.noContent().build();
     }
 }
