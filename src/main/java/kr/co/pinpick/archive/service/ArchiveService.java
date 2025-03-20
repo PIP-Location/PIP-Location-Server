@@ -10,7 +10,10 @@ import kr.co.pinpick.archive.repository.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.user.dto.response.FolderDetailResponse;
+import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
+import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -34,6 +37,7 @@ public class ArchiveService {
     private final ArchiveLikeRepository archiveLikeRepository;
     private final FollowerRepository followerRepository;
     private final GeometryFactory geometryFactory;
+    private final FolderArchiveRepository folderArchiveRepository;
 
     @Transactional
     public ArchiveResponse create(User author, CreateArchiveRequest request, List<MultipartFile> attaches) {
@@ -132,6 +136,25 @@ public class ArchiveService {
                 .collect(archives.stream().map(a -> ArchiveResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ArchiveCollectResponse getByFolder(User user, Folder folder) {
+        var folderArchives = folderArchiveRepository.getByFolder(folder);
+        var archiveIds = folderArchives.stream().map(fa -> fa.getArchive().getId()).collect(toSet());
+        var isLikeMap = getIsLikeMap(user, archiveIds);
+        return ArchiveCollectResponse.builder()
+                .collect(folderArchives.stream().map(fa -> ArchiveResponse
+                        .fromEntity(fa.getArchive(), !user.getId().equals(fa.getArchive().getId()), isLikeMap.containsKey(fa.getArchive().getId()))).toList())
+                .meta(PaginateResponse.builder().count(folderArchives.size()).build())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public FolderDetailResponse getArchivesWithFolderInfo(User user, Folder folder) {
+        var archiveIds = folder.getFolderArchives().stream().map(fa -> fa.getArchive().getId()).collect(toSet());
+        var isLikeMap = getIsLikeMap(user, archiveIds);
+        return FolderDetailResponse.fromEntity(folder, user, isLikeMap);
     }
 
     @Transactional

@@ -5,10 +5,13 @@ import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.FolderArchive;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FolderArchiveRepository extends JpaRepository<FolderArchive, Long> {
     Optional<FolderArchive> findByFolderAndArchive(Folder folder, Archive archive);
 
     void deleteByFolderAndArchive(Folder folder, Archive archive);
+
+    List<FolderArchive> getByFolder(Folder folder);
 }

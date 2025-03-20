@@ -33,7 +33,7 @@ public class FolderController {
     public ResponseEntity<FolderResponse> create(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
-            @RequestPart(required = false, name = "attaches") MultipartFile attach
+            @RequestPart(required = false, name = "attache") MultipartFile attach
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(user, request, attach));
     }

@@ -13,7 +13,9 @@ import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.common.argumenthandler.Entity;
 import kr.co.pinpick.common.aspect.CheckArchiveAuthorization;
+import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
+import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,6 +78,26 @@ public class ArchiveController {
             @PathVariable(name = "authorId") long ignoredAuthorId
     ) {
         return ResponseEntity.ok(archiveService.getByUser(user, author));
+    }
+
+    @Operation(summary = "폴더로 아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "folders/{folderId}")
+    public ResponseEntity<ArchiveCollectResponse> getByFolder(
+            @AuthenticationPrincipal User user,
+            @Entity(name = "folderId") Folder folder,
+            @PathVariable(name = "folderId") long ignoredFolderId) {
+        return ResponseEntity.ok(archiveService.getByFolder(user, folder));
+    }
+
+    @Operation(summary = "폴더정보와 함께 아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "folders/{folderId}/info")
+    public ResponseEntity<FolderDetailResponse> getArchivesWithFolderInfo(
+            @AuthenticationPrincipal User user,
+            @Entity(name = "folderId") Folder folder,
+            @PathVariable(name = "folderId") long ignoredFolderId) {
+        return ResponseEntity.ok(archiveService.getArchivesWithFolderInfo(user, folder));
     }
 
     @Operation(summary = "아카이브 삭제")
