@@ -1,6 +1,7 @@
 package kr.co.pinpick.user.service;
 
 import kr.co.pinpick.archive.entity.Archive;
+import kr.co.pinpick.common.dto.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
@@ -49,7 +50,8 @@ public class FolderService {
             folders = folderRepository.findAllByUserAndIsPublic(author, true);
         }
         return FolderCollectResponse.builder()
-                .folders(folders.stream().map(FolderResponse::fromEntity).toList())
+                .collect(folders.stream().map(FolderResponse::fromEntity).toList())
+                .meta(PaginateResponse.builder().count(folders.size()).build())
                 .build();
     }
 

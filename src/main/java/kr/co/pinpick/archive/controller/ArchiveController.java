@@ -14,7 +14,7 @@ import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.common.argumenthandler.Entity;
 import kr.co.pinpick.common.aspect.CheckArchiveAuthorization;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
-import kr.co.pinpick.user.dto.response.UserResponse;
+import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -127,9 +127,19 @@ public class ArchiveController {
     }
 
     //region 좋아요
+    @Operation(summary = "좋아요한 사람 목록 조회")
+    @GetMapping("{archiveId}/like")
+    public ResponseEntity<UserCollectResponse> get(
+            @PathVariable(name = "archiveId") long ignoredArchiveId,
+            @Entity(name = "archiveId") Archive archive,
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+    ) {
+        return ResponseEntity.ok(archiveLikeService.get(user, archive));
+    }
+
     @Operation(summary = "아카이브 좋아요")
     @PostMapping("{archiveId}/like")
-    public ResponseEntity<UserResponse> like(
+    public ResponseEntity<Void> like(
             @PathVariable(name = "archiveId") long ignoredArchiveId,
             @Entity(name = "archiveId") Archive archive,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
@@ -140,7 +150,7 @@ public class ArchiveController {
 
     @Operation(summary = "아카이브 좋아요 취소")
     @DeleteMapping("{archiveId}/like")
-    public ResponseEntity<UserResponse> unlike(
+    public ResponseEntity<Void> unlike(
             @PathVariable(name = "archiveId") long ignoredArchiveId,
             @Entity(name = "archiveId") Archive archive,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user

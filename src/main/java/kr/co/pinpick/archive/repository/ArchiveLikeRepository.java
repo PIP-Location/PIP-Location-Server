@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, ArchiveLIkeId> {
+
+    List<ArchiveLike> findByAuthorAndArchive(User user, Archive archive);
+
     List<ArchiveLike> findByAuthorAndArchiveIdIn(@Param(value = "author") User author, @Param("archiveIds") Set<Long> archiveIds);
 
     boolean existsByAuthorAndArchive(User user, Archive archive);

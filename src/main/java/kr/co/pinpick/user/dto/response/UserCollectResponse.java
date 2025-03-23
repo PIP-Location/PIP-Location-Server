@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FolderCollectResponse extends CollectResponse<FolderResponse> {
-    @JsonProperty("folders")
-    private List<FolderResponse> collect;
+public class UserCollectResponse extends CollectResponse<UserResponse> {
+    @JsonProperty("users")
+    private List<UserResponse> collect;
 }

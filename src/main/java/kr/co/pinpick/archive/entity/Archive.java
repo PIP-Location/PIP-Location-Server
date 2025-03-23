@@ -58,7 +58,7 @@ public class Archive extends BaseEntity {
     @Setter
     private Boolean isPublic = false;
 
-    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
     private List<ArchiveAttach> archiveAttaches = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class Archive extends BaseEntity {
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
     private Set<ArchiveLike> archiveLikes = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
     private List<ArchiveTag> tags = new ArrayList<>();
 
