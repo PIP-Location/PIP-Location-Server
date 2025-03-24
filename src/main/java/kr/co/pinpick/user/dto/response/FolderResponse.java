@@ -18,7 +18,7 @@ public class FolderResponse {
 
     private String name;
 
-    private boolean isPublic;
+    private Boolean isPublic;
 
     private int count;
 

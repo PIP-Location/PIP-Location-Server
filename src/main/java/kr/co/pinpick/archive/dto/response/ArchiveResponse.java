@@ -1,5 +1,6 @@
 package kr.co.pinpick.archive.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import lombok.*;
@@ -30,7 +31,7 @@ public class ArchiveResponse {
 
     private Boolean isPublic;
 
-    private boolean isLike;
+    private Boolean isLike;
 
     private int likeCount;
 

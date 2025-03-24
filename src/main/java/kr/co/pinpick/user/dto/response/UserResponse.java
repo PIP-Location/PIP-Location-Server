@@ -1,5 +1,6 @@
 package kr.co.pinpick.user.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.co.pinpick.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class UserResponse {
 
     private String profileImage;
 
-    private boolean isFollow;
+    private Boolean isFollow;
 
     public static UserResponse fromEntity(User user) {
         return fromEntity(user, builder());

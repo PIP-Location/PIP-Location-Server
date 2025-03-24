@@ -25,39 +25,50 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'com.azure.spring:spring-cloud-azure-starter-storage-blob:5.14.0'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-
-	// Thymeleaf
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-	// security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// test
+	testImplementation 'io.rest-assured:rest-assured:5.2.0'
+	testImplementation 'org.testcontainers:testcontainers:1.17.3'
+	testImplementation 'org.testcontainers:junit-jupiter:1.16.2'  // TC 의존성
+	testImplementation 'org.testcontainers:mysql:1.17.3'
+	testImplementation 'org.testcontainers:jdbc:1.16.0'
 
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
+	// JsonWebToken
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'com.nimbusds:nimbus-jose-jwt'
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.72'
+
 	// javax.xml.bind
 	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 
-	// JsonWebToken
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	// Thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// MySQL MBR
+	implementation 'org.hibernate:hibernate-spatial:6.6.0.Final'
 
 	// querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-
-	// MySQL MBR
-	implementation 'org.hibernate:hibernate-spatial:6.6.0.Final'
 }
 
 tasks.named('test') {
