@@ -3,7 +3,6 @@ package kr.co.pinpick.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.co.pinpick.common.argumenthandler.Entity;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.entity.User;
@@ -31,16 +30,15 @@ public class UserController {
     public ResponseEntity<UserDetailResponse> me(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
     ) {
-        return ResponseEntity.ok(userService.find(user, user));
+        return ResponseEntity.ok(userService.find(user, user.getId()));
     }
     @Operation(summary = "회원 상세 조회")
     @GetMapping("{userId}")
     public ResponseEntity<UserDetailResponse> getUserDetail(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable(name = "userId") long ignoredUserId,
-            @Entity(name = "userId") User target
+            @PathVariable(name = "userId") Long targetId
     ) {
-        return ResponseEntity.ok(userService.find(user, target));
+        return ResponseEntity.ok(userService.find(user, targetId));
     }
     //endregion
 
@@ -58,22 +56,20 @@ public class UserController {
     @Operation(summary = "회원 차단")
     @PostMapping("{userId}/block")
     public ResponseEntity<Void> block(
-            @PathVariable(name = "userId") long ignoredUserId,
-            @Entity(name = "userId") User user,
+            @PathVariable(name = "userId") Long userId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
     ) {
-        userBlockService.link(author, user);
+        userBlockService.link(author, userId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "회원 차단해제")
     @DeleteMapping("{userId}/unblock")
     public ResponseEntity<Void> unblock(
-            @PathVariable(name = "userId") long ignoredUserId,
-            @Entity(name = "userId") User user,
+            @PathVariable(name = "userId") Long userId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
     ) {
-        userBlockService.unlink(author, user);
+        userBlockService.unlink(author, userId);
         return ResponseEntity.noContent().build();
     }
     //endregion
@@ -82,22 +78,20 @@ public class UserController {
     @Operation(summary = "회원 팔로우")
     @PostMapping("{userId}/follow")
     public ResponseEntity<Void> follow(
-            @PathVariable(name = "userId") long ignoredUserId,
-            @Entity(name = "userId") User user,
+            @PathVariable(name = "userId") Long userId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
     ) {
-        userFollowService.link(author, user);
+        userFollowService.link(author, userId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "회원 팔로우 해제")
     @DeleteMapping("{userId}/unfollow")
     public ResponseEntity<Void> unfollow(
-            @PathVariable(name = "userId") long ignoredUserId,
-            @Entity(name = "userId") User user,
+            @PathVariable(name = "userId") Long userId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User author
     ) {
-        userFollowService.unlink(author, user);
+        userFollowService.unlink(author, userId);
         return ResponseEntity.noContent().build();
     }
     //endregion

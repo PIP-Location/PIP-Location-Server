@@ -4,13 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.common.argumenthandler.Entity;
-import kr.co.pinpick.common.aspect.CheckFolderAuthorization;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
-import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.FolderService;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +39,9 @@ public class FolderController {
     @GetMapping("users/{authorId}")
     public ResponseEntity<FolderCollectResponse> getFolderList(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @Entity(name = "authorId") User author,
-            @PathVariable(name = "authorId") long ignoredAuthorId
+            @PathVariable(name = "authorId") Long authorId
     ) {
-        return ResponseEntity.ok(service.getFolderList(user, author));
+        return ResponseEntity.ok(service.getFolderList(user, authorId));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
@@ -54,12 +49,10 @@ public class FolderController {
     @PostMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> addArchiveToFolder(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable(name = "folderId") long ignoredFolderId,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
-            @Entity(name = "archiveId") Archive archive
+            @PathVariable(name = "folderId") Long folderId,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        service.addArchiveToFolder(user, folder, archive);
+        service.addArchiveToFolder(user, folderId, archiveId);
         return ResponseEntity.noContent().build();
     }
 
@@ -68,38 +61,32 @@ public class FolderController {
     @DeleteMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> removeArchiveFromFolder(
             @AuthenticationPrincipal(errorOnInvalidType = true) User ignoreUser,
-            @PathVariable(name = "folderId") long ignoredFolderId,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
-            @Entity(name = "archiveId") Archive archive
+            @PathVariable(name = "folderId") Long folderId,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        service.removeArchiveFromFolder(folder, archive);
+        service.removeArchiveFromFolder(folderId, archiveId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "폴더 공개/비공개 전환")
     @ApiResponse(responseCode = "200")
-    @CheckFolderAuthorization
     @PatchMapping("/{folderId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
-            @AuthenticationPrincipal User ignoreUser,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "folderId") long ignoredFolderId,
+            @AuthenticationPrincipal User user,
+            @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(service.changeIsPublic(folder, isPublic));
+        return ResponseEntity.ok(service.changeIsPublic(user, folderId, isPublic));
     }
 
     @Operation(summary = "폴더 삭제")
     @ApiResponse(responseCode = "204")
-    @CheckFolderAuthorization
     @DeleteMapping("/{folderId}")
     public ResponseEntity<Void> deleteFolder(
-            @AuthenticationPrincipal User ignoreUser,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "folderId") long ignoredFolderId
+            @AuthenticationPrincipal User user,
+            @PathVariable(name = "folderId") Long folderId
     ) {
-        service.deleteFolder(folder);
+        service.delete(user, folderId);
         return ResponseEntity.noContent().build();
     }
 }

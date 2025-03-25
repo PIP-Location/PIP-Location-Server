@@ -8,14 +8,10 @@ import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
-import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
-import kr.co.pinpick.common.argumenthandler.Entity;
-import kr.co.pinpick.common.aspect.CheckArchiveAuthorization;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
-import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,6 +44,16 @@ public class ArchiveController {
                 .body(archiveService.create(author, request ,attaches));
     }
 
+    @Operation(summary = "ID로 아카이브 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping(path = "{archiveId}")
+    public ResponseEntity<ArchiveResponse> retrieve(
+            @AuthenticationPrincipal User user,
+            @PathVariable(name = "archiveId") Long archiveId
+    ) {
+        return ResponseEntity.ok(archiveService.get(user, archiveId));
+    }
+
     @Operation(summary = "아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping
@@ -58,26 +64,14 @@ public class ArchiveController {
         return ResponseEntity.ok(archiveService.retrieve(user, request));
     }
 
-    @Operation(summary = "ID로 아카이브 조회")
-    @ApiResponse(responseCode = "200")
-    @GetMapping(path = "{archiveId}")
-    public ResponseEntity<ArchiveResponse> retrieve(
-            @AuthenticationPrincipal User user,
-            @Entity(name = "archiveId") Archive archive,
-            @PathVariable(name = "archiveId") long ignoredArchiveId
-    ) {
-        return ResponseEntity.ok(archiveService.get(user, archive));
-    }
-
     @Operation(summary = "작성자로 아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping(path = "users/{authorId}")
     public ResponseEntity<ArchiveCollectResponse> getByAuthor(
             @AuthenticationPrincipal User user,
-            @Entity(name = "authorId") User author,
-            @PathVariable(name = "authorId") long ignoredAuthorId
+            @PathVariable(name = "authorId") Long authorId
     ) {
-        return ResponseEntity.ok(archiveService.getByUser(user, author));
+        return ResponseEntity.ok(archiveService.getByUser(user, authorId));
     }
 
     @Operation(summary = "폴더로 아카이브 조회")
@@ -85,9 +79,8 @@ public class ArchiveController {
     @GetMapping(path = "folders/{folderId}")
     public ResponseEntity<ArchiveCollectResponse> getByFolder(
             @AuthenticationPrincipal User user,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "folderId") long ignoredFolderId) {
-        return ResponseEntity.ok(archiveService.getByFolder(user, folder));
+            @PathVariable(name = "folderId") Long folderId) {
+        return ResponseEntity.ok(archiveService.getByFolder(user, folderId));
     }
 
     @Operation(summary = "폴더정보와 함께 아카이브 조회")
@@ -95,67 +88,59 @@ public class ArchiveController {
     @GetMapping(path = "folders/{folderId}/info")
     public ResponseEntity<FolderDetailResponse> getArchivesWithFolderInfo(
             @AuthenticationPrincipal User user,
-            @Entity(name = "folderId") Folder folder,
-            @PathVariable(name = "folderId") long ignoredFolderId) {
-        return ResponseEntity.ok(archiveService.getArchivesWithFolderInfo(user, folder));
+            @PathVariable(name = "folderId") Long folderId) {
+        return ResponseEntity.ok(archiveService.getArchivesWithFolderInfo(user, folderId));
     }
 
     @Operation(summary = "아카이브 삭제")
     @ApiResponse(responseCode = "204")
-    @CheckArchiveAuthorization
     @DeleteMapping("{archiveId}")
     public ResponseEntity<Void> deleteArchive(
-            @AuthenticationPrincipal User ignoredAuthor,
-            @Entity(name = "archiveId") Archive archive,
-            @PathVariable(name = "archiveId") long ignoredArchiveId
+            @AuthenticationPrincipal User author,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        archiveService.delete(archive);
+        archiveService.delete(author, archiveId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "공개/비공개 전환")
     @ApiResponse(responseCode = "200")
-    @CheckArchiveAuthorization
     @PatchMapping("{archiveId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
-            @AuthenticationPrincipal User ignoredAuthor,
-            @Entity(name = "archiveId") Archive archive,
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
+            @AuthenticationPrincipal User author,
+            @PathVariable(name = "archiveId") Long archiveId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(archiveService.changeIsPublic(archive, isPublic));
+        return ResponseEntity.ok(archiveService.changeIsPublic(author, archiveId, isPublic));
     }
 
     //region 좋아요
     @Operation(summary = "좋아요한 사람 목록 조회")
     @GetMapping("{archiveId}/like")
     public ResponseEntity<UserCollectResponse> get(
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
-            @Entity(name = "archiveId") Archive archive,
+            @PathVariable(name = "archiveId") Long archiveId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
     ) {
-        return ResponseEntity.ok(archiveLikeService.get(user, archive));
+        return ResponseEntity.ok(archiveLikeService.get(user, archiveId));
     }
 
     @Operation(summary = "아카이브 좋아요")
     @PostMapping("{archiveId}/like")
     public ResponseEntity<Void> like(
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
-            @Entity(name = "archiveId") Archive archive,
+            @PathVariable(name = "archiveId") Long archiveId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
     ) {
-        archiveLikeService.link(user, archive);
+        archiveLikeService.link(user, archiveId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "아카이브 좋아요 취소")
     @DeleteMapping("{archiveId}/like")
     public ResponseEntity<Void> unlike(
-            @PathVariable(name = "archiveId") long ignoredArchiveId,
-            @Entity(name = "archiveId") Archive archive,
+            @PathVariable(name = "archiveId") long archiveId,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user
     ) {
-        archiveLikeService.unlink(user, archive);
+        archiveLikeService.unlink(user, archiveId);
         return ResponseEntity.noContent().build();
     }
     //endregion

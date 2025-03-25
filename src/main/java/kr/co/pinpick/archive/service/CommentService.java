@@ -7,6 +7,7 @@ import kr.co.pinpick.archive.dto.request.CreateCommentRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
 import kr.co.pinpick.archive.repository.ArchiveCommentRepository;
+import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.dto.PaginateResponse;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+    private final ArchiveRepository archiveRepository;
     private final ArchiveCommentRepository archiveCommentRepository;
 
     @Transactional
-    public CommentResponse create(User author, Archive archive, CreateCommentRequest request, ArchiveComment parent) {
+    public CommentResponse create(User author, Long archiveId, CreateCommentRequest request, Long commendId) {
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
+        var parent = archiveCommentRepository.findByIdOrElseThrow(commendId);
         var comment = ArchiveComment.builder()
                 .author(author)
                 .archive(archive)
@@ -31,7 +35,8 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentCollectResponse get(Archive archive) {
+    public CommentCollectResponse get(Long archiveId) {
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         var comments = archiveCommentRepository.findByArchiveAndParentIsNull(archive);
         return CommentCollectResponse.builder()
                 .collect(comments.stream().map(CommentResponse::fromEntity).toList())
@@ -40,7 +45,8 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentDetailResponse find(ArchiveComment comment) {
+    public CommentDetailResponse find(Long commentId) {
+        var comment = archiveCommentRepository.findByIdOrElseThrow(commentId);
         return CommentDetailResponse.fromEntity(comment);
     }
 }
