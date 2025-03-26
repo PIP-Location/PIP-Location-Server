@@ -116,6 +116,7 @@ public class ArchiveController {
 
     //region 좋아요
     @Operation(summary = "좋아요한 사람 목록 조회")
+    @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/like")
     public ResponseEntity<UserCollectResponse> get(
             @PathVariable(name = "archiveId") Long archiveId,
@@ -125,6 +126,7 @@ public class ArchiveController {
     }
 
     @Operation(summary = "아카이브 좋아요")
+    @ApiResponse(responseCode = "204")
     @PostMapping("{archiveId}/like")
     public ResponseEntity<Void> like(
             @PathVariable(name = "archiveId") Long archiveId,
@@ -135,6 +137,7 @@ public class ArchiveController {
     }
 
     @Operation(summary = "아카이브 좋아요 취소")
+    @ApiResponse(responseCode = "204")
     @DeleteMapping("{archiveId}/like")
     public ResponseEntity<Void> unlike(
             @PathVariable(name = "archiveId") long archiveId,

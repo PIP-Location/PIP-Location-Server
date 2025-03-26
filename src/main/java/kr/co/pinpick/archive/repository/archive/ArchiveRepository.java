@@ -12,8 +12,4 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long>, Archive
     default Archive findByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ARCHIVE_NOT_FOUND, ""));
     }
-
-    List<Archive> findAllByAuthorAndIsPublic(User author, boolean isPublic);
-
-    List<Archive> findAllByAuthor(User author);
 }

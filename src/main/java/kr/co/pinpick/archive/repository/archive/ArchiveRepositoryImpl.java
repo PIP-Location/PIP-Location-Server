@@ -22,7 +22,7 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     @Override
     public List<Archive> retrieve(User user, ArchiveRetrieveRequest request) {
-        var query = queryFactory.select(archive).from(archive)
+        var query = queryFactory.selectFrom(archive)
                 .where(
                         ltArchiveId(request.getArchiveId()),
                         JPAExpressions.selectFrom(block1)
@@ -79,5 +79,17 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     private BooleanExpression ltArchiveId(Long archiveId) {
         return archiveId == null ? null : archive.id.lt(archiveId);
+    }
+
+    @Override
+    public List<Archive> findAllByAuthor(User user, User author) {
+        return queryFactory
+                .selectFrom(archive)
+                .where(archive.author.eq(author), isMe(user.getId(), author.getId()))
+                .fetch();
+    }
+
+    private BooleanExpression isMe(Long userId, Long authorId) {
+        return userId.equals(authorId) ? null : archive.isPublic.isTrue();
     }
 }

@@ -19,8 +19,4 @@ public interface TagRepository extends JpaRepository<Tag, Long>, TagRepositoryCu
         `count` = values(`count`)
     """)
     void collectTagCount();
-
-    List<Tag> findAllByOrderByCountDesc(Limit limit);
-
-    List<Tag> findByNameContainingOrderByCountDesc(@Size(max = 50) @NotNull String name, Limit limit);
 }

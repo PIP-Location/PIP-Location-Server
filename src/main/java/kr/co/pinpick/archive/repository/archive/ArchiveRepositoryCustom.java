@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ArchiveRepositoryCustom {
     List<Archive> retrieve(User user, ArchiveRetrieveRequest request);
+
+    List<Archive> findAllByAuthor(User user, User author);
 }

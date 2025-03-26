@@ -131,14 +131,7 @@ public class ArchiveService {
     @Transactional(readOnly = true)
     public ArchiveCollectResponse getByUser(User user, Long authorId) {
         var author = userRepository.findByIdOrElseThrow(authorId);
-        var isAuthor = user.getId().equals(author.getId());
-        List<Archive> archives;
-        if (isAuthor) {
-            archives = archiveRepository.findAllByAuthor(author);
-        } else {
-            archives = archiveRepository.findAllByAuthorAndIsPublic(author, true);
-        }
-
+        var archives = archiveRepository.findAllByAuthor(user, author);
         var archiveIds = archives.stream().map(Archive::getId).collect(toSet());
         var isFollow = followerRepository.existsByFollowerAndFollow(user, author);
         var isLikeMap = getIsLikeMap(user, archiveIds);
