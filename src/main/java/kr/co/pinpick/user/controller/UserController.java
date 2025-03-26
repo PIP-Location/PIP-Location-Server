@@ -10,6 +10,7 @@ import kr.co.pinpick.user.service.UserService;
 import kr.co.pinpick.user.service.UserBlockService;
 import kr.co.pinpick.user.service.UserFollowService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class UserController {
     //endregion
 
     @Operation(summary = "회원정보 수정")
-    @PatchMapping
+    @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDetailResponse> update(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,

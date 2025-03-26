@@ -2,7 +2,7 @@ package kr.co.pinpick.archive.service;
 
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveTag;
@@ -13,7 +13,6 @@ import kr.co.pinpick.common.dto.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
-import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FolderRepository;

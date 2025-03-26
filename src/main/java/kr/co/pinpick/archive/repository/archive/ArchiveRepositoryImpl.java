@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -71,14 +71,13 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
             query.where(subQuery.exists());
         }
 
-        return query.orderBy(archive.createdAt.desc()).fetch();
+        return query
+                .orderBy(archive.createdAt.desc())
+                .limit(20)
+                .fetch();
     }
 
     private BooleanExpression ltArchiveId(Long archiveId) {
-        if (archiveId == null) {
-            return null;
-        }
-
-        return archive.id.lt(archiveId);
+        return archiveId == null ? null : archive.id.lt(archiveId);
     }
 }

@@ -8,7 +8,7 @@ import io.restassured.response.ValidatableResponse;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.common.error.ErrorResponse;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 

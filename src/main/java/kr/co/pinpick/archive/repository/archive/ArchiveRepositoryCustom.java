@@ -1,6 +1,6 @@
 package kr.co.pinpick.archive.repository.archive;
 
-import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.user.entity.User;
 

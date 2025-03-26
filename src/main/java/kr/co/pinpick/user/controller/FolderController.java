@@ -11,6 +11,7 @@ import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.FolderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class FolderController {
 
     @Operation(summary = "폴더 생성")
     @ApiResponse(responseCode = "201")
-    @PostMapping
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<FolderResponse> create(
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,

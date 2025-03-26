@@ -2,7 +2,7 @@ package kr.co.pinpick.archive;
 
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.request.CreateTagRequest;
-import kr.co.pinpick.archive.dto.response.ArchiveRetrieveRequest;
+import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 
 import java.util.ArrayList;
 import java.util.List;
