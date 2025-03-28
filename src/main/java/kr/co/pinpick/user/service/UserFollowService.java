@@ -3,7 +3,7 @@ package kr.co.pinpick.user.service;
 import kr.co.pinpick.common.service.IUserLinkService;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
-import kr.co.pinpick.user.repository.UserRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

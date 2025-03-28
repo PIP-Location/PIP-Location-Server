@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
+import kr.co.pinpick.user.dto.request.UserRetrieveRequest;
+import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
@@ -26,6 +28,15 @@ public class UserController {
     private final UserBlockService userBlockService;
 
     //region 조회
+    @Operation(summary = "회원 검색")
+    @GetMapping()
+    public ResponseEntity<UserCollectResponse> get(
+            @AuthenticationPrincipal User user,
+            @ModelAttribute UserRetrieveRequest request
+    ) {
+        return ResponseEntity.ok(userService.get(user, request));
+    }
+
     @Operation(summary = "로그인된 회원 조회")
     @GetMapping("@me")
     public ResponseEntity<UserDetailResponse> me(

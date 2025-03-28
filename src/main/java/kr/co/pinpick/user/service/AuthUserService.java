@@ -11,7 +11,7 @@ import kr.co.pinpick.user.dto.response.SocialLoginResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.entity.UserProvider;
 import kr.co.pinpick.user.repository.UserProviderRepository;
-import kr.co.pinpick.user.repository.UserRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;

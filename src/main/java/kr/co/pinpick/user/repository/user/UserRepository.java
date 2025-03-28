@@ -1,4 +1,4 @@
-package kr.co.pinpick.user.repository;
+package kr.co.pinpick.user.repository.user;
 
 import kr.co.pinpick.common.error.EntityNotFoundException;
 import kr.co.pinpick.common.error.ErrorCode;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
     default User findByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, ""));
     }

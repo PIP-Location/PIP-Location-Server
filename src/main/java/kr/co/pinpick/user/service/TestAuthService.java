@@ -8,7 +8,7 @@ import kr.co.pinpick.user.dto.request.LoginRequest;
 import kr.co.pinpick.user.dto.request.SignupRequest;
 import kr.co.pinpick.user.dto.response.TokenResponse;
 import kr.co.pinpick.user.entity.User;
-import kr.co.pinpick.user.repository.UserRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

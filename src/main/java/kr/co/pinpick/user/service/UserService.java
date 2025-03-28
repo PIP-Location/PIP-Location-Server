@@ -1,10 +1,14 @@
 package kr.co.pinpick.user.service;
 
+import kr.co.pinpick.common.dto.PaginateResponse;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
+import kr.co.pinpick.user.dto.request.UserRetrieveRequest;
+import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
+import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
-import kr.co.pinpick.user.repository.UserRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +22,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowerRepository followerRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public UserCollectResponse get(User user, UserRetrieveRequest request) {
+        var users = userRepository.retrieve(user, request);
+        return UserCollectResponse.builder()
+                .collect(users.stream().map(UserResponse::fromEntity).toList())
+                .meta(PaginateResponse.builder().count(users.size()).build())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
     public UserDetailResponse find(User user, Long targetId) {
         var target = userRepository.findByIdOrElseThrow(targetId);
         var isFollow = followerRepository.existsByFollowerAndFollow(user, target);

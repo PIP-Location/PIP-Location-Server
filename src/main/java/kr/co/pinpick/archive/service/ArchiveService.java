@@ -17,7 +17,7 @@ import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FolderRepository;
 import kr.co.pinpick.user.repository.FollowerRepository;
-import kr.co.pinpick.user.repository.UserRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
