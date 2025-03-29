@@ -31,7 +31,7 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
-    public TagCollectResponse get(TagRetrieveRequest request) {
+    public TagCollectResponse search(TagRetrieveRequest request) {
         var tags = repository.findAllByName(request);
         // 정확히 일치하는 태그는 최상단으로 이동
         var eq = tags.removeFirst(o -> o.getName().equals(request.getQ()));

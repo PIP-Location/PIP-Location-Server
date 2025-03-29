@@ -6,6 +6,7 @@ import kr.co.pinpick.user.dto.request.UserRetrieveRequest;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
+import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import kr.co.pinpick.user.repository.user.UserRepository;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,10 +26,10 @@ public class UserService {
     private final FollowerRepository followerRepository;
 
     @Transactional(readOnly = true)
-    public UserCollectResponse get(User user, UserRetrieveRequest request) {
+    public UserSearchResponse search(User user, UserRetrieveRequest request) {
         var users = userRepository.retrieve(user, request);
-        return UserCollectResponse.builder()
-                .collect(users.stream().map(UserResponse::fromEntity).toList())
+        return UserSearchResponse.builder()
+                .collect(users.stream().map(UserSearchResponse.SearchResponse::fromEntity).toList())
                 .meta(PaginateResponse.builder().count(users.size()).build())
                 .build();
     }

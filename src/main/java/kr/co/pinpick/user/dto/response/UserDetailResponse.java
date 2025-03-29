@@ -13,9 +13,9 @@ import lombok.experimental.SuperBuilder;
 public class UserDetailResponse extends UserResponse {
     private String description;
 
-    private int followerCnt;
+    private int followerCount;
 
-    private int archiveCnt;
+    private int archiveCount;
 
     public static UserDetailResponse fromEntity(User user, boolean isFollow) {
         return fromEntity(
@@ -23,8 +23,8 @@ public class UserDetailResponse extends UserResponse {
                 builder()
                     .description(user.getDescription())
                     .isFollow(isFollow)
-                    .followerCnt(user.getFollowers().size())
-                    .archiveCnt(user.getArchives().size())
+                    .followerCount(user.getFollowers().size())
+                    .archiveCount(user.getArchives().size())
         );
     }
 }

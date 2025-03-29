@@ -49,6 +49,7 @@ public class CommentController {
     }
 
     @Operation(summary = "조회")
+    @ApiResponse(responseCode = "200")
     @GetMapping
     public ResponseEntity<CommentCollectResponse> get(
             @PathVariable(name = "archiveId") Long archiveId,
@@ -58,6 +59,7 @@ public class CommentController {
     }
 
     @Operation(summary = "대댓글 조회")
+    @ApiResponse(responseCode = "200")
     @GetMapping("{commentId}")
     public ResponseEntity<CommentDetailResponse> find(
             @PathVariable(name = "archiveId") Long ignoreArchiveId,

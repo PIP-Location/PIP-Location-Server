@@ -1,6 +1,7 @@
 package kr.co.pinpick.archive.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.pinpick.archive.dto.request.TagRetrieveRequest;
 import kr.co.pinpick.archive.dto.response.TagCollectResponse;
@@ -19,11 +20,12 @@ public class TagController {
     private final TagService service;
 
     @Operation(summary = "사용된 태그 조회")
-    @GetMapping
-    public ResponseEntity<TagCollectResponse> get(
+    @ApiResponse(responseCode = "200")
+    @GetMapping("search")
+    public ResponseEntity<TagCollectResponse> search(
             @AuthenticationPrincipal User ignoredUser,
             @ModelAttribute TagRetrieveRequest request
     ) {
-        return ResponseEntity.ok(service.get(request));
+        return ResponseEntity.ok(service.search(request));
     }
 }

@@ -1,6 +1,5 @@
 package kr.co.pinpick.user.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.co.pinpick.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
