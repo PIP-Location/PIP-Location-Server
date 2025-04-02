@@ -17,7 +17,7 @@ public class TagRetrieveRequest {
     @Parameter(description = "검색어")
     private String q;
 
-    @Parameter(description = "페이지 수")
-    @Schema(defaultValue = "0")
-    private int pageNo = 0;
+    @Parameter(description = "조회 수")
+    @Schema(defaultValue = "100")
+    private Long limit = 100L;
 }

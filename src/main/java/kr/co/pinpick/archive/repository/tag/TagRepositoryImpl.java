@@ -21,8 +21,7 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
                 .selectFrom(tag)
                 .where(containingQ(request.getQ()))
                 .orderBy(tag.count.desc())
-                .limit(20)
-                .offset(request.getPageNo() * 20L)
+                .limit(request.getLimit())
                 .fetch();
     }
 

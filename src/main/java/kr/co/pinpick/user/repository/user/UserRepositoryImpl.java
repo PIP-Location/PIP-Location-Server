@@ -22,8 +22,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return queryFactory
                 .selectFrom(user)
                 .where(containingQ(request.getQ()), exceptMe(author), exceptBlock(author))
-                .offset(request.getPageNo() * 20L)
-                .limit(20)
+                .limit(request.getLimit())
                 .fetch();
     }
 
