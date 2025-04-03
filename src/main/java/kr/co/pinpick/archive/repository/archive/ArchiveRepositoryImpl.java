@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static kr.co.pinpick.archive.entity.QArchive.archive;
-import static kr.co.pinpick.archive.entity.QArchiveTag.archiveTag;
 import static kr.co.pinpick.user.entity.QBlock.block1;
 import static kr.co.pinpick.user.entity.QFollower.follower1;
 import static org.springframework.util.StringUtils.hasText;
@@ -26,24 +25,14 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     public List<Archive> retrieve(User user, ArchiveRetrieveRequest request) {
         return queryFactory.selectFrom(archive)
                 .where(
-                        ltArchiveId(request.getArchiveId()),
-                        notBlockedByUser(user),
                         locationInBounds(request),
                         followFilter(user, request),
-                        hasTag(request.getTag())
+                        blockFilter(user),
+                        ltArchiveId(request.getArchiveId())
                 )
                 .orderBy(archive.createdAt.desc())
                 .limit(20)
                 .fetch();
-    }
-
-    /** 차단된 유저의 아카이브 제외 */
-    private BooleanExpression notBlockedByUser(User user) {
-        if (user == null) return null;
-        return JPAExpressions.selectFrom(block1)
-                .where(block1.author.eq(user))
-                .where(block1.block.eq(archive.author))
-                .notExists();
     }
 
     /** 위치 필터 */
@@ -78,14 +67,13 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         return request.getFollow() ? subQuery.exists() : subQuery.notExists();
     }
 
-    /** 태그 필터 */
-    private BooleanExpression hasTag(String tag) {
-        if (tag == null) return null;
-
-        return JPAExpressions.selectFrom(archiveTag)
-                .where(archiveTag.archive.eq(archive))
-                .where(archiveTag.name.eq(tag))
-                .exists();
+    /** 차단된 유저의 아카이브 제외 */
+    private BooleanExpression blockFilter(User user) {
+        if (user == null) return null;
+        return JPAExpressions.selectFrom(block1)
+                .where(block1.author.eq(user))
+                .where(block1.block.eq(archive.author))
+                .notExists();
     }
 
     /** 페이지네이션 */
