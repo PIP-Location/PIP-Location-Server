@@ -6,6 +6,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
+import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,7 @@ import static kr.co.pinpick.archive.entity.QArchive.archive;
 import static kr.co.pinpick.archive.entity.QArchiveTag.archiveTag;
 import static kr.co.pinpick.user.entity.QBlock.block1;
 import static kr.co.pinpick.user.entity.QFollower.follower1;
+import static org.springframework.util.StringUtils.hasText;
 
 @RequiredArgsConstructor
 public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
@@ -101,5 +103,19 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     private BooleanExpression isMe(Long userId, Long authorId) {
         return userId.equals(authorId) ? null : archive.isPublic.isTrue();
+    }
+
+    @Override
+    public List<Archive> search(SearchRequest request) {
+        return queryFactory
+                .selectFrom(archive)
+                .where(containingQ(request.getQ()))
+                .orderBy(archive.name.asc())
+                .limit(request.getLimit())
+                .fetch();
+    }
+
+    private BooleanExpression containingQ(String q) {
+        return hasText(q) ? archive.name.contains(q) : null;
     }
 }

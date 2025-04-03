@@ -1,11 +1,9 @@
 package kr.co.pinpick.user.service;
 
-import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
-import kr.co.pinpick.user.dto.request.UserRetrieveRequest;
-import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
-import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FollowerRepository;
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,8 +22,8 @@ public class UserService {
     private final FollowerRepository followerRepository;
 
     @Transactional(readOnly = true)
-    public UserSearchResponse search(User user, UserRetrieveRequest request) {
-        var users = userRepository.retrieve(user, request);
+    public UserSearchResponse search(User user, SearchRequest request) {
+        var users = userRepository.search(user, request);
         return UserSearchResponse.builder()
                 .collect(users.stream().map(UserSearchResponse.SearchResponse::fromEntity).toList())
                 .meta(PaginateResponse.builder().count(users.size()).build())

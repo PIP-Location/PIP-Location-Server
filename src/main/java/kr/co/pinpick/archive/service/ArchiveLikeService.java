@@ -2,7 +2,7 @@ package kr.co.pinpick.archive.service;
 
 import kr.co.pinpick.archive.repository.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
-import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.service.IUserLinkService;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
@@ -10,8 +10,6 @@ import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

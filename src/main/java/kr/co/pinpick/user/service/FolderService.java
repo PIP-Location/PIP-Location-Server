@@ -1,7 +1,7 @@
 package kr.co.pinpick.user.service;
 
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
-import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;

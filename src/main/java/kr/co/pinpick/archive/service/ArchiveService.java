@@ -4,12 +4,14 @@ import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveTag;
 import kr.co.pinpick.archive.repository.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.ArchiveTagRepository;
-import kr.co.pinpick.common.dto.PaginateResponse;
+import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
@@ -115,6 +117,15 @@ public class ArchiveService {
     private Map<Long, Boolean> getIsFollowMap(User author, Set<Long> authorIds) {
         var follows = followerRepository.findByFollowerAndFollowIdIn(author, authorIds);
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
+    }
+
+    @Transactional(readOnly = true)
+    public ArchiveSearchResponse search(SearchRequest request) {
+        var archives = archiveRepository.search(request);
+        return ArchiveSearchResponse.builder()
+                .collect(archives.stream().map(ArchiveSearchResponse.SearchResponse::fromEntity).toList())
+                .meta(PaginateResponse.builder().count(archives.size()).build())
+                .build();
     }
 
     @Transactional(readOnly = true)

@@ -1,8 +1,8 @@
-package kr.co.pinpick.user.dto.response;
+package kr.co.pinpick.archive.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.common.dto.response.CollectResponse;
-import kr.co.pinpick.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class UserSearchResponse extends CollectResponse<UserSearchResponse.SearchResponse> {
-    @JsonProperty("users")
-    private List<SearchResponse> collect;
+public class ArchiveSearchResponse extends CollectResponse<ArchiveSearchResponse.SearchResponse> {
+    @JsonProperty("archives")
+    private List<ArchiveSearchResponse.SearchResponse> collect;
 
     @Getter
     @NoArgsConstructor
@@ -25,14 +25,14 @@ public class UserSearchResponse extends CollectResponse<UserSearchResponse.Searc
     @Builder
     public static class SearchResponse {
         private Long id;
-        private String nickName;
-        private int archiveCount;
+        private String name;
+        private String address;
 
-        public static SearchResponse fromEntity(User user) {
+        public static SearchResponse fromEntity(Archive archive) {
             return builder()
-                    .id(user.getId())
-                    .nickName(user.getNickName())
-                    .archiveCount(user.getArchives().size())
+                    .id(archive.getId())
+                    .name(archive.getName())
+                    .address(archive.getAddress())
                     .build();
         }
     }

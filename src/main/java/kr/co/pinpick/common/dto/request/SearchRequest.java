@@ -1,4 +1,4 @@
-package kr.co.pinpick.user.dto.request;
+package kr.co.pinpick.common.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +11,7 @@ import org.springdoc.core.annotations.ParameterObject;
 @Setter
 @NoArgsConstructor
 @ParameterObject
-public class UserRetrieveRequest {
+public class SearchRequest {
     @Parameter(description = "검색어")
     private String q;
 

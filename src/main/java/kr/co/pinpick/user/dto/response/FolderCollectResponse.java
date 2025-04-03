@@ -1,9 +1,8 @@
 package kr.co.pinpick.user.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import kr.co.pinpick.common.dto.CollectResponse;
+import kr.co.pinpick.common.dto.response.CollectResponse;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

@@ -1,4 +1,4 @@
-package kr.co.pinpick.common.dto;
+package kr.co.pinpick.common.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

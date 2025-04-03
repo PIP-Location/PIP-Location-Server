@@ -8,8 +8,10 @@ import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
+import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.entity.User;
@@ -62,6 +64,16 @@ public class ArchiveController {
             @ModelAttribute ArchiveRetrieveRequest request
     ) {
         return ResponseEntity.ok(archiveService.retrieve(user, request));
+    }
+
+    @Operation(summary = "아카이브 검색")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("search")
+    public ResponseEntity<ArchiveSearchResponse> search(
+            @AuthenticationPrincipal User ignoredUser,
+            @ModelAttribute SearchRequest request
+    ) {
+        return ResponseEntity.ok(archiveService.search(request));
     }
 
     @Operation(summary = "작성자로 아카이브 조회")

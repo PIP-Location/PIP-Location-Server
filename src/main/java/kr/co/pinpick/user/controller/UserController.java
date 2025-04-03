@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
-import kr.co.pinpick.user.dto.request.UserRetrieveRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
@@ -34,7 +34,7 @@ public class UserController {
     @GetMapping("search")
     public ResponseEntity<UserSearchResponse> search(
             @AuthenticationPrincipal User user,
-            @ModelAttribute UserRetrieveRequest request
+            @ModelAttribute SearchRequest request
     ) {
         return ResponseEntity.ok(userService.search(user, request));
     }
