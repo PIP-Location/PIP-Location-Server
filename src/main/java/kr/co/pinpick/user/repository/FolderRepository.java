@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
     default Folder findByIdOrElseThrow(Long folderId) {
-        return findById(folderId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.FOLDER_NOT_FOUND, ""));
+        return findById(folderId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND, "Folder"));
     };
 
     List<Folder> findAllByUserAndIsPublic(User user, boolean isPublic);

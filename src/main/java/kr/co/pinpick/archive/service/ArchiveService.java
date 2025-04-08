@@ -132,7 +132,7 @@ public class ArchiveService {
     public ArchiveResponse get(User user, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         if (!archive.getIsPublic() && !archive.getAuthor().getId().equals(user.getId())) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
         var isFollow = followerRepository.existsByFollowerAndFollow(user, archive.getAuthor());
         var isLike = archiveLikeRepository.existsByAuthorAndArchive(user, archive);
@@ -190,7 +190,7 @@ public class ArchiveService {
 
     private void checkAuthorization(User author, Archive archive) {
         if (!archive.getAuthor().getId().equals(author.getId())) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
     }
 }

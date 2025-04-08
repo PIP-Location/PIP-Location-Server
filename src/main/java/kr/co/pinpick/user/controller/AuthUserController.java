@@ -26,7 +26,9 @@ public class AuthUserController {
     @Operation(summary = "카카오 로그인")
     @ApiResponse(responseCode = "200")
     @PostMapping("/kakao/login")
-    public ResponseEntity<SocialLoginResponse> kakaoLogin(@RequestBody SocialLoginRequest requestDto) {
+    public ResponseEntity<SocialLoginResponse> kakaoLogin(
+            @RequestBody SocialLoginRequest requestDto
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.login(requestDto.getAccessToken(), kakaoRequestBodyFactory));
     }
@@ -34,7 +36,9 @@ public class AuthUserController {
     @Operation(summary = "구글 로그인")
     @ApiResponse(responseCode = "200")
     @PostMapping("/google/login")
-    public ResponseEntity<SocialLoginResponse> googleLogin(@RequestBody SocialLoginRequest requestDto) {
+    public ResponseEntity<SocialLoginResponse> googleLogin(
+            @RequestBody SocialLoginRequest requestDto
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.login(requestDto.getAccessToken(), googleRequestBodyFactory));
     }
@@ -42,7 +46,9 @@ public class AuthUserController {
     @Operation(summary = "카카오 로그인")
     @ApiResponse(responseCode = "200")
     @GetMapping("/user/kakao/callback")
-    public ResponseEntity<SocialLoginResponse> kakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
+    public ResponseEntity<SocialLoginResponse> kakaoLogin(
+            @RequestParam("code") String code
+    ) throws JsonProcessingException {
         String accessToken = service.getToken(code, kakaoRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.login(accessToken, kakaoRequestBodyFactory));
@@ -51,7 +57,9 @@ public class AuthUserController {
     @Operation(summary = "구글 로그인")
     @ApiResponse(responseCode = "200")
     @GetMapping("/user/google/callback")
-    public ResponseEntity<SocialLoginResponse> googleLogin(@RequestParam("code") String code) throws JsonProcessingException {
+    public ResponseEntity<SocialLoginResponse> googleLogin(
+            @RequestParam("code") String code
+    ) throws JsonProcessingException {
         String accessToken = service.getToken(code, googleRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.login(accessToken, googleRequestBodyFactory));

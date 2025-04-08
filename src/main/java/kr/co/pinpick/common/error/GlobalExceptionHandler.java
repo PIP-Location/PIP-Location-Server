@@ -2,14 +2,11 @@ package kr.co.pinpick.common.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.nio.file.AccessDeniedException;
 
@@ -46,23 +43,7 @@ public class GlobalExceptionHandler {
         log.error("handleBusinessException", ex);
         ErrorCode errorCode = ex.getErrorCode();
         ErrorResponse response = ErrorResponse.of(errorCode);
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(errorCode.getStatus()));
-    }
-
-    @ExceptionHandler({NoResourceFoundException.class, MethodArgumentTypeMismatchException.class})
-    protected ResponseEntity<ErrorResponse> handleNotFoundException() {
-        return new ResponseEntity<>(
-                ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND),
-                HttpStatus.NOT_FOUND
-        );
-    }
-
-    @ExceptionHandler(ClassCastException.class)
-    protected ResponseEntity<ErrorResponse> handleUnauthorizedException() {
-        return new ResponseEntity<>(
-            ErrorResponse.of(ErrorCode.UNAUTHORIZED),
-            HttpStatus.UNAUTHORIZED
-        );
+        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 
     @ExceptionHandler(Exception.class)

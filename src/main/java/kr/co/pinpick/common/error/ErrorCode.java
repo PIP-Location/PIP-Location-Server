@@ -18,36 +18,26 @@ public enum ErrorCode {
 
     // User
     EMAIL_DUPLICATION(400, "U001", "Email is duplication"),
-    USER_NOT_FOUND(404, "U002", "User not found"),
-
-
-    // Folder
-    FOLDER_NOT_FOUND(404, "F001", "Folder not found"),
 
 
     // FolderArchive
-    FOLDERARCHIVE_ALREADY_ADDED(400, "FA001", "Already Added archive"),
-    FOLDERARCHIVE_ALREADY_REMOVED(400, "FA002", "Already removed archive"),
+    ARCHIVE_ALREADY_ADDED(400, "FA001", "Already Added archive"),
+    ARCHIVE_ALREADY_REMOVED(400, "FA002", "Already removed archive"),
     ONLY_ADDABLE_FOLLOWERS_ARCHIVE(400, "FA003", "Only addable follower's archive"),
 
 
-    // Archive
-    ARCHIVE_NOT_FOUND(404, "A001", "Archive not found"),
-    ALREADY_LIKE_ARCHIVE(400, "A002", "Already like archive"),
-    ALREADY_DISLIKE_ARCHIVE(400, "A003", "Already dislike archive"),
-
-
-    // 차단
-    USER_ALREADY_LINKED(400, "B001", "Already linked"),
-    USER_ALREADY_UNLINKED(400, "U002", "Already unlinked"),
+    // Link
+    USER_ALREADY_LINKED(400, "L001", "Already linked"),
+    USER_ALREADY_UNLINKED(400, "L002", "Already unlinked"),
 
 
     // Auth
-    UNAUTHORIZED(401, "T001", "UNAUTHORIZED"),
-
-
-    // OAuth
-    PROVIDER_NOT_VALID(404, "O001", "this provider is not valid");
+    UNAUTHENTICATED(401, "T001", "Unauthenticated access"),
+    EXPIRED_JWT_EXCEPTION(402, "T002", "Expired JWT Token"),
+    MALFORMED_JWT_EXCEPTION(403, "T003", "Invalid JWT Token"),
+    UNSUPPORTED_JWT_EXCEPTION(404, "T004", "Unsupported JWT Token"),
+    ILLEGAL_ARGUMENT_EXCEPTION(405, "T005", "JWT claims string is empty."),
+    SIGNATURE_JWT_EXCEPTION(406, "T006", "Modulated JWT Token");
 
 
     private final int status;

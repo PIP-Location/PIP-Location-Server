@@ -28,7 +28,7 @@ public class FolderController {
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<FolderResponse> create(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @AuthenticationPrincipal User user,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
             @RequestPart(required = false, name = "attach") MultipartFile attach
     ) {
@@ -39,7 +39,7 @@ public class FolderController {
     @ApiResponse(responseCode = "200")
     @GetMapping("users/{authorId}")
     public ResponseEntity<FolderCollectResponse> getFolderList(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @AuthenticationPrincipal User user,
             @PathVariable(name = "authorId") Long authorId
     ) {
         return ResponseEntity.ok(service.getFolderList(user, authorId));
@@ -49,7 +49,7 @@ public class FolderController {
     @ApiResponse(responseCode = "204")
     @PostMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> addArchiveToFolder(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @AuthenticationPrincipal User user,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
@@ -61,7 +61,7 @@ public class FolderController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> removeArchiveFromFolder(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User ignoreUser,
+            @AuthenticationPrincipal User ignoreUser,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {

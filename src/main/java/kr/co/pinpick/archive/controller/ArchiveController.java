@@ -38,7 +38,7 @@ public class ArchiveController {
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ArchiveResponse> create(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author,
+            @AuthenticationPrincipal User author,
             @RequestPart(value = "request", name = "request") @Valid CreateArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) throws IOException {
@@ -132,7 +132,7 @@ public class ArchiveController {
     @GetMapping("{archiveId}/like")
     public ResponseEntity<UserCollectResponse> get(
             @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+            @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(archiveLikeService.get(user, archiveId));
     }
@@ -142,7 +142,7 @@ public class ArchiveController {
     @PostMapping("{archiveId}/like")
     public ResponseEntity<Void> like(
             @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+            @AuthenticationPrincipal User user
     ) {
         archiveLikeService.link(user, archiveId);
         return ResponseEntity.noContent().build();
@@ -153,7 +153,7 @@ public class ArchiveController {
     @DeleteMapping("{archiveId}/like")
     public ResponseEntity<Void> unlike(
             @PathVariable(name = "archiveId") long archiveId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+            @AuthenticationPrincipal User user
     ) {
         archiveLikeService.unlink(user, archiveId);
         return ResponseEntity.noContent().build();

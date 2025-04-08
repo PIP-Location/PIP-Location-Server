@@ -29,7 +29,7 @@ public class CommentController {
     public ResponseEntity<CommentResponse> create(
             @RequestBody @Valid CreateCommentRequest request,
             @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.create(author, archiveId, request, null));
@@ -42,7 +42,7 @@ public class CommentController {
             @RequestBody @Valid CreateCommentRequest request,
             @PathVariable(name = "archiveId") Long archiveId,
             @PathVariable(name = "commentId") Long commendId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(service.create(author, archiveId, request, commendId));

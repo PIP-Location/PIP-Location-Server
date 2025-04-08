@@ -22,7 +22,7 @@ public class TestAuthService {
     @Transactional(readOnly = true)
     public TokenResponse testLogin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.USER_NOT_FOUND, request.getEmail()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND, "User"));
         return TokenResponse.builder()
                 .accessToken(jwtUtil.createToken(user))
                 .build();

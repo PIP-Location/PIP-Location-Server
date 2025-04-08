@@ -69,7 +69,7 @@ public class FolderService {
         }
         var folderArchiveOptional = folderArchiveRepository.findByFolderAndArchive(folder, archive);
         if (folderArchiveOptional.isPresent()) {
-            throw new BusinessException(ErrorCode.FOLDERARCHIVE_ALREADY_ADDED);
+            throw new BusinessException(ErrorCode.ARCHIVE_ALREADY_ADDED);
         }
         folderArchiveRepository.save(FolderArchive.builder().folder(folder).archive(archive).build());
     }
@@ -80,7 +80,7 @@ public class FolderService {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         var folderArchiveOptional = folderArchiveRepository.findByFolderAndArchive(folder, archive);
         if (folderArchiveOptional.isEmpty()) {
-            throw new BusinessException(ErrorCode.FOLDERARCHIVE_ALREADY_REMOVED);
+            throw new BusinessException(ErrorCode.ARCHIVE_ALREADY_REMOVED);
         }
         folderArchiveRepository.deleteByFolderAndArchive(folder, archive);
     }
@@ -102,7 +102,7 @@ public class FolderService {
 
     private void checkAuthorization(User user, Folder folder) {
         if (!folder.getUser().getId().equals(user.getId())) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
     }
 }

@@ -27,7 +27,9 @@ public class TestAuthController {
     @Operation(summary = "테스트 로그인")
     @PostMapping("/testLogin")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<TokenResponse> testLogin(@RequestBody LoginRequest request) {
+    public ResponseEntity<TokenResponse> testLogin(
+            @RequestBody LoginRequest request
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authService.testLogin(request));
     }
@@ -35,7 +37,9 @@ public class TestAuthController {
     @Operation(summary = "회원가입")
     @PostMapping("/signUp")
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> signUp(@RequestBody @Valid SignupRequest request) {
+    public ResponseEntity<Long> signUp(
+            @RequestBody @Valid SignupRequest request
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authService.signUp(request));
     }

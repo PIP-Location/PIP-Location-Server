@@ -40,6 +40,6 @@ public class ArchiveChangeIsPublicAcceptanceTest extends AcceptanceTest {
         var request = ArchiveFixture.defaultCreateArchiveRequest();
         var archiveResponse = ArchiveSteps.successCreateArchive(token, request);
         var error = ArchiveSteps.failChangeIsPublic(otherToken, archiveResponse.getId(), false);
-        assertThat(error.getCode()).isEqualTo(ErrorCode.UNAUTHORIZED.getCode());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.ACCESS_DENIED.getCode());
     }
 }

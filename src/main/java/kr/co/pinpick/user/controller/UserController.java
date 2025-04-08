@@ -43,7 +43,7 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @GetMapping("@me")
     public ResponseEntity<UserDetailResponse> me(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user
+            @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(userService.find(user, user.getId()));
     }
@@ -51,7 +51,7 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @GetMapping("{userId}")
     public ResponseEntity<UserDetailResponse> getUserDetail(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @AuthenticationPrincipal User user,
             @PathVariable(name = "userId") Long targetId
     ) {
         return ResponseEntity.ok(userService.find(user, targetId));
@@ -62,7 +62,7 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDetailResponse> update(
-            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @AuthenticationPrincipal User user,
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
             @RequestPart(required = false, name = "attaches") MultipartFile profileImage
     ) {
@@ -75,7 +75,7 @@ public class UserController {
     @PostMapping("{userId}/block")
     public ResponseEntity<Void> block(
             @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         userBlockService.link(author, userId);
         return ResponseEntity.noContent().build();
@@ -86,7 +86,7 @@ public class UserController {
     @DeleteMapping("{userId}/unblock")
     public ResponseEntity<Void> unblock(
             @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         userBlockService.unlink(author, userId);
         return ResponseEntity.noContent().build();
@@ -99,7 +99,7 @@ public class UserController {
     @PostMapping("{userId}/follow")
     public ResponseEntity<Void> follow(
             @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         userFollowService.link(author, userId);
         return ResponseEntity.noContent().build();
@@ -110,7 +110,7 @@ public class UserController {
     @DeleteMapping("{userId}/unfollow")
     public ResponseEntity<Void> unfollow(
             @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal(errorOnInvalidType = true) User author
+            @AuthenticationPrincipal User author
     ) {
         userFollowService.unlink(author, userId);
         return ResponseEntity.noContent().build();
