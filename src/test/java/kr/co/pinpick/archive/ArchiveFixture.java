@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ArchiveFixture {
     public static ArchiveRetrieveRequest defaultRetrieveRequest() {
-        return new ArchiveRetrieveRequest(37.5202, 127.0787, 37.5015, 127.0961, null,  "", null);
+        return new ArchiveRetrieveRequest(37.5202, 127.0787, 37.5015, 127.0961, null,  null);
     }
 
     public static CreateArchiveRequest defaultCreateArchiveRequest() {

@@ -26,6 +26,7 @@ public class Folder extends BaseEntity {
     @NotNull
     @Column(name = "is_public", nullable = false)
     @Setter
+    @Builder.Default
     private boolean isPublic = false;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.REMOVE)

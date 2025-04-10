@@ -10,8 +10,13 @@ import lombok.*;
 @Setter
 public class UpdateUserRequest {
     @NotNull
-    private String nickName;
+    private String nickname;
+
+    private String description;
 
     @NotNull
-    private String description;
+    private Boolean isAgreeToTermsOfService;
+
+    @NotNull
+    private Boolean isAgreeToPrivacyPolicy;
 }

@@ -47,6 +47,9 @@ public class AuthUserService {
     private SocialLoginResponse buildLoginResponse(User user) {
         return SocialLoginResponse.builder()
                 .accessToken(jwtUtil.createToken(user))
+                .nickname(user.getNickname())
+                .isAgreeToTermsOfService(user.getIsAgreeToTermsOfService())
+                .isAgreeToPrivacyPolicy(user.getIsAgreeToPrivacyPolicy())
                 .status(HttpStatus.OK)
                 .code(200)
                 .build();

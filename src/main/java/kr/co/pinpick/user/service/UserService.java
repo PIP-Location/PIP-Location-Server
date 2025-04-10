@@ -39,8 +39,8 @@ public class UserService {
 
     @Transactional
     public UserDetailResponse update(User user, UpdateUserRequest request, MultipartFile profileImage) {
-        user.setNickName(request.getNickName());
-        user.setDescription(request.getDescription());
+        user = userRepository.findByIdOrElseThrow(user.getId());
+        user.updateUserInfo(request);
 
         // TODO: 프로필 이미지 업데이트
 

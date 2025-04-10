@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 public class UserResponse {
     private Long id;
 
-    private String nickName;
+    private String nickname;
 
     private String email;
 
@@ -32,7 +32,7 @@ public class UserResponse {
     public static <T extends UserResponse> T fromEntity(User user, UserResponseBuilder<T, ?> builder) {
         return builder
                 .id(user.getId())
-                .nickName(user.getNickName())
+                .nickname(user.getNickname())
                 .email(user.getEmail())
                 .profileImage(user.getProfileImage())
                 .build();
@@ -41,7 +41,7 @@ public class UserResponse {
     public static <T extends UserResponse> T fromEntity(User user, boolean isFollow, UserResponseBuilder<T, ?> builder) {
         return builder
                 .id(user.getId())
-                .nickName(user.getNickName())
+                .nickname(user.getNickname())
                 .email(user.getEmail())
                 .profileImage(user.getProfileImage())
                 .isFollow(isFollow)

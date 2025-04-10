@@ -22,13 +22,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return queryFactory
                 .selectFrom(user)
                 .where(containingQ(request.getQ()), exceptMe(author), exceptBlock(author))
-                .orderBy(user.nickName.asc())
+                .orderBy(user.nickname.asc())
                 .limit(request.getLimit())
                 .fetch();
     }
 
     private BooleanExpression containingQ(String q) {
-        return hasText(q) ? user.nickName.contains(q) : null;
+        return hasText(q) ? user.nickname.contains(q) : null;
     }
 
     private BooleanExpression exceptMe(User author) {

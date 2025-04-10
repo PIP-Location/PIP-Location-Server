@@ -13,6 +13,14 @@ import org.springframework.http.HttpStatus;
 public class SocialLoginResponse {
     private String accessToken;
 
+    private String nickname;
+
+    @Builder.Default
+    private Boolean isAgreeToTermsOfService = false;
+
+    @Builder.Default
+    private Boolean isAgreeToPrivacyPolicy = false;
+
     private HttpStatus status;
 
     private int code;

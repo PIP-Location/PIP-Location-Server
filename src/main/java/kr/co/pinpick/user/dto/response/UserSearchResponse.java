@@ -25,13 +25,13 @@ public class UserSearchResponse extends CollectResponse<UserSearchResponse.Searc
     @Builder
     public static class SearchResponse {
         private Long id;
-        private String nickName;
+        private String nickname;
         private int archiveCount;
 
         public static SearchResponse fromEntity(User user) {
             return builder()
                     .id(user.getId())
-                    .nickName(user.getNickName())
+                    .nickname(user.getNickname())
                     .archiveCount(user.getArchives().size())
                     .build();
         }
