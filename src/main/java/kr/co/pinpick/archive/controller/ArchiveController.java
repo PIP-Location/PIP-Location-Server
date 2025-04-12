@@ -95,15 +95,6 @@ public class ArchiveController {
         return ResponseEntity.ok(archiveService.getByFolder(user, folderId));
     }
 
-    @Operation(summary = "폴더정보와 함께 아카이브 조회")
-    @ApiResponse(responseCode = "200")
-    @GetMapping(path = "folders/{folderId}/info")
-    public ResponseEntity<FolderDetailResponse> getArchivesWithFolderInfo(
-            @AuthenticationPrincipal User user,
-            @PathVariable(name = "folderId") Long folderId) {
-        return ResponseEntity.ok(archiveService.getArchivesWithFolderInfo(user, folderId));
-    }
-
     @Operation(summary = "아카이브 삭제")
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{archiveId}")

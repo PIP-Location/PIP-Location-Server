@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/**")).permitAll()
                         .requestMatchers(new MvcRequestMatcher(introspector, "/api-docs/**")).permitAll()
                         .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui.html")).permitAll()
                         .requestMatchers(new MvcRequestMatcher(introspector, "/user/login")).permitAll()
                         .anyRequest().authenticated())
                 .headers(headersConfigurer -> headersConfigurer

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static kr.co.pinpick.archive.entity.QArchive.archive;
+import static kr.co.pinpick.archive.entity.QArchiveTag.archiveTag;
 import static kr.co.pinpick.user.entity.QBlock.block1;
 import static kr.co.pinpick.user.entity.QFollower.follower1;
 import static org.springframework.util.StringUtils.hasText;
@@ -23,24 +24,28 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     @Override
     public List<Archive> retrieve(User user, ArchiveRetrieveRequest request) {
-        return queryFactory.selectFrom(archive)
+        var query = queryFactory.selectFrom(archive)
                 .where(
                         locationInBounds(request),
                         followFilter(user, request),
                         blockFilter(user),
+                        userFilter(request),
+                        tagFilter(request),
+                        visibilityFilter(user),
                         ltArchiveId(request.getArchiveId())
                 )
-                .orderBy(archive.createdAt.desc())
-                .limit(20)
-                .fetch();
+                .orderBy(archive.createdAt.desc());
+
+        if (!isRetrieveFromMap(request)) {
+            query.limit(20);
+        }
+
+        return query.fetch();
     }
 
     /** 위치 필터 */
     private BooleanExpression locationInBounds(ArchiveRetrieveRequest request) {
-        if (request.getTopLeftLatitude() == null ||
-                request.getTopLeftLongitude() == null ||
-                request.getBottomRightLatitude() == null ||
-                request.getBottomRightLongitude() == null) {
+        if (!isRetrieveFromMap(request)) {
             return null;
         }
 
@@ -61,8 +66,8 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         if (user == null || request.getFollow() == null) return null;
 
         var subQuery = JPAExpressions.selectFrom(follower1)
-                .where(follower1.follower.eq(user))
-                .where(follower1.follow.eq(archive.author));
+                .where(follower1.follower.id.eq(user.getId()))
+                .where(follower1.follow.id.eq(archive.author.id));
 
         return request.getFollow() ? subQuery.exists() : subQuery.notExists();
     }
@@ -71,9 +76,28 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     private BooleanExpression blockFilter(User user) {
         if (user == null) return null;
         return JPAExpressions.selectFrom(block1)
-                .where(block1.author.eq(user))
-                .where(block1.block.eq(archive.author))
+                .where(block1.author.id.eq(user.getId()))
+                .where(block1.block.id.eq(archive.author.id))
                 .notExists();
+    }
+
+    /** 유저 필터 */
+    private BooleanExpression userFilter(ArchiveRetrieveRequest request) {
+        return request.getUserId() == null ? null : archive.author.id.eq(request.getUserId());
+    }
+
+    /** 태그 필터 */
+    private BooleanExpression tagFilter(ArchiveRetrieveRequest request) {
+        if (request.getTag() == null) return null;
+        return JPAExpressions.selectFrom(archiveTag)
+                .where(archiveTag.archive.id.eq(archive.id))
+                .where(archiveTag.name.eq(request.getTag()))
+                .notExists();
+    }
+
+    /** 공개 여부 필터 */
+    private BooleanExpression visibilityFilter(User user) {
+        return archive.author.id.eq(user.getId()).or(archive.isPublic.isTrue());
     }
 
     /** 페이지네이션 */
@@ -81,16 +105,23 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         return archiveId == null ? null : archive.id.lt(archiveId);
     }
 
+    private boolean isRetrieveFromMap(ArchiveRetrieveRequest request) {
+        return request.getTopLeftLatitude() != null &&
+                request.getTopLeftLongitude() != null &&
+                request.getBottomRightLatitude() != null &&
+                request.getBottomRightLongitude() != null;
+    }
+
     @Override
     public List<Archive> findAllByAuthor(User user, User author) {
         return queryFactory
                 .selectFrom(archive)
-                .where(archive.author.eq(author), isMe(user.getId(), author.getId()))
+                .where(archive.author.id.eq(author.getId()), isMe(user, author))
                 .fetch();
     }
 
-    private BooleanExpression isMe(Long userId, Long authorId) {
-        return userId.equals(authorId) ? null : archive.isPublic.isTrue();
+    private BooleanExpression isMe(User user, User author) {
+        return user.getId().equals(author.getId()) ? null : archive.isPublic.isTrue();
     }
 
     @Override
