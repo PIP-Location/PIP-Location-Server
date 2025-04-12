@@ -165,14 +165,6 @@ public class ArchiveService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public FolderDetailResponse getArchivesWithFolderInfo(User user, Long folderId) {
-        var folder = folderRepository.findByIdOrElseThrow(folderId);
-        var archiveIds = folder.getFolderArchives().stream().map(fa -> fa.getArchive().getId()).collect(toSet());
-        var isLikeMap = getIsLikeMap(user, archiveIds);
-        return FolderDetailResponse.fromEntity(folder, user, isLikeMap);
-    }
-
     @Transactional
     public void delete(User author, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
