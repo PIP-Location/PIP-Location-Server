@@ -20,6 +20,10 @@ public enum ErrorCode {
     EMAIL_DUPLICATION(400, "U001", "Email is duplication"),
 
 
+    // Repip
+    ONLY_CAN_REPIP_FOLLOWS_ARCHIVE(401, "R001", "Only can repip follow's archive"),
+
+
     // FolderArchive
     ARCHIVE_ALREADY_ADDED(400, "FA001", "Already Added archive"),
     ARCHIVE_ALREADY_REMOVED(400, "FA002", "Already removed archive"),

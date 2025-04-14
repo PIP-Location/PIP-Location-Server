@@ -63,7 +63,7 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     /** 팔로우 필터 */
     private BooleanExpression followFilter(User user, ArchiveRetrieveRequest request) {
-        if (user == null || request.getFollow() == null) return null;
+        if (user == null || request.getFollow() == null || !isRetrieveFromMap(request)) return null;
 
         var subQuery = JPAExpressions.selectFrom(follower1)
                 .where(follower1.follower.id.eq(user.getId()))

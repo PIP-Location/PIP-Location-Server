@@ -43,6 +43,8 @@ public class ArchiveResponse {
 
     private List<ArchiveTagResponse> tags;
 
+    private ArchiveResponse repipArchive;
+
     public static ArchiveResponse fromEntity(Archive archive, boolean isFollow, boolean isLike) {
         return builder()
                 .id(archive.getId())
@@ -60,6 +62,23 @@ public class ArchiveResponse {
                 .commentCount(Optional.ofNullable(archive.getArchiveComments())
                         .orElse(Collections.emptySet())
                         .size())
+                .createdAt(archive.getCreatedAt())
+                .archiveAttaches(archive.getArchiveAttaches().stream().map(AttachResponse::fromEntity).toList())
+                .tags(archive.getTags().stream().map(ArchiveTagResponse::fromEntity).toList())
+                .repipArchive(archive.getRepipArchive() == null ? null : repipArchiveResponse(archive.getRepipArchive()))
+                .build();
+    }
+
+    public static ArchiveResponse repipArchiveResponse(Archive archive) {
+        return ArchiveResponse.builder()
+                .id(archive.getId())
+                .author(UserResponse.fromEntity(archive.getAuthor()))
+                .positionX(archive.getPositionX())
+                .positionY(archive.getPositionY())
+                .address(archive.getAddress())
+                .name(archive.getName())
+                .content(archive.getContent())
+                .isPublic(archive.getIsPublic())
                 .createdAt(archive.getCreatedAt())
                 .archiveAttaches(archive.getArchiveAttaches().stream().map(AttachResponse::fromEntity).toList())
                 .tags(archive.getTags().stream().map(ArchiveTagResponse::fromEntity).toList())
