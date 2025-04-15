@@ -1,5 +1,7 @@
 package kr.co.pinpick.archive.service;
 
+import kr.co.pinpick.archive.dto.request.CreateTagRequest;
+import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
@@ -14,7 +16,8 @@ import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
-import kr.co.pinpick.user.dto.response.FolderDetailResponse;
+import kr.co.pinpick.user.dto.response.UserCollectResponse;
+import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FolderRepository;
@@ -67,11 +70,21 @@ public class ArchiveService {
         archiveRepository.save(archive);
 
         // TODO: Amazon S3 save attaches
-        archive.setArchiveAttaches(new ArrayList<>());
+        saveArchiveAttaches(archive, attaches);
 
         // 태그 저장
+        saveArchiveTag(archive, request.getTags());
+
+        return ArchiveResponse.fromEntity(archive, false, false);
+    }
+
+    private void saveArchiveAttaches(Archive archive, List<MultipartFile> attaches) {
+        archive.setArchiveAttaches(new ArrayList<>());
+    }
+
+    private void saveArchiveTag(Archive archive, List<CreateTagRequest> tags) {
         var index = new AtomicInteger();
-        List<ArchiveTag> archiveTags = request.getTags()
+        List<ArchiveTag> archiveTags = tags
                 .stream()
                 .map(o -> ArchiveTag.builder()
                         .archive(archive)
@@ -82,8 +95,6 @@ public class ArchiveService {
 
         archiveTagRepository.saveAll(archiveTags);
         archive.setTags(archiveTags);
-
-        return ArchiveResponse.fromEntity(archive, false, false);
     }
 
     @Transactional(readOnly = true)
@@ -184,5 +195,54 @@ public class ArchiveService {
         if (!archive.getAuthor().getId().equals(author.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
+    }
+
+    @Transactional
+    public ArchiveResponse repip(User author, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
+        if (attaches == null) {
+            attaches = new ArrayList<>();
+        }
+
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
+
+        var isFollow = followerRepository.existsByFollowerAndFollow(author, archive.getAuthor());
+        if (!isFollow) throw new BusinessException(ErrorCode.ONLY_CAN_REPIP_FOLLOWS_ARCHIVE);
+
+        var repipArchive = Archive.builder()
+                .location(archive.getLocation())
+                .positionX(archive.getPositionX())
+                .positionY(archive.getPositionY())
+                .address(archive.getAddress())
+                .name(archive.getName())
+                .author(author)
+                .isPublic(request.isPublic())
+                .content(request.getContent())
+                .repipArchive(archive)
+                .build();
+
+        archiveRepository.save(repipArchive);
+
+        // TODO: Amazon S3 save attaches
+        saveArchiveAttaches(repipArchive, attaches);
+
+        // 태그 저장
+        saveArchiveTag(repipArchive, request.getTags());
+
+        return ArchiveResponse.fromEntity(repipArchive, false, false);
+    }
+
+    @Transactional(readOnly = true)
+    public UserCollectResponse getRepip(Long archiveId) {
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
+        var repipArchives = archiveRepository.findByRepipArchive(archive);
+        var authorIds = repipArchives.stream().map(o -> o.getAuthor().getId()).collect(toSet());
+        var authors = userRepository.findByIdIn(authorIds);
+        return UserCollectResponse.builder()
+                .collect(authors
+                        .stream()
+                        .map(UserResponse::fromEntity)
+                        .toList())
+                .meta(PaginateResponse.builder().count(authors.size()).build())
+                .build();
     }
 }

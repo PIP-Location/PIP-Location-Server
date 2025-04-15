@@ -58,6 +58,10 @@ public class Archive extends BaseEntity {
     @Setter
     private Boolean isPublic;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repip_archive_id")
+    private Archive repipArchive;
+
     @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
     private List<ArchiveAttach> archiveAttaches = new ArrayList<>();

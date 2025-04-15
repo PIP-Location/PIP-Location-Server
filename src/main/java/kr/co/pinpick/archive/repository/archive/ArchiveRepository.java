@@ -11,4 +11,6 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long>, Archive
     default Archive findByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND, "Archive"));
     }
+
+    List<Archive> findByRepipArchive(Archive archive);
 }

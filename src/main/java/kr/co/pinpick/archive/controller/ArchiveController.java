@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
@@ -12,7 +13,6 @@ import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
 import kr.co.pinpick.common.dto.request.SearchRequest;
-import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -118,14 +118,14 @@ public class ArchiveController {
     }
 
     //region 좋아요
-    @Operation(summary = "좋아요한 사람 목록 조회")
+    @Operation(summary = "좋아요한 사람 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/like")
-    public ResponseEntity<UserCollectResponse> get(
+    public ResponseEntity<UserCollectResponse> getLike(
             @PathVariable(name = "archiveId") Long archiveId,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(archiveLikeService.get(user, archiveId));
+        return ResponseEntity.ok(archiveLikeService.getLike(user, archiveId));
     }
 
     @Operation(summary = "아카이브 좋아요")
@@ -143,7 +143,7 @@ public class ArchiveController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{archiveId}/like")
     public ResponseEntity<Void> unlike(
-            @PathVariable(name = "archiveId") long archiveId,
+            @PathVariable(name = "archiveId") Long archiveId,
             @AuthenticationPrincipal User user
     ) {
         archiveLikeService.unlink(user, archiveId);
@@ -153,5 +153,27 @@ public class ArchiveController {
 
     //region 리핍
     //TODO 리핍 기능 개발
+    @Operation(summary = "리핍")
+    @ApiResponse(responseCode = "201")
+    @PostMapping("{archiveId}/repip")
+    public ResponseEntity<ArchiveResponse> repip(
+            @PathVariable(name = "archiveId") long archiveId,
+            @AuthenticationPrincipal User user,
+            @RequestPart(value = "request", name = "request") @Valid RepipArchiveRequest request,
+            @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(archiveService.repip(user, archiveId, request, attaches));
+    }
+
+    @Operation(summary = "리핍한 사람 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("{archiveId}/repip")
+    public ResponseEntity<UserCollectResponse> getRepip(
+            @PathVariable(name = "archiveId") Long archiveId,
+            @AuthenticationPrincipal User ignoreUser
+    ) {
+        return ResponseEntity.ok(archiveService.getRepip(archiveId));
+    }
     //endregion
 }

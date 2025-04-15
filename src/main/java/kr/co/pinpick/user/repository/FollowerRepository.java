@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface FollowerRepository extends JpaRepository<Follower, FollowerId> {
-    List<Follower> findByFollowerAndFollowIdIn(@Param("follower") User follower, @Param("authorIds") Set<Long> authorIds);
+    List<Follower> findByFollowerAndFollowIdIn(User follower, Set<Long> authorIds);
 
     boolean existsByFollowerAndFollow(User user, User author);
 
