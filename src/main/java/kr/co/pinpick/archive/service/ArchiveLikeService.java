@@ -7,26 +7,32 @@ import kr.co.pinpick.common.service.IUserLinkService;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
+import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
 public class ArchiveLikeService implements IUserLinkService {
     private final ArchiveRepository archiveRepository;
     private final ArchiveLikeRepository archiveLikeRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public UserCollectResponse get(User user, Long archiveId) {
+    public UserCollectResponse getLike(User user, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         var archiveLikes = archiveLikeRepository.findByAuthorAndArchive(user, archive);
+        var authorIds = archiveLikes.stream().map(o -> o.getAuthor().getId()).collect(toSet());
+        var authors = userRepository.findByIdIn(authorIds);
         return UserCollectResponse.builder()
-                .collect(archiveLikes
+                .collect(authors
                         .stream()
-                        .map(archiveLike -> UserResponse.fromEntity(archiveLike.getAuthor()))
+                        .map(UserResponse::fromEntity)
                         .toList())
-                .meta(PaginateResponse.builder().count(archiveLikes.size()).build())
+                .meta(PaginateResponse.builder().count(authors.size()).build())
                 .build();
     }
 

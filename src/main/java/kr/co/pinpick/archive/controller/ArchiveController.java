@@ -118,14 +118,14 @@ public class ArchiveController {
     }
 
     //region 좋아요
-    @Operation(summary = "좋아요한 사람 목록 조회")
+    @Operation(summary = "좋아요한 사람 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/like")
-    public ResponseEntity<UserCollectResponse> get(
+    public ResponseEntity<UserCollectResponse> getLike(
             @PathVariable(name = "archiveId") Long archiveId,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(archiveLikeService.get(user, archiveId));
+        return ResponseEntity.ok(archiveLikeService.getLike(user, archiveId));
     }
 
     @Operation(summary = "아카이브 좋아요")
@@ -162,7 +162,18 @@ public class ArchiveController {
             @RequestPart(value = "request", name = "request") @Valid RepipArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) {
-        return ResponseEntity.ok(archiveService.repip(user, archiveId, request, attaches));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(archiveService.repip(user, archiveId, request, attaches));
+    }
+
+    @Operation(summary = "리핍한 사람 조회")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("{archiveId}/repip")
+    public ResponseEntity<UserCollectResponse> getRepip(
+            @PathVariable(name = "archiveId") Long archiveId,
+            @AuthenticationPrincipal User ignoreUser
+    ) {
+        return ResponseEntity.ok(archiveService.getRepip(archiveId));
     }
     //endregion
 }

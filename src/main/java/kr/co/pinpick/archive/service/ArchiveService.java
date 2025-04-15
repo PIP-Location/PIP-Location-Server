@@ -16,6 +16,8 @@ import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
+import kr.co.pinpick.user.dto.response.UserCollectResponse;
+import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FolderRepository;
@@ -203,10 +205,8 @@ public class ArchiveService {
 
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
 
-        boolean isFollow = followerRepository.existsByFollowerAndFollow(author, archive.getAuthor());
-        if (!isFollow) {
-            throw new BusinessException(ErrorCode.ONLY_CAN_REPIP_FOLLOWS_ARCHIVE);
-        }
+        var isFollow = followerRepository.existsByFollowerAndFollow(author, archive.getAuthor());
+        if (!isFollow) throw new BusinessException(ErrorCode.ONLY_CAN_REPIP_FOLLOWS_ARCHIVE);
 
         var repipArchive = Archive.builder()
                 .location(archive.getLocation())
@@ -229,5 +229,20 @@ public class ArchiveService {
         saveArchiveTag(repipArchive, request.getTags());
 
         return ArchiveResponse.fromEntity(repipArchive, false, false);
+    }
+
+    @Transactional(readOnly = true)
+    public UserCollectResponse getRepip(Long archiveId) {
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
+        var repipArchives = archiveRepository.findByRepipArchive(archive);
+        var authorIds = repipArchives.stream().map(o -> o.getAuthor().getId()).collect(toSet());
+        var authors = userRepository.findByIdIn(authorIds);
+        return UserCollectResponse.builder()
+                .collect(authors
+                        .stream()
+                        .map(UserResponse::fromEntity)
+                        .toList())
+                .meta(PaginateResponse.builder().count(authors.size()).build())
+                .build();
     }
 }

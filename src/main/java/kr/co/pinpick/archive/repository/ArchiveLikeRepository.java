@@ -16,7 +16,7 @@ public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, Archiv
 
     List<ArchiveLike> findByAuthorAndArchive(User user, Archive archive);
 
-    List<ArchiveLike> findByAuthorAndArchiveIdIn(@Param(value = "author") User author, @Param("archiveIds") Set<Long> archiveIds);
+    List<ArchiveLike> findByAuthorAndArchiveIdIn(User author, Set<Long> archiveIds);
 
     boolean existsByAuthorAndArchive(User user, Archive archive);
 
