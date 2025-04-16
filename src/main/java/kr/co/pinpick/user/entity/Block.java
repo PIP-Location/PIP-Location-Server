@@ -14,10 +14,10 @@ public class Block {
     @EmbeddedId
     private BlockId id;
 
-    @MapsId("author")
+    @MapsId("user")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @MapsId("block")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

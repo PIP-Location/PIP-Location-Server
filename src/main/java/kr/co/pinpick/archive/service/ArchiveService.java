@@ -50,7 +50,7 @@ public class ArchiveService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ArchiveResponse create(User author, CreateArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }
@@ -64,7 +64,7 @@ public class ArchiveService {
                 .name(request.getName())
                 .content(request.getContent())
                 .isPublic(request.isPublic())
-                .author(author)
+                .user(principal)
                 .build();
 
         archiveRepository.save(archive);
@@ -98,35 +98,35 @@ public class ArchiveService {
     }
 
     @Transactional(readOnly = true)
-    public ArchiveCollectResponse retrieve(User user, ArchiveRetrieveRequest request) {
-        var archives = archiveRepository.retrieve(user, request);
+    public ArchiveCollectResponse retrieve(User principal, ArchiveRetrieveRequest request) {
+        var archives = archiveRepository.retrieve(principal, request);
 
-        Set<Long> authorIds = new HashSet<>();
+        Set<Long> userIds = new HashSet<>();
         Set<Long> archiveIds = new HashSet<>();
         archives.forEach(a -> {
-            authorIds.add(a.getAuthor().getId());
+            userIds.add(a.getUser().getId());
             archiveIds.add(a.getId());
         });
 
-        var isFollowMap = getIsFollowMap(user, authorIds);
-        var isLikeMap = getIsLikeMap(user, archiveIds);
+        var isFollowMap = getIsFollowMap(principal, userIds);
+        var isLikeMap = getIsLikeMap(principal, archiveIds);
 
         return ArchiveCollectResponse.builder()
                 .collect(archives
                         .stream()
-                        .map(a -> ArchiveResponse.fromEntity(a, isFollowMap.containsKey(a.getAuthor().getId()), isLikeMap.containsKey(a.getId())))
+                        .map(a -> ArchiveResponse.fromEntity(a, isFollowMap.containsKey(a.getUser().getId()), isLikeMap.containsKey(a.getId())))
                         .toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
                 .build();
     }
 
-    private Map<Long, Boolean> getIsLikeMap(User author, Set<Long> archiveIds) {
-        var likes = archiveLikeRepository.findByAuthorAndArchiveIdIn(author, archiveIds);
+    private Map<Long, Boolean> getIsLikeMap(User principal, Set<Long> archiveIds) {
+        var likes = archiveLikeRepository.findByUserAndArchiveIdIn(principal, archiveIds);
         return likes.stream().collect(Collectors.toMap(k -> k.getArchive().getId(), v -> true));
     }
 
-    private Map<Long, Boolean> getIsFollowMap(User author, Set<Long> authorIds) {
-        var follows = followerRepository.findByFollowerAndFollowIdIn(author, authorIds);
+    private Map<Long, Boolean> getIsFollowMap(User principal, Set<Long> userIds) {
+        var follows = followerRepository.findByFollowerAndFollowIdIn(principal, userIds);
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
     }
 
@@ -140,23 +140,23 @@ public class ArchiveService {
     }
 
     @Transactional(readOnly = true)
-    public ArchiveResponse get(User user, Long archiveId) {
+    public ArchiveResponse get(User principal, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        if (!archive.getIsPublic() && !archive.getAuthor().getId().equals(user.getId())) {
+        if (!archive.getIsPublic() && !archive.getUser().getId().equals(principal.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
-        var isFollow = followerRepository.existsByFollowerAndFollow(user, archive.getAuthor());
-        var isLike = archiveLikeRepository.existsByAuthorAndArchive(user, archive);
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
+        var isLike = archiveLikeRepository.existsByUserAndArchive(principal, archive);
         return ArchiveResponse.fromEntity(archive, isFollow, isLike);
     }
 
     @Transactional(readOnly = true)
-    public ArchiveCollectResponse getByUser(User user, Long authorId) {
-        var author = userRepository.findByIdOrElseThrow(authorId);
-        var archives = archiveRepository.findAllByAuthor(user, author);
+    public ArchiveCollectResponse getByUser(User principal, Long userId) {
+        var user = userRepository.findByIdOrElseThrow(userId);
+        var archives = archiveRepository.findAllByUser(principal, user);
         var archiveIds = archives.stream().map(Archive::getId).collect(toSet());
-        var isFollow = followerRepository.existsByFollowerAndFollow(user, author);
-        var isLikeMap = getIsLikeMap(user, archiveIds);
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, user);
+        var isLikeMap = getIsLikeMap(principal, archiveIds);
         return ArchiveCollectResponse.builder()
                 .collect(archives.stream().map(a -> ArchiveResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
@@ -177,35 +177,35 @@ public class ArchiveService {
     }
 
     @Transactional
-    public void delete(User author, Long archiveId) {
+    public void delete(User principal, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        checkAuthorization(author, archive);
+        checkAuthorization(principal, archive);
         archiveRepository.delete(archive);
     }
 
     @Transactional
-    public Boolean changeIsPublic(User author, Long archiveId, boolean isPublic) {
+    public Boolean changeIsPublic(User principal, Long archiveId, boolean isPublic) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        checkAuthorization(author, archive);
+        checkAuthorization(principal, archive);
         archive.setIsPublic(isPublic);
         return archive.getIsPublic();
     }
 
-    private void checkAuthorization(User author, Archive archive) {
-        if (!archive.getAuthor().getId().equals(author.getId())) {
+    private void checkAuthorization(User principal, Archive archive) {
+        if (!archive.getUser().getId().equals(principal.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
     }
 
     @Transactional
-    public ArchiveResponse repip(User author, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveResponse repip(User principal, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }
 
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
 
-        var isFollow = followerRepository.existsByFollowerAndFollow(author, archive.getAuthor());
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
         if (!isFollow) throw new BusinessException(ErrorCode.ONLY_CAN_REPIP_FOLLOWS_ARCHIVE);
 
         var repipArchive = Archive.builder()
@@ -214,7 +214,7 @@ public class ArchiveService {
                 .positionY(archive.getPositionY())
                 .address(archive.getAddress())
                 .name(archive.getName())
-                .author(author)
+                .user(principal)
                 .isPublic(request.isPublic())
                 .content(request.getContent())
                 .repipArchive(archive)
@@ -235,14 +235,14 @@ public class ArchiveService {
     public UserCollectResponse getRepip(Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         var repipArchives = archiveRepository.findByRepipArchive(archive);
-        var authorIds = repipArchives.stream().map(o -> o.getAuthor().getId()).collect(toSet());
-        var authors = userRepository.findByIdIn(authorIds);
+        var userIds = repipArchives.stream().map(o -> o.getUser().getId()).collect(toSet());
+        var users = userRepository.findByIdIn(userIds);
         return UserCollectResponse.builder()
-                .collect(authors
+                .collect(users
                         .stream()
                         .map(UserResponse::fromEntity)
                         .toList())
-                .meta(PaginateResponse.builder().count(authors.size()).build())
+                .meta(PaginateResponse.builder().count(users.size()).build())
                 .build();
     }
 }

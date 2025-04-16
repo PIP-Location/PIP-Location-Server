@@ -1,6 +1,5 @@
 package kr.co.pinpick.archive.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import lombok.*;
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class ArchiveResponse {
     private Long id;
 
-    private UserResponse author;
+    private UserResponse user;
 
     private Double positionX;
 
@@ -48,7 +47,7 @@ public class ArchiveResponse {
     public static ArchiveResponse fromEntity(Archive archive, boolean isFollow, boolean isLike) {
         return builder()
                 .id(archive.getId())
-                .author(UserResponse.fromEntity(archive.getAuthor(), isFollow))
+                .user(UserResponse.fromEntity(archive.getUser(), isFollow))
                 .positionX(archive.getPositionX())
                 .positionY(archive.getPositionY())
                 .address(archive.getAddress())
@@ -72,7 +71,7 @@ public class ArchiveResponse {
     public static ArchiveResponse repipArchiveResponse(Archive archive) {
         return ArchiveResponse.builder()
                 .id(archive.getId())
-                .author(UserResponse.fromEntity(archive.getAuthor()))
+                .user(UserResponse.fromEntity(archive.getUser()))
                 .positionX(archive.getPositionX())
                 .positionY(archive.getPositionY())
                 .address(archive.getAddress())

@@ -18,10 +18,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<User> search(User author, SearchRequest request) {
+    public List<User> search(User principal, SearchRequest request) {
         return queryFactory
                 .selectFrom(user)
-                .where(containingQ(request.getQ()), exceptMe(author), exceptBlock(author))
+                .where(containingQ(request.getQ()), exceptMe(principal), exceptBlock(principal))
                 .orderBy(user.nickname.asc())
                 .limit(request.getLimit())
                 .fetch();
@@ -31,14 +31,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return hasText(q) ? user.nickname.contains(q) : null;
     }
 
-    private BooleanExpression exceptMe(User author) {
-        return user.id.ne(author.getId());
+    private BooleanExpression exceptMe(User principal) {
+        return user.id.ne(principal.getId());
     }
 
-    private BooleanExpression exceptBlock(User author) {
+    private BooleanExpression exceptBlock(User principal) {
         return JPAExpressions
                 .selectFrom(block1)
-                .where(block1.author.id.eq(author.getId()))
+                .where(block1.user.id.eq(principal.getId()))
                 .where(block1.block.id.eq(user.id))
                 .notExists();
     }

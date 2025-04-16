@@ -14,15 +14,15 @@ import java.util.Set;
 
 public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, ArchiveLIkeId> {
 
-    List<ArchiveLike> findByAuthorAndArchive(User user, Archive archive);
+    List<ArchiveLike> findByUserAndArchive(User user, Archive archive);
 
-    List<ArchiveLike> findByAuthorAndArchiveIdIn(User author, Set<Long> archiveIds);
+    List<ArchiveLike> findByUserAndArchiveIdIn(User principal, Set<Long> archiveIds);
 
-    boolean existsByAuthorAndArchive(User user, Archive archive);
+    boolean existsByUserAndArchive(User principal, Archive archive);
 
-    @Query(value = "insert into archive_likes(author_id, archive_id) values(:authorId, :archiveId)", nativeQuery = true)
+    @Query(value = "insert into archive_likes(user_id, archive_id) values(:userId, :archiveId)", nativeQuery = true)
     @Modifying
-    void saveWithNativeQuery(@Param("authorId") Long authorId, @Param("archiveId") Long archiveId);
+    void saveWithNativeQuery(@Param("userId") Long userId, @Param("archiveId") Long archiveId);
 
-    int deleteByAuthorAndArchive(User source, Archive target);
+    int deleteByUserAndArchive(User source, Archive target);
 }

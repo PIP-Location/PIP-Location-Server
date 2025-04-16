@@ -15,10 +15,10 @@ public class ArchiveLike {
     @EmbeddedId
     private ArchiveLIkeId id;
 
-    @MapsId("author")
+    @MapsId("user")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @MapsId("archive")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

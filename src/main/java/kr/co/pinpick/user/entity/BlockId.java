@@ -11,7 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Embeddable
 public class BlockId implements Serializable {
-    private Long author;
+    private Long user;
 
     private Long block;
 
@@ -20,12 +20,12 @@ public class BlockId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BlockId blockId = (BlockId) o;
-        return Objects.equals(author, blockId.author) && Objects.equals(block, blockId.block);
+        return Objects.equals(user, blockId.user) && Objects.equals(block, blockId.block);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(author, block);
+        return Objects.hash(user, block);
     }
 }
 

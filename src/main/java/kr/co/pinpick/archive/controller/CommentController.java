@@ -9,6 +9,7 @@ import kr.co.pinpick.archive.dto.response.CommentDetailResponse;
 import kr.co.pinpick.archive.dto.response.CommentResponse;
 import kr.co.pinpick.archive.dto.request.CreateCommentRequest;
 import kr.co.pinpick.archive.service.CommentService;
+import kr.co.pinpick.common.dto.request.PaginateRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,44 +28,45 @@ public class CommentController {
     @ApiResponse(responseCode = "201")
     @PostMapping
     public ResponseEntity<CommentResponse> create(
+            @AuthenticationPrincipal User principal,
             @RequestBody @Valid CreateCommentRequest request,
-            @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User author
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.create(author, archiveId, request, null));
+                .body(service.create(principal, archiveId, request, null));
     }
 
     @Operation(summary = "대댓글 작성")
     @ApiResponse(responseCode = "201")
     @PostMapping("{commentId}")
     public ResponseEntity<CommentResponse> createSub(
+            @AuthenticationPrincipal User principal,
             @RequestBody @Valid CreateCommentRequest request,
             @PathVariable(name = "archiveId") Long archiveId,
-            @PathVariable(name = "commentId") Long commendId,
-            @AuthenticationPrincipal User author
+            @PathVariable(name = "commentId") Long commendId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.create(author, archiveId, request, commendId));
+                .body(service.create(principal, archiveId, request, commendId));
     }
 
     @Operation(summary = "조회")
     @ApiResponse(responseCode = "200")
     @GetMapping
     public ResponseEntity<CommentCollectResponse> get(
+            @AuthenticationPrincipal User ignoredPrincipal,
             @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User ignoredAuthor
-    ) {
-        return ResponseEntity.ok(service.get(archiveId));
+            @ModelAttribute PaginateRequest request
+            ) {
+        return ResponseEntity.ok(service.get(archiveId, request));
     }
 
     @Operation(summary = "대댓글 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{commentId}")
     public ResponseEntity<CommentDetailResponse> find(
+            @AuthenticationPrincipal User ignoredPrincipal,
             @PathVariable(name = "archiveId") Long ignoreArchiveId,
-            @PathVariable(name = "commentId") Long commentId,
-            @AuthenticationPrincipal User ignoredAuthor
+            @PathVariable(name = "commentId") Long commentId
     ) {
         return ResponseEntity.ok(service.find(commentId));
     }

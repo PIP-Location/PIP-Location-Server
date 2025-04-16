@@ -32,12 +32,12 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
                         userFilter(request),
                         tagFilter(request),
                         visibilityFilter(user),
-                        ltArchiveId(request.getArchiveId())
+                        ltArchiveId(request.getLastId())
                 )
                 .orderBy(archive.createdAt.desc());
 
         if (!isRetrieveFromMap(request)) {
-            query.limit(20);
+            query.limit(request.getLimit());
         }
 
         return query.fetch();
@@ -67,7 +67,7 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
         var subQuery = JPAExpressions.selectFrom(follower1)
                 .where(follower1.follower.id.eq(user.getId()))
-                .where(follower1.follow.id.eq(archive.author.id));
+                .where(follower1.follow.id.eq(archive.user.id));
 
         return request.getFollow() ? subQuery.exists() : subQuery.notExists();
     }
@@ -76,14 +76,14 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     private BooleanExpression blockFilter(User user) {
         if (user == null) return null;
         return JPAExpressions.selectFrom(block1)
-                .where(block1.author.id.eq(user.getId()))
-                .where(block1.block.id.eq(archive.author.id))
+                .where(block1.user.id.eq(user.getId()))
+                .where(block1.block.id.eq(archive.user.id))
                 .notExists();
     }
 
     /** 유저 필터 */
     private BooleanExpression userFilter(ArchiveRetrieveRequest request) {
-        return request.getUserId() == null ? null : archive.author.id.eq(request.getUserId());
+        return request.getUserId() == null ? null : archive.user.id.eq(request.getUserId());
     }
 
     /** 태그 필터 */
@@ -97,12 +97,12 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     /** 공개 여부 필터 */
     private BooleanExpression visibilityFilter(User user) {
-        return archive.author.id.eq(user.getId()).or(archive.isPublic.isTrue());
+        return archive.user.id.eq(user.getId()).or(archive.isPublic.isTrue());
     }
 
     /** 페이지네이션 */
-    private BooleanExpression ltArchiveId(Long archiveId) {
-        return archiveId == null ? null : archive.id.lt(archiveId);
+    private BooleanExpression ltArchiveId(Long lastId) {
+        return lastId == null ? null : archive.id.lt(lastId);
     }
 
     private boolean isRetrieveFromMap(ArchiveRetrieveRequest request) {
@@ -113,15 +113,15 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     }
 
     @Override
-    public List<Archive> findAllByAuthor(User user, User author) {
+    public List<Archive> findAllByUser(User principal, User user) {
         return queryFactory
                 .selectFrom(archive)
-                .where(archive.author.id.eq(author.getId()), isMe(user, author))
+                .where(archive.user.id.eq(user.getId()), isMe(principal, user))
                 .fetch();
     }
 
-    private BooleanExpression isMe(User user, User author) {
-        return user.getId().equals(author.getId()) ? null : archive.isPublic.isTrue();
+    private BooleanExpression isMe(User principal, User user) {
+        return principal.getId().equals(user.getId()) ? null : archive.isPublic.isTrue();
     }
 
     @Override

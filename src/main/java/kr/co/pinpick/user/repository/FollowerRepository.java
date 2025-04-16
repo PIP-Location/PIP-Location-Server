@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface FollowerRepository extends JpaRepository<Follower, FollowerId> {
-    List<Follower> findByFollowerAndFollowIdIn(User follower, Set<Long> authorIds);
+    List<Follower> findByFollowerAndFollowIdIn(User principal, Set<Long> userIds);
 
-    boolean existsByFollowerAndFollow(User user, User author);
+    boolean existsByFollowerAndFollow(User principal, User user);
 
     int deleteByFollowerAndFollow(User source, User target);
 

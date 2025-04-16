@@ -1,6 +1,7 @@
 package kr.co.pinpick.archive.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import kr.co.pinpick.common.dto.request.PaginateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import org.springdoc.core.annotations.ParameterObject;
 @NoArgsConstructor
 @ParameterObject
 @AllArgsConstructor
-public class ArchiveRetrieveRequest {
+public class ArchiveRetrieveRequest extends PaginateRequest {
     private Double topLeftLatitude;
 
     private Double topLeftLongitude;
@@ -27,6 +28,4 @@ public class ArchiveRetrieveRequest {
     private Long userId;
 
     private String tag = null;
-
-    private Long archiveId;
 }

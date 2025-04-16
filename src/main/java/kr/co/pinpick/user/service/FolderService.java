@@ -31,9 +31,9 @@ public class FolderService {
     private final ArchiveRepository archiveRepository;
 
     @Transactional
-    public FolderResponse create(User user, CreateFolderRequest request, MultipartFile attach) {
+    public FolderResponse create(User principal, CreateFolderRequest request, MultipartFile attach) {
         var folder = Folder.builder()
-                .user(user)
+                .user(principal)
                 .name(request.getName())
                 .isPublic(request.isPublic())
                 .build();
@@ -44,14 +44,14 @@ public class FolderService {
     }
 
     @Transactional(readOnly = true)
-    public FolderCollectResponse getFolderList(User user, Long authorId) {
-        var author = userRepository.findByIdOrElseThrow(authorId);
-        var isAuthor = user.getId().equals(author.getId());
+    public FolderCollectResponse getFolderList(User principal, Long userId) {
+        var user = userRepository.findByIdOrElseThrow(userId);
+        var isMe = principal.getId().equals(user.getId());
         List<Folder> folders;
-        if (isAuthor) {
-            folders = folderRepository.findAllByUser(author);
+        if (isMe) {
+            folders = folderRepository.findAllByUser(user);
         } else {
-            folders = folderRepository.findAllByUserAndIsPublic(author, true);
+            folders = folderRepository.findAllByUserAndIsPublic(user, true);
         }
         return FolderCollectResponse.builder()
                 .collect(folders.stream().map(FolderResponse::fromEntity).toList())
@@ -60,11 +60,11 @@ public class FolderService {
     }
 
     @Transactional
-    public void addArchiveToFolder(User user, Long folderId, Long archiveId) {
+    public void addArchiveToFolder(User principal, Long folderId, Long archiveId) {
         var folder = folderRepository.findByIdOrElseThrow(folderId);
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        var isFollow = followerRepository.existsByFollowerAndFollow(user, archive.getAuthor());
-        if (!isFollow && !user.getId().equals(archive.getAuthor().getId())) {
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
+        if (!isFollow && !principal.getId().equals(archive.getUser().getId())) {
             throw new BusinessException(ErrorCode.ONLY_ADDABLE_FOLLOWERS_ARCHIVE);
         }
         var folderArchiveOptional = folderArchiveRepository.findByFolderAndArchive(folder, archive);
@@ -86,22 +86,22 @@ public class FolderService {
     }
 
     @Transactional
-    public Boolean changeIsPublic(User user, Long folderId, boolean isPublic) {
+    public Boolean changeIsPublic(User principal, Long folderId, boolean isPublic) {
         var folder = folderRepository.findByIdOrElseThrow(folderId);
-        checkAuthorization(user, folder);
+        checkAuthorization(principal, folder);
         folder.setPublic(isPublic);
         return folder.isPublic();
     }
 
     @Transactional
-    public void delete(User user, Long folderId) {
+    public void delete(User principal, Long folderId) {
         var folder = folderRepository.findByIdOrElseThrow(folderId);
-        checkAuthorization(user, folder);
+        checkAuthorization(principal, folder);
         folderRepository.delete(folder);
     }
 
-    private void checkAuthorization(User user, Folder folder) {
-        if (!folder.getUser().getId().equals(user.getId())) {
+    private void checkAuthorization(User principal, Folder folder) {
+        if (!folder.getUser().getId().equals(principal.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
     }

@@ -8,9 +8,9 @@ import kr.co.pinpick.user.entity.User;
 import java.util.List;
 
 public interface ArchiveRepositoryCustom {
-    List<Archive> retrieve(User user, ArchiveRetrieveRequest request);
+    List<Archive> retrieve(User principal, ArchiveRetrieveRequest request);
 
-    List<Archive> findAllByAuthor(User user, User author);
+    List<Archive> findAllByUser(User principal, User user);
 
     List<Archive> search(SearchRequest request);
 }

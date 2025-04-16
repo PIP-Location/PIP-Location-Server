@@ -28,32 +28,32 @@ public class FolderController {
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<FolderResponse> create(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
             @RequestPart(required = false, name = "attach") MultipartFile attach
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(user, request, attach));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(principal, request, attach));
     }
 
     @Operation(summary = "폴더 리스트 조회")
     @ApiResponse(responseCode = "200")
-    @GetMapping("users/{authorId}")
+    @GetMapping("users/{userId}")
     public ResponseEntity<FolderCollectResponse> getFolderList(
-            @AuthenticationPrincipal User user,
-            @PathVariable(name = "authorId") Long authorId
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        return ResponseEntity.ok(service.getFolderList(user, authorId));
+        return ResponseEntity.ok(service.getFolderList(principal, userId));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
     @ApiResponse(responseCode = "204")
     @PostMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> addArchiveToFolder(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
-        service.addArchiveToFolder(user, folderId, archiveId);
+        service.addArchiveToFolder(principal, folderId, archiveId);
         return ResponseEntity.noContent().build();
     }
 
@@ -61,7 +61,7 @@ public class FolderController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> removeArchiveFromFolder(
-            @AuthenticationPrincipal User ignoreUser,
+            @AuthenticationPrincipal User ignorePrincipal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
@@ -73,21 +73,21 @@ public class FolderController {
     @ApiResponse(responseCode = "200")
     @PatchMapping("/{folderId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(service.changeIsPublic(user, folderId, isPublic));
+        return ResponseEntity.ok(service.changeIsPublic(principal, folderId, isPublic));
     }
 
     @Operation(summary = "폴더 삭제")
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/{folderId}")
     public ResponseEntity<Void> deleteFolder(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId
     ) {
-        service.delete(user, folderId);
+        service.delete(principal, folderId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -22,17 +22,17 @@ public class ArchiveLikeService implements IUserLinkService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public UserCollectResponse getLike(User user, Long archiveId) {
+    public UserCollectResponse getLike(User principal, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        var archiveLikes = archiveLikeRepository.findByAuthorAndArchive(user, archive);
-        var authorIds = archiveLikes.stream().map(o -> o.getAuthor().getId()).collect(toSet());
-        var authors = userRepository.findByIdIn(authorIds);
+        var archiveLikes = archiveLikeRepository.findByUserAndArchive(principal, archive);
+        var userIds = archiveLikes.stream().map(o -> o.getUser().getId()).collect(toSet());
+        var users = userRepository.findByIdIn(userIds);
         return UserCollectResponse.builder()
-                .collect(authors
+                .collect(users
                         .stream()
                         .map(UserResponse::fromEntity)
                         .toList())
-                .meta(PaginateResponse.builder().count(authors.size()).build())
+                .meta(PaginateResponse.builder().count(users.size()).build())
                 .build();
     }
 
@@ -46,6 +46,6 @@ public class ArchiveLikeService implements IUserLinkService {
     @Transactional
     public int unlink(User source, Long targetId) {
         var target = archiveRepository.findByIdOrElseThrow(targetId);
-        return archiveLikeRepository.deleteByAuthorAndArchive(source, target);
+        return archiveLikeRepository.deleteByUserAndArchive(source, target);
     }
 }

@@ -6,5 +6,5 @@ import kr.co.pinpick.user.entity.User;
 import java.util.List;
 
 public interface UserRepositoryCustom {
-    List<User> search(User author, SearchRequest request);
+    List<User> search(User principal, SearchRequest request);
 }

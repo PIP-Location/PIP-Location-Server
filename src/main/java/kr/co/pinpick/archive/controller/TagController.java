@@ -23,7 +23,7 @@ public class TagController {
     @ApiResponse(responseCode = "200")
     @GetMapping("search")
     public ResponseEntity<TagCollectResponse> search(
-            @AuthenticationPrincipal User ignoredUser,
+            @AuthenticationPrincipal User ignoredPrincipal,
             @ModelAttribute SearchRequest request
     ) {
         return ResponseEntity.ok(service.search(request));

@@ -33,28 +33,28 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @GetMapping("search")
     public ResponseEntity<UserSearchResponse> search(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @ModelAttribute SearchRequest request
     ) {
-        return ResponseEntity.ok(userService.search(user, request));
+        return ResponseEntity.ok(userService.search(principal, request));
     }
 
     @Operation(summary = "로그인된 회원 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("@me")
     public ResponseEntity<UserDetailResponse> me(
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User principal
     ) {
-        return ResponseEntity.ok(userService.find(user, user.getId()));
+        return ResponseEntity.ok(userService.find(principal, principal.getId()));
     }
     @Operation(summary = "회원 상세 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{userId}")
     public ResponseEntity<UserDetailResponse> getUserDetail(
-            @AuthenticationPrincipal User user,
-            @PathVariable(name = "userId") Long targetId
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        return ResponseEntity.ok(userService.find(user, targetId));
+        return ResponseEntity.ok(userService.find(principal, userId));
     }
     //endregion
 
@@ -62,11 +62,11 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserDetailResponse> update(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
             @RequestPart(required = false, name = "attaches") MultipartFile profileImage
     ) {
-        return ResponseEntity.ok(userService.update(user, request, profileImage));
+        return ResponseEntity.ok(userService.update(principal, request, profileImage));
     }
 
     //region 차단
@@ -74,10 +74,10 @@ public class UserController {
     @ApiResponse(responseCode = "204")
     @PostMapping("{userId}/block")
     public ResponseEntity<Void> block(
-            @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal User author
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        userBlockService.link(author, userId);
+        userBlockService.link(principal, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -85,10 +85,10 @@ public class UserController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{userId}/unblock")
     public ResponseEntity<Void> unblock(
-            @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal User author
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        userBlockService.unlink(author, userId);
+        userBlockService.unlink(principal, userId);
         return ResponseEntity.noContent().build();
     }
     //endregion
@@ -98,10 +98,10 @@ public class UserController {
     @ApiResponse(responseCode = "204")
     @PostMapping("{userId}/follow")
     public ResponseEntity<Void> follow(
-            @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal User author
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        userFollowService.link(author, userId);
+        userFollowService.link(principal, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -109,10 +109,10 @@ public class UserController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{userId}/unfollow")
     public ResponseEntity<Void> unfollow(
-            @PathVariable(name = "userId") Long userId,
-            @AuthenticationPrincipal User author
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        userFollowService.unlink(author, userId);
+        userFollowService.unlink(principal, userId);
         return ResponseEntity.noContent().build();
     }
     //endregion

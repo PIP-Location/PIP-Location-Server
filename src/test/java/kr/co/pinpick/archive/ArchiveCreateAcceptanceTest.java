@@ -14,7 +14,6 @@ import kr.co.pinpick.user.dto.response.FolderResponse;
 import kr.co.pinpick.util.MockMultipartFileFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -22,8 +21,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
     String token;
@@ -38,7 +35,7 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
 
     private void assertArchive(ArchiveResponse archive) {
         assertThat(archive.getId()).isNotNull();
-        assertThat(archive.getAuthor()).isNotNull();
+        assertThat(archive.getUser()).isNotNull();
         assertThat(archive.getPositionX()).isNotNull();
         assertThat(archive.getPositionY()).isNotNull();
         assertThat(archive.getAddress()).isNotNull();

@@ -53,7 +53,7 @@ public class User extends BaseEntity implements UserDetails {
     @Builder.Default
     private Boolean isAgreeToPrivacyPolicy = false;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "user")
     private List<Archive> archives;
 
     @OneToMany(mappedBy = "follow")

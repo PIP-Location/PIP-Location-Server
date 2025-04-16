@@ -16,7 +16,7 @@ public class CommentResponse {
 
     private String content;
 
-    private UserResponse author;
+    private UserResponse user;
 
     private int subCommentCount;
 
@@ -32,7 +32,7 @@ public class CommentResponse {
         return builder
                 .id(comment.getId())
                 .content(comment.getContent())
-                .author(UserResponse.fromEntity(comment.getAuthor()))
+                .user(UserResponse.fromEntity(comment.getUser()))
                 .subCommentCount(Optional.ofNullable(comment.getSubComments())
                         .orElse(Collections.emptyList())
                         .size())

@@ -24,6 +24,6 @@ public class UserBlockService implements IUserLinkService {
     @Transactional
     public int unlink(User source, Long targetId) {
         var target = userRepository.findByIdOrElseThrow(targetId);
-        return blockRepository.deleteByAuthorAndBlock(source, target);
+        return blockRepository.deleteByUserAndBlock(source, target);
     }
 }

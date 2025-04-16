@@ -38,39 +38,39 @@ public class ArchiveController {
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ArchiveResponse> create(
-            @AuthenticationPrincipal User author,
+            @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid CreateArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(archiveService.create(author, request ,attaches));
+                .body(archiveService.create(principal, request ,attaches));
     }
 
     @Operation(summary = "ID로 아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping(path = "{archiveId}")
     public ResponseEntity<ArchiveResponse> retrieve(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
-        return ResponseEntity.ok(archiveService.get(user, archiveId));
+        return ResponseEntity.ok(archiveService.get(principal, archiveId));
     }
 
     @Operation(summary = "아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping
     public ResponseEntity<ArchiveCollectResponse> retrieve(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @ModelAttribute ArchiveRetrieveRequest request
     ) {
-        return ResponseEntity.ok(archiveService.retrieve(user, request));
+        return ResponseEntity.ok(archiveService.retrieve(principal, request));
     }
 
     @Operation(summary = "아카이브 검색")
     @ApiResponse(responseCode = "200")
     @GetMapping("search")
     public ResponseEntity<ArchiveSearchResponse> search(
-            @AuthenticationPrincipal User ignoredUser,
+            @AuthenticationPrincipal User ignoredPrincipal,
             @ModelAttribute SearchRequest request
     ) {
         return ResponseEntity.ok(archiveService.search(request));
@@ -78,31 +78,31 @@ public class ArchiveController {
 
     @Operation(summary = "작성자로 아카이브 조회")
     @ApiResponse(responseCode = "200")
-    @GetMapping(path = "users/{authorId}")
-    public ResponseEntity<ArchiveCollectResponse> getByAuthor(
-            @AuthenticationPrincipal User user,
-            @PathVariable(name = "authorId") Long authorId
+    @GetMapping(path = "users/{userId}")
+    public ResponseEntity<ArchiveCollectResponse> getByUser(
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "userId") Long userId
     ) {
-        return ResponseEntity.ok(archiveService.getByUser(user, authorId));
+        return ResponseEntity.ok(archiveService.getByUser(principal, userId));
     }
 
     @Operation(summary = "폴더로 아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping(path = "folders/{folderId}")
     public ResponseEntity<ArchiveCollectResponse> getByFolder(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId) {
-        return ResponseEntity.ok(archiveService.getByFolder(user, folderId));
+        return ResponseEntity.ok(archiveService.getByFolder(principal, folderId));
     }
 
     @Operation(summary = "아카이브 삭제")
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{archiveId}")
     public ResponseEntity<Void> deleteArchive(
-            @AuthenticationPrincipal User author,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
-        archiveService.delete(author, archiveId);
+        archiveService.delete(principal, archiveId);
         return ResponseEntity.noContent().build();
     }
 
@@ -110,11 +110,11 @@ public class ArchiveController {
     @ApiResponse(responseCode = "200")
     @PatchMapping("{archiveId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
-            @AuthenticationPrincipal User author,
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(archiveService.changeIsPublic(author, archiveId, isPublic));
+        return ResponseEntity.ok(archiveService.changeIsPublic(principal, archiveId, isPublic));
     }
 
     //region 좋아요
@@ -122,20 +122,20 @@ public class ArchiveController {
     @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/like")
     public ResponseEntity<UserCollectResponse> getLike(
-            @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        return ResponseEntity.ok(archiveLikeService.getLike(user, archiveId));
+        return ResponseEntity.ok(archiveLikeService.getLike(principal, archiveId));
     }
 
     @Operation(summary = "아카이브 좋아요")
     @ApiResponse(responseCode = "204")
     @PostMapping("{archiveId}/like")
     public ResponseEntity<Void> like(
-            @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        archiveLikeService.link(user, archiveId);
+        archiveLikeService.link(principal, archiveId);
         return ResponseEntity.noContent().build();
     }
 
@@ -143,10 +143,10 @@ public class ArchiveController {
     @ApiResponse(responseCode = "204")
     @DeleteMapping("{archiveId}/like")
     public ResponseEntity<Void> unlike(
-            @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
-        archiveLikeService.unlink(user, archiveId);
+        archiveLikeService.unlink(principal, archiveId);
         return ResponseEntity.noContent().build();
     }
     //endregion
@@ -157,21 +157,21 @@ public class ArchiveController {
     @ApiResponse(responseCode = "201")
     @PostMapping("{archiveId}/repip")
     public ResponseEntity<ArchiveResponse> repip(
+            @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") long archiveId,
-            @AuthenticationPrincipal User user,
             @RequestPart(value = "request", name = "request") @Valid RepipArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(archiveService.repip(user, archiveId, request, attaches));
+                .body(archiveService.repip(principal, archiveId, request, attaches));
     }
 
     @Operation(summary = "리핍한 사람 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/repip")
     public ResponseEntity<UserCollectResponse> getRepip(
-            @PathVariable(name = "archiveId") Long archiveId,
-            @AuthenticationPrincipal User ignoreUser
+            @AuthenticationPrincipal User ignorePrincipal,
+            @PathVariable(name = "archiveId") Long archiveId
     ) {
         return ResponseEntity.ok(archiveService.getRepip(archiveId));
     }

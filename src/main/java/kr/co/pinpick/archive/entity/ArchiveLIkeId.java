@@ -12,7 +12,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Embeddable
 public class ArchiveLIkeId implements Serializable {
-    private Long author;
+    private Long user;
 
     private Long archive;
 
@@ -21,12 +21,12 @@ public class ArchiveLIkeId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArchiveLIkeId archiveLikeId = (ArchiveLIkeId) o;
-        return Objects.equals(author, archiveLikeId.author) &&
+        return Objects.equals(user, archiveLikeId.user) &&
                 Objects.equals(archive, archiveLikeId.archive);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(author, archive);
+        return Objects.hash(user, archive);
     }
 }

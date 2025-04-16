@@ -31,9 +31,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDetailResponse find(User user, Long targetId) {
-        var target = userRepository.findByIdOrElseThrow(targetId);
-        var isFollow = followerRepository.existsByFollowerAndFollow(user, target);
+    public UserDetailResponse find(User principal, Long userId) {
+        var target = userRepository.findByIdOrElseThrow(userId);
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, target);
         return UserDetailResponse.fromEntity(target, isFollow);
     }
 
