@@ -7,7 +7,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.common.error.ErrorResponse;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
@@ -35,10 +35,10 @@ public class ArchiveSteps {
                 .then().log().all();
     }
 
-    public static ArchiveResponse successCreateArchive(String token, CreateArchiveRequest request, InputStream... files) {
+    public static ArchiveDetailResponse successCreateArchive(String token, CreateArchiveRequest request, InputStream... files) {
         return createArchive(token, request, files)
                 .statusCode(201)
-                .extract().as(ArchiveResponse.class);
+                .extract().as(ArchiveDetailResponse.class);
     }
 
     public static ErrorResponse failCreateArchiveBecauseValidation(String token, CreateArchiveRequest request, InputStream... files) {
@@ -114,7 +114,7 @@ public class ArchiveSteps {
                 .extract().as(Boolean.class);
     }
 
-    public static ArchiveResponse successRetrieveById(String token, long archiveId) {
+    public static ArchiveDetailResponse successRetrieveById(String token, long archiveId) {
         return RestAssured
                 .given().log().all()
                 .when()
@@ -122,7 +122,7 @@ public class ArchiveSteps {
                 .get("/api/archives/{archiveId}", archiveId)
                 .then().log().all()
                 .statusCode(200)
-                .extract().as(ArchiveResponse.class);
+                .extract().as(ArchiveDetailResponse.class);
     }
 
     public static ErrorResponse failRetrieveById(String token, long archiveId) {

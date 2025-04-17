@@ -1,7 +1,7 @@
 package kr.co.pinpick.archive;
 
 import kr.co.pinpick.AcceptanceTest;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.user.UserFixture;
 import kr.co.pinpick.user.UserSteps;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,11 +32,11 @@ public class ArchiveRetrieveAcceptanceTest extends AcceptanceTest {
     public void success() throws IOException {
         // given
         ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
-        ArchiveResponse songpa = ArchiveSteps.successCreateArchive(token, ArchiveFixture.inSongpaCreateArchiveRequest());
-        ArchiveResponse youngdeungpo = ArchiveSteps.successCreateArchive(token, ArchiveFixture.inYoungdeungpoCreateArchiveRequest());
+        ArchiveDetailResponse songpa = ArchiveSteps.successCreateArchive(token, ArchiveFixture.inSongpaCreateArchiveRequest());
+        ArchiveDetailResponse youngdeungpo = ArchiveSteps.successCreateArchive(token, ArchiveFixture.inYoungdeungpoCreateArchiveRequest());
 
         // when
-        List<ArchiveResponse> archives = ArchiveSteps.retrieve(token, ArchiveFixture.defaultRetrieveRequest()).getCollect();
+        List<ArchiveDetailResponse> archives = ArchiveSteps.retrieve(token, ArchiveFixture.defaultRetrieveRequest()).getCollect();
 
         // then
         assertThat(archives.size()).isEqualTo(2);
@@ -48,12 +48,12 @@ public class ArchiveRetrieveAcceptanceTest extends AcceptanceTest {
     public void successWithBlock() throws IOException {
         // given
         ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
-        ArchiveResponse blockedArchive = ArchiveSteps.successCreateArchive(blockedUserToken, ArchiveFixture.inSongpaCreateArchiveRequest());
+        ArchiveDetailResponse blockedArchive = ArchiveSteps.successCreateArchive(blockedUserToken, ArchiveFixture.inSongpaCreateArchiveRequest());
 
         // when
         UserSteps.block(token, blockedUserId);
         var request = ArchiveFixture.defaultRetrieveRequest();
-        List<ArchiveResponse> archives = ArchiveSteps.retrieve(token, request).getCollect();
+        List<ArchiveDetailResponse> archives = ArchiveSteps.retrieve(token, request).getCollect();
 
         // then
         assertThat(archives.size()).isEqualTo(1);

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
@@ -37,7 +37,7 @@ public class ArchiveController {
     @Operation(summary = "아카이브 생성")
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ArchiveResponse> create(
+    public ResponseEntity<ArchiveDetailResponse> create(
             @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid CreateArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
@@ -49,7 +49,7 @@ public class ArchiveController {
     @Operation(summary = "ID로 아카이브 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping(path = "{archiveId}")
-    public ResponseEntity<ArchiveResponse> retrieve(
+    public ResponseEntity<ArchiveDetailResponse> retrieve(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
@@ -156,7 +156,7 @@ public class ArchiveController {
     @Operation(summary = "리핍")
     @ApiResponse(responseCode = "201")
     @PostMapping("{archiveId}/repip")
-    public ResponseEntity<ArchiveResponse> repip(
+    public ResponseEntity<ArchiveDetailResponse> repip(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") long archiveId,
             @RequestPart(value = "request", name = "request") @Valid RepipArchiveRequest request,

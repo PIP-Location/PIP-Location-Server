@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class ArchiveCollectResponse extends CollectResponse<ArchiveResponse> {
+public class ArchiveCollectResponse extends CollectResponse<ArchiveDetailResponse> {
     @JsonProperty("archives")
-    private List<ArchiveResponse> collect;
+    private List<ArchiveDetailResponse> collect;
 }

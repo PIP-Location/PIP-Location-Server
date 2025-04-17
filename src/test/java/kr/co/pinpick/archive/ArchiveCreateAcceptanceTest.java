@@ -3,7 +3,7 @@ package kr.co.pinpick.archive;
 import kr.co.pinpick.AcceptanceTest;
 import kr.co.pinpick.archive.dto.request.CreateTagRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveTagResponse;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.folder.FolderFixture;
@@ -33,7 +33,7 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         token = UserSteps.testLogin(UserFixture.defaultLoginRequest()).getAccessToken();
     }
 
-    private void assertArchive(ArchiveResponse archive) {
+    private void assertArchive(ArchiveDetailResponse archive) {
         assertThat(archive.getId()).isNotNull();
         assertThat(archive.getUser()).isNotNull();
         assertThat(archive.getPositionX()).isNotNull();
@@ -172,7 +172,7 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
 
         for (int i = 1; i <= 10; i++) {
             var request = ArchiveFixture.createArchiveRequest(i);
-            ArchiveResponse archiveResponse = ArchiveSteps.successCreateArchive(
+            ArchiveDetailResponse archiveDetailResponse = ArchiveSteps.successCreateArchive(
                     token,
                     request,
                     MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"),
@@ -180,9 +180,9 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
                     MockMultipartFileFixture.mockImageFile(300, 301, "jpeg"));
 
             if (i <= 5) {
-                FolderSteps.addArchiveToFolder(token, folder1.getId(), archiveResponse.getId());
+                FolderSteps.addArchiveToFolder(token, folder1.getId(), archiveDetailResponse.getId());
             } else {
-                FolderSteps.addArchiveToFolder(token, folder2.getId(), archiveResponse.getId());
+                FolderSteps.addArchiveToFolder(token, folder2.getId(), archiveDetailResponse.getId());
             }
         }
 

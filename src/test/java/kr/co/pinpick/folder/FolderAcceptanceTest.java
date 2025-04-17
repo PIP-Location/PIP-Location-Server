@@ -3,7 +3,7 @@ package kr.co.pinpick.folder;
 import kr.co.pinpick.AcceptanceTest;
 import kr.co.pinpick.archive.ArchiveFixture;
 import kr.co.pinpick.archive.ArchiveSteps;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.user.UserFixture;
 import kr.co.pinpick.user.UserSteps;
 import kr.co.pinpick.user.dto.response.FolderResponse;
@@ -54,13 +54,13 @@ public class FolderAcceptanceTest extends AcceptanceTest {
     @Test
     public void addArchiveToFolderSuccess() throws IOException {
         // given
-        ArchiveResponse archiveResponse1 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
-        ArchiveResponse archiveResponse2 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
+        ArchiveDetailResponse archiveDetailResponse1 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
+        ArchiveDetailResponse archiveDetailResponse2 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
         FolderResponse folderResponse = FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(1), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
 
         // when
-        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveResponse1.getId());
-        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveResponse2.getId());
+        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse1.getId());
+        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse2.getId());
         List<FolderResponse> folders = FolderSteps.getFolderList(token).getCollect();
 
         // then
@@ -71,14 +71,14 @@ public class FolderAcceptanceTest extends AcceptanceTest {
     @Test
     public void removeArchiveToFolderSuccess() throws IOException {
         // given
-        ArchiveResponse archiveResponse1 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
-        ArchiveResponse archiveResponse2 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
+        ArchiveDetailResponse archiveDetailResponse1 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
+        ArchiveDetailResponse archiveDetailResponse2 = ArchiveSteps.successCreateArchive(token, ArchiveFixture.defaultCreateArchiveRequest());
         FolderResponse folderResponse = FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(1), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
-        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveResponse1.getId());
-        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveResponse2.getId());
+        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse1.getId());
+        FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse2.getId());
 
         // when
-        FolderSteps.removeArchiveToFolder(token, folderResponse.getId(), archiveResponse1.getId());
+        FolderSteps.removeArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse1.getId());
         List<FolderResponse> folders = FolderSteps.getFolderList(token).getCollect();
 
         // then

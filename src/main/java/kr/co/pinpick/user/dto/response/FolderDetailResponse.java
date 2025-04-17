@@ -1,6 +1,6 @@
 package kr.co.pinpick.user.dto.response;
 
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -16,14 +16,14 @@ import java.util.Map;
 @AllArgsConstructor
 @SuperBuilder
 public class FolderDetailResponse extends FolderResponse {
-    private List<ArchiveResponse> archiveResponses;
+    private List<ArchiveDetailResponse> archiveDetailRespons;
 
     public static FolderDetailResponse fromEntity(Folder folder, User user, Map<Long, Boolean> isLikeMap) {
         return fromEntity(
                 folder,
-                builder().archiveResponses(folder.getFolderArchives()
+                builder().archiveDetailRespons(folder.getFolderArchives()
                         .stream()
-                        .map(fa -> ArchiveResponse.fromEntity(
+                        .map(fa -> ArchiveDetailResponse.fromEntity(
                                 fa.getArchive(),
                                 !user.getId().equals(fa.getArchive().getId()),
                                 isLikeMap.containsKey(fa.getArchive().getId())))

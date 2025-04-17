@@ -77,12 +77,12 @@ public class ArchiveGetByFolderAcceptanceTest extends AcceptanceTest {
         }
 
         var folder = ArchiveSteps.getArchivesWithFolderInfo(token, folder1.getId());
-        assertThat(folder.getArchiveResponses().size()).isEqualTo(5);
+        assertThat(folder.getArchiveDetailRespons().size()).isEqualTo(5);
         for (int i = 1; i <= 5; i++) {
-            assertThat(folder.getArchiveResponses().get(i - 1).getName()).isEqualTo("킨더커피" + i);
-            assertThat(folder.getArchiveResponses().get(i - 1).getContent()).isEqualTo("킨더커피 크렘브륄레 마카롱 맛있어요" + i);
-            assertThat(folder.getArchiveResponses().get(i - 1).getAddress()).isEqualTo("서울특별시 송파구 석촌호수로 135" + i);
-            assertThat(folder.getArchiveResponses().get(i - 1).getTags().size()).isEqualTo(i);
+            assertThat(folder.getArchiveDetailRespons().get(i - 1).getName()).isEqualTo("킨더커피" + i);
+            assertThat(folder.getArchiveDetailRespons().get(i - 1).getContent()).isEqualTo("킨더커피 크렘브륄레 마카롱 맛있어요" + i);
+            assertThat(folder.getArchiveDetailRespons().get(i - 1).getAddress()).isEqualTo("서울특별시 송파구 석촌호수로 135" + i);
+            assertThat(folder.getArchiveDetailRespons().get(i - 1).getTags().size()).isEqualTo(i);
         }
     }
 }

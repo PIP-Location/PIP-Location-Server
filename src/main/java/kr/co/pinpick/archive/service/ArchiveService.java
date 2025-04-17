@@ -3,7 +3,7 @@ package kr.co.pinpick.archive.service;
 import kr.co.pinpick.archive.dto.request.CreateTagRequest;
 import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
@@ -50,7 +50,7 @@ public class ArchiveService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ArchiveResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveDetailResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }
@@ -75,7 +75,7 @@ public class ArchiveService {
         // 태그 저장
         saveArchiveTag(archive, request.getTags());
 
-        return ArchiveResponse.fromEntity(archive, false, false);
+        return ArchiveDetailResponse.fromEntity(archive, false, false);
     }
 
     private void saveArchiveAttaches(Archive archive, List<MultipartFile> attaches) {
@@ -114,7 +114,7 @@ public class ArchiveService {
         return ArchiveCollectResponse.builder()
                 .collect(archives
                         .stream()
-                        .map(a -> ArchiveResponse.fromEntity(a, isFollowMap.containsKey(a.getUser().getId()), isLikeMap.containsKey(a.getId())))
+                        .map(a -> ArchiveDetailResponse.fromEntity(a, isFollowMap.containsKey(a.getUser().getId()), isLikeMap.containsKey(a.getId())))
                         .toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
                 .build();
@@ -140,14 +140,14 @@ public class ArchiveService {
     }
 
     @Transactional(readOnly = true)
-    public ArchiveResponse get(User principal, Long archiveId) {
+    public ArchiveDetailResponse get(User principal, Long archiveId) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         if (!archive.getIsPublic() && !archive.getUser().getId().equals(principal.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
         var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
         var isLike = archiveLikeRepository.existsByUserAndArchive(principal, archive);
-        return ArchiveResponse.fromEntity(archive, isFollow, isLike);
+        return ArchiveDetailResponse.fromEntity(archive, isFollow, isLike);
     }
 
     @Transactional(readOnly = true)
@@ -158,7 +158,7 @@ public class ArchiveService {
         var isFollow = followerRepository.existsByFollowerAndFollow(principal, user);
         var isLikeMap = getIsLikeMap(principal, archiveIds);
         return ArchiveCollectResponse.builder()
-                .collect(archives.stream().map(a -> ArchiveResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
+                .collect(archives.stream().map(a -> ArchiveDetailResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
                 .meta(PaginateResponse.builder().count(archives.size()).build())
                 .build();
     }
@@ -170,7 +170,7 @@ public class ArchiveService {
         var archiveIds = folderArchives.stream().map(fa -> fa.getArchive().getId()).collect(toSet());
         var isLikeMap = getIsLikeMap(user, archiveIds);
         return ArchiveCollectResponse.builder()
-                .collect(folderArchives.stream().map(fa -> ArchiveResponse
+                .collect(folderArchives.stream().map(fa -> ArchiveDetailResponse
                         .fromEntity(fa.getArchive(), !user.getId().equals(fa.getArchive().getId()), isLikeMap.containsKey(fa.getArchive().getId()))).toList())
                 .meta(PaginateResponse.builder().count(folderArchives.size()).build())
                 .build();
@@ -198,7 +198,7 @@ public class ArchiveService {
     }
 
     @Transactional
-    public ArchiveResponse repip(User principal, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveDetailResponse repip(User principal, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }
@@ -228,7 +228,7 @@ public class ArchiveService {
         // 태그 저장
         saveArchiveTag(repipArchive, request.getTags());
 
-        return ArchiveResponse.fromEntity(repipArchive, false, false);
+        return ArchiveDetailResponse.fromEntity(repipArchive, false, false);
     }
 
     @Transactional(readOnly = true)
