@@ -1,10 +1,10 @@
-package kr.co.pinpick.archive.repository.ArchiveComment;
+package kr.co.pinpick.archive.repository.archiveComment;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
-import kr.co.pinpick.common.dto.request.PaginateRequest;
+import kr.co.pinpick.common.dto.request.NoOffsetPaginateRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class ArchiveCommentRepositoryImpl implements ArchiveCommentRepositoryCus
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ArchiveComment> findByArchiveAndParentIsNull(Archive archive, PaginateRequest request) {
+    public List<ArchiveComment> findByArchiveAndParentIsNull(Archive archive, NoOffsetPaginateRequest request) {
         return queryFactory
                 .selectFrom(archiveComment)
                 .where(

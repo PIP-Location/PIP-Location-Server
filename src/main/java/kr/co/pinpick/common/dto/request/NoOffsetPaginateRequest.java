@@ -12,11 +12,11 @@ import org.springdoc.core.annotations.ParameterObject;
 @Setter
 @NoArgsConstructor
 @ParameterObject
-public class PaginateRequest {
+public class NoOffsetPaginateRequest {
     @Parameter(description = "마지막 아이디")
     private Long lastId;
 
     @Parameter(description = "조회 수")
-    @Schema(defaultValue = "100")
-    private Long limit = 100L;
+    @Schema(defaultValue = "20")
+    private Long limit = 20L;
 }

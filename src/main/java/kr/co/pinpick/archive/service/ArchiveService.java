@@ -9,9 +9,10 @@ import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveTag;
-import kr.co.pinpick.archive.repository.ArchiveLikeRepository;
+import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.ArchiveTagRepository;
+import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
@@ -232,11 +233,9 @@ public class ArchiveService {
     }
 
     @Transactional(readOnly = true)
-    public UserCollectResponse getRepip(Long archiveId) {
+    public UserCollectResponse getRepip(Long archiveId, OffsetPaginateRequest request) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        var repipArchives = archiveRepository.findByRepipArchive(archive);
-        var userIds = repipArchives.stream().map(o -> o.getUser().getId()).collect(toSet());
-        var users = userRepository.findByIdIn(userIds);
+        var users = archiveRepository.findRepipByArchive(archive, request);
         return UserCollectResponse.builder()
                 .collect(users
                         .stream()

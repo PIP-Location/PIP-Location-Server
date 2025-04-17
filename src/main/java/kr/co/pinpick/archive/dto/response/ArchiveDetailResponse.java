@@ -1,8 +1,6 @@
 package kr.co.pinpick.archive.dto.response;
 
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.archive.entity.ArchiveComment;
-import kr.co.pinpick.user.dto.response.UserResponse;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

@@ -11,7 +11,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Embeddable
-public class ArchiveLIkeId implements Serializable {
+public class ArchiveLikeId implements Serializable {
     private Long user;
 
     private Long archive;
@@ -20,7 +20,7 @@ public class ArchiveLIkeId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ArchiveLIkeId archiveLikeId = (ArchiveLIkeId) o;
+        ArchiveLikeId archiveLikeId = (ArchiveLikeId) o;
         return Objects.equals(user, archiveLikeId.user) &&
                 Objects.equals(archive, archiveLikeId.archive);
     }

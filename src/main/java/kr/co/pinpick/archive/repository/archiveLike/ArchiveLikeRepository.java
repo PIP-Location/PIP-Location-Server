@@ -1,8 +1,8 @@
-package kr.co.pinpick.archive.repository;
+package kr.co.pinpick.archive.repository.archiveLike;
 
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveLike;
-import kr.co.pinpick.archive.entity.ArchiveLIkeId;
+import kr.co.pinpick.archive.entity.ArchiveLikeId;
 import kr.co.pinpick.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,9 +12,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Set;
 
-public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, ArchiveLIkeId> {
-
-    List<ArchiveLike> findByUserAndArchive(User user, Archive archive);
+public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, ArchiveLikeId>, ArchiveLikeRepositoryCustom {
+    List<ArchiveLike> findByArchive(Archive archive);
 
     List<ArchiveLike> findByUserAndArchiveIdIn(User principal, Set<Long> archiveIds);
 

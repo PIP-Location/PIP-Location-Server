@@ -9,7 +9,7 @@ import kr.co.pinpick.archive.dto.response.CommentDetailResponse;
 import kr.co.pinpick.archive.dto.response.CommentResponse;
 import kr.co.pinpick.archive.dto.request.CreateCommentRequest;
 import kr.co.pinpick.archive.service.CommentService;
-import kr.co.pinpick.common.dto.request.PaginateRequest;
+import kr.co.pinpick.common.dto.request.NoOffsetPaginateRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,8 +55,8 @@ public class CommentController {
     public ResponseEntity<CommentCollectResponse> get(
             @AuthenticationPrincipal User ignoredPrincipal,
             @PathVariable(name = "archiveId") Long archiveId,
-            @ModelAttribute PaginateRequest request
-            ) {
+            @ModelAttribute NoOffsetPaginateRequest request
+    ) {
         return ResponseEntity.ok(service.get(archiveId, request));
     }
 

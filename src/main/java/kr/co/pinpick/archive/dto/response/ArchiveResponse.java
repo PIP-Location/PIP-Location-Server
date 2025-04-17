@@ -1,7 +1,6 @@
 package kr.co.pinpick.archive.dto.response;
 
 import kr.co.pinpick.archive.entity.Archive;
-import kr.co.pinpick.archive.entity.ArchiveComment;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @NoArgsConstructor

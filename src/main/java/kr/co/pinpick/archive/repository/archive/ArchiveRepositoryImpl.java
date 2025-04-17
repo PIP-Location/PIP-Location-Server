@@ -6,6 +6,8 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
+import kr.co.pinpick.archive.entity.QArchive;
+import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -66,8 +68,8 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         if (user == null || request.getFollow() == null || !isRetrieveFromMap(request)) return null;
 
         var subQuery = JPAExpressions.selectFrom(follower1)
-                .where(follower1.follower.id.eq(user.getId()))
-                .where(follower1.follow.id.eq(archive.user.id));
+                .where(follower1.follower.eq(user))
+                .where(follower1.follow.eq(archive.user));
 
         return request.getFollow() ? subQuery.exists() : subQuery.notExists();
     }
@@ -76,8 +78,8 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     private BooleanExpression blockFilter(User user) {
         if (user == null) return null;
         return JPAExpressions.selectFrom(block1)
-                .where(block1.user.id.eq(user.getId()))
-                .where(block1.block.id.eq(archive.user.id))
+                .where(block1.user.eq(user))
+                .where(block1.block.eq(archive.user))
                 .notExists();
     }
 
@@ -90,14 +92,14 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     private BooleanExpression tagFilter(ArchiveRetrieveRequest request) {
         if (request.getTag() == null) return null;
         return JPAExpressions.selectFrom(archiveTag)
-                .where(archiveTag.archive.id.eq(archive.id))
+                .where(archiveTag.archive.eq(archive))
                 .where(archiveTag.name.eq(request.getTag()))
                 .notExists();
     }
 
     /** 공개 여부 필터 */
     private BooleanExpression visibilityFilter(User user) {
-        return archive.user.id.eq(user.getId()).or(archive.isPublic.isTrue());
+        return archive.user.eq(user).or(archive.isPublic.isTrue());
     }
 
     /** 페이지네이션 */
@@ -116,7 +118,7 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     public List<Archive> findAllByUser(User principal, User user) {
         return queryFactory
                 .selectFrom(archive)
-                .where(archive.user.id.eq(user.getId()), isMe(principal, user))
+                .where(archive.user.eq(user), isMe(principal, user))
                 .fetch();
     }
 
@@ -136,5 +138,21 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
 
     private BooleanExpression containingQ(String q) {
         return hasText(q) ? archive.name.contains(q) : null;
+    }
+
+    @Override
+    public List<User> findRepipByArchive(Archive source, OffsetPaginateRequest request) {
+        QArchive archive = QArchive.archive;
+        QArchive original = new QArchive("original");
+
+        return queryFactory
+                .select(archive.user)
+                .from(archive)
+                .join(archive.repipArchive, original)
+                .where(archive.repipArchive.eq(source))
+                .offset(request.getPage() * request.getLimit())
+                .limit(request.getLimit())
+                .orderBy(archive.createdAt.desc())
+                .fetch();
     }
 }

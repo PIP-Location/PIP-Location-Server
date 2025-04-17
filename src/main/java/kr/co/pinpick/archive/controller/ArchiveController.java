@@ -12,6 +12,7 @@ import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
+import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.entity.User;
@@ -122,10 +123,11 @@ public class ArchiveController {
     @ApiResponse(responseCode = "200")
     @GetMapping("{archiveId}/like")
     public ResponseEntity<UserCollectResponse> getLike(
-            @AuthenticationPrincipal User principal,
-            @PathVariable(name = "archiveId") Long archiveId
+            @AuthenticationPrincipal User ignoredPrincipal,
+            @PathVariable(name = "archiveId") Long archiveId,
+            @ModelAttribute OffsetPaginateRequest request
     ) {
-        return ResponseEntity.ok(archiveLikeService.getLike(principal, archiveId));
+        return ResponseEntity.ok(archiveLikeService.getLike(archiveId, request));
     }
 
     @Operation(summary = "아카이브 좋아요")
@@ -152,7 +154,6 @@ public class ArchiveController {
     //endregion
 
     //region 리핍
-    //TODO 리핍 기능 개발
     @Operation(summary = "리핍")
     @ApiResponse(responseCode = "201")
     @PostMapping("{archiveId}/repip")
@@ -171,9 +172,10 @@ public class ArchiveController {
     @GetMapping("{archiveId}/repip")
     public ResponseEntity<UserCollectResponse> getRepip(
             @AuthenticationPrincipal User ignorePrincipal,
-            @PathVariable(name = "archiveId") Long archiveId
+            @PathVariable(name = "archiveId") Long archiveId,
+            @ModelAttribute OffsetPaginateRequest request
     ) {
-        return ResponseEntity.ok(archiveService.getRepip(archiveId));
+        return ResponseEntity.ok(archiveService.getRepip(archiveId, request));
     }
     //endregion
 }

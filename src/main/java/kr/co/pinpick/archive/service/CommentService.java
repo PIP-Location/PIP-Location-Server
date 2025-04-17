@@ -5,9 +5,9 @@ import kr.co.pinpick.archive.dto.response.CommentDetailResponse;
 import kr.co.pinpick.archive.dto.response.CommentResponse;
 import kr.co.pinpick.archive.dto.request.CreateCommentRequest;
 import kr.co.pinpick.archive.entity.ArchiveComment;
-import kr.co.pinpick.archive.repository.ArchiveComment.ArchiveCommentRepository;
+import kr.co.pinpick.archive.repository.archiveComment.ArchiveCommentRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
-import kr.co.pinpick.common.dto.request.PaginateRequest;
+import kr.co.pinpick.common.dto.request.NoOffsetPaginateRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentCollectResponse get(Long archiveId, PaginateRequest request) {
+    public CommentCollectResponse get(Long archiveId, NoOffsetPaginateRequest request) {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         var comments = archiveCommentRepository.findByArchiveAndParentIsNull(archive, request);
         return CommentCollectResponse.builder()

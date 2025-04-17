@@ -47,7 +47,7 @@ public class FolderController {
 
     @Operation(summary = "아카이브 폴더에 등록")
     @ApiResponse(responseCode = "204")
-    @PostMapping("/{folderId}/archives/{archiveId}")
+    @PostMapping("{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> addArchiveToFolder(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
@@ -59,7 +59,7 @@ public class FolderController {
 
     @Operation(summary = "아카이브 폴더에서 삭제")
     @ApiResponse(responseCode = "204")
-    @DeleteMapping("/{folderId}/archives/{archiveId}")
+    @DeleteMapping("{folderId}/archives/{archiveId}")
     public ResponseEntity<Void> removeArchiveFromFolder(
             @AuthenticationPrincipal User ignorePrincipal,
             @PathVariable(name = "folderId") Long folderId,
@@ -71,7 +71,7 @@ public class FolderController {
 
     @Operation(summary = "폴더 공개/비공개 전환")
     @ApiResponse(responseCode = "200")
-    @PatchMapping("/{folderId}/public/{isPublic}")
+    @PatchMapping("{folderId}/public/{isPublic}")
     public ResponseEntity<Boolean> changeIsPublic(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
@@ -82,7 +82,7 @@ public class FolderController {
 
     @Operation(summary = "폴더 삭제")
     @ApiResponse(responseCode = "204")
-    @DeleteMapping("/{folderId}")
+    @DeleteMapping("{folderId}")
     public ResponseEntity<Void> deleteFolder(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId

@@ -1,6 +1,5 @@
-package kr.co.pinpick.archive.repository.ArchiveComment;
+package kr.co.pinpick.archive.repository.archiveComment;
 
-import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveComment;
 import kr.co.pinpick.common.error.EntityNotFoundException;
 import kr.co.pinpick.common.error.ErrorCode;

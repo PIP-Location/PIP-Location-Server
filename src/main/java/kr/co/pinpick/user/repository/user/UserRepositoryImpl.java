@@ -32,14 +32,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     private BooleanExpression exceptMe(User principal) {
-        return user.id.ne(principal.getId());
+        return user.ne(principal);
     }
 
     private BooleanExpression exceptBlock(User principal) {
         return JPAExpressions
                 .selectFrom(block1)
-                .where(block1.user.id.eq(principal.getId()))
-                .where(block1.block.id.eq(user.id))
+                .where(block1.user.eq(principal))
+                .where(block1.block.eq(user))
                 .notExists();
     }
 }
