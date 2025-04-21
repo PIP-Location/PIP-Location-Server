@@ -3,13 +3,14 @@ package kr.co.pinpick.archive;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
-import kr.co.pinpick.common.error.ErrorResponse;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 
 import java.io.InputStream;
@@ -41,10 +42,10 @@ public class ArchiveSteps {
                 .extract().as(ArchiveDetailResponse.class);
     }
 
-    public static ErrorResponse failCreateArchiveBecauseValidation(String token, CreateArchiveRequest request, InputStream... files) {
+    public static BaseResponse<Void> failCreateArchiveBecauseValidation(String token, CreateArchiveRequest request, InputStream... files) {
         return createArchive(token, request, files)
                 .statusCode(400)
-                .extract().as(ErrorResponse.class);
+                .extract().as(BaseResponse.class);
     }
 
     public static ArchiveCollectResponse retrieve(String token, ArchiveRetrieveRequest request) {
@@ -92,7 +93,7 @@ public class ArchiveSteps {
             .extract().as(Boolean.class);
     }
 
-    public static ErrorResponse failChangeIsPublic(String token, long archiveId, boolean isPublic) {
+    public static BaseResponse<Void> failChangeIsPublic(String token, long archiveId, boolean isPublic) {
         return RestAssured
                 .given().log().all()
                 .when()
@@ -100,7 +101,7 @@ public class ArchiveSteps {
                 .patch("/api/archives/{archiveId}/public/{isPublic}", archiveId, isPublic)
                 .then().log().all()
                 .statusCode(401)
-                .extract().as(ErrorResponse.class);
+                .extract().as(new TypeRef<BaseResponse<Void>>() {});
     }
 
     public static void successChangeIsPublic(String token, long archiveId, boolean isPublic) {
@@ -125,7 +126,7 @@ public class ArchiveSteps {
                 .extract().as(ArchiveDetailResponse.class);
     }
 
-    public static ErrorResponse failRetrieveById(String token, long archiveId) {
+    public static BaseResponse<Void> failRetrieveById(String token, long archiveId) {
         return RestAssured
                 .given().log().all()
                 .when()
@@ -133,7 +134,7 @@ public class ArchiveSteps {
                 .get("/api/archives/{archiveId}", archiveId)
                 .then().log().all()
                 .statusCode(404)
-                .extract().as(ErrorResponse.class);
+                .extract().as(new TypeRef<BaseResponse<Void>>() {});
     }
 
     public static void successDeleteArchive(String token, long archiveId) {
@@ -147,7 +148,7 @@ public class ArchiveSteps {
             .extract();
     }
 
-    public static ErrorResponse failDeleteArchive(String token, long archiveId) {
+    public static BaseResponse<Void> failDeleteArchive(String token, long archiveId) {
         return RestAssured
                 .given().log().all()
                 .when()
@@ -155,6 +156,6 @@ public class ArchiveSteps {
                 .delete("/api/archives/{archiveId}", archiveId)
                 .then().log().all()
                 .statusCode(401)
-                .extract().as(ErrorResponse.class);
+                .extract().as(new TypeRef<BaseResponse<Void>>() {});
     }
 }

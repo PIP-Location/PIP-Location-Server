@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.LoginRequest;
 import kr.co.pinpick.user.dto.request.SignupRequest;
 import kr.co.pinpick.user.dto.response.TokenResponse;
@@ -27,20 +28,21 @@ public class TestAuthController {
     @Operation(summary = "테스트 로그인")
     @PostMapping("/testLogin")
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<TokenResponse> testLogin(
+    public ResponseEntity<BaseResponse<TokenResponse>> testLogin(
             @RequestBody LoginRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(authService.testLogin(request));
+        TokenResponse response = authService.testLogin(request);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 
     @Operation(summary = "회원가입")
     @PostMapping("/signUp")
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> signUp(
+    public ResponseEntity<BaseResponse<Long>> signUp(
             @RequestBody @Valid SignupRequest request
     ) {
+        Long userId = authService.signUp(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authService.signUp(request));
+                .body(BaseResponse.success(userId));
     }
 }

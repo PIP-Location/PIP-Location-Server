@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.common.oauth.GoogleRequestBodyFactory;
 import kr.co.pinpick.common.oauth.KakaoRequestBodyFactory;
 import kr.co.pinpick.user.dto.request.SocialLoginRequest;
@@ -26,42 +27,42 @@ public class AuthUserController {
     @Operation(summary = "카카오 로그인")
     @ApiResponse(responseCode = "200")
     @PostMapping("/kakao/login")
-    public ResponseEntity<SocialLoginResponse> kakaoLogin(
+    public ResponseEntity<BaseResponse<SocialLoginResponse>> kakaoLogin(
             @RequestBody SocialLoginRequest requestDto
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(service.login(requestDto.getAccessToken(), kakaoRequestBodyFactory));
+                .body(BaseResponse.success(service.login(requestDto.getAccessToken(), kakaoRequestBodyFactory)));
     }
 
     @Operation(summary = "구글 로그인")
     @ApiResponse(responseCode = "200")
     @PostMapping("/google/login")
-    public ResponseEntity<SocialLoginResponse> googleLogin(
+    public ResponseEntity<BaseResponse<SocialLoginResponse>> googleLogin(
             @RequestBody SocialLoginRequest requestDto
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(service.login(requestDto.getAccessToken(), googleRequestBodyFactory));
+                .body(BaseResponse.success(service.login(requestDto.getAccessToken(), googleRequestBodyFactory)));
     }
 
-    @Operation(summary = "카카오 로그인")
+    @Operation(summary = "카카오 로그인 콜백")
     @ApiResponse(responseCode = "200")
     @GetMapping("/user/kakao/callback")
-    public ResponseEntity<SocialLoginResponse> kakaoLogin(
+    public ResponseEntity<BaseResponse<SocialLoginResponse>> kakaoLogin(
             @RequestParam("code") String code
     ) throws JsonProcessingException {
         String accessToken = service.getToken(code, kakaoRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(service.login(accessToken, kakaoRequestBodyFactory));
+                .body(BaseResponse.success(service.login(accessToken, kakaoRequestBodyFactory)));
     }
 
-    @Operation(summary = "구글 로그인")
+    @Operation(summary = "구글 로그인 콜백")
     @ApiResponse(responseCode = "200")
     @GetMapping("/user/google/callback")
-    public ResponseEntity<SocialLoginResponse> googleLogin(
+    public ResponseEntity<BaseResponse<SocialLoginResponse>> googleLogin(
             @RequestParam("code") String code
     ) throws JsonProcessingException {
         String accessToken = service.getToken(code, googleRequestBodyFactory);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(service.login(accessToken, googleRequestBodyFactory));
+                .body(BaseResponse.success(service.login(accessToken, googleRequestBodyFactory)));
     }
 }

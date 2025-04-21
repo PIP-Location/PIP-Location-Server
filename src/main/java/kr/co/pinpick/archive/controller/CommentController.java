@@ -10,6 +10,7 @@ import kr.co.pinpick.archive.dto.response.CommentResponse;
 import kr.co.pinpick.archive.dto.request.CreateCommentRequest;
 import kr.co.pinpick.archive.service.CommentService;
 import kr.co.pinpick.common.dto.request.NoOffsetPaginateRequest;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,47 +28,47 @@ public class CommentController {
     @Operation(summary = "댓글 작성")
     @ApiResponse(responseCode = "201")
     @PostMapping
-    public ResponseEntity<CommentResponse> create(
+    public ResponseEntity<BaseResponse<CommentResponse>> create(
             @AuthenticationPrincipal User principal,
             @RequestBody @Valid CreateCommentRequest request,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.create(principal, archiveId, request, null));
+                .body(BaseResponse.success(service.create(principal, archiveId, request, null)));
     }
 
     @Operation(summary = "대댓글 작성")
     @ApiResponse(responseCode = "201")
     @PostMapping("{commentId}")
-    public ResponseEntity<CommentResponse> createSub(
+    public ResponseEntity<BaseResponse<CommentResponse>> createSub(
             @AuthenticationPrincipal User principal,
             @RequestBody @Valid CreateCommentRequest request,
             @PathVariable(name = "archiveId") Long archiveId,
             @PathVariable(name = "commentId") Long commendId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.create(principal, archiveId, request, commendId));
+                .body(BaseResponse.success(service.create(principal, archiveId, request, commendId)));
     }
 
     @Operation(summary = "조회")
     @ApiResponse(responseCode = "200")
     @GetMapping
-    public ResponseEntity<CommentCollectResponse> get(
+    public ResponseEntity<BaseResponse<CommentCollectResponse>> get(
             @AuthenticationPrincipal User ignoredPrincipal,
             @PathVariable(name = "archiveId") Long archiveId,
             @ModelAttribute NoOffsetPaginateRequest request
     ) {
-        return ResponseEntity.ok(service.get(archiveId, request));
+        return ResponseEntity.ok(BaseResponse.success(service.get(archiveId, request)));
     }
 
     @Operation(summary = "대댓글 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{commentId}")
-    public ResponseEntity<CommentDetailResponse> find(
+    public ResponseEntity<BaseResponse<CommentDetailResponse>> find(
             @AuthenticationPrincipal User ignoredPrincipal,
             @PathVariable(name = "archiveId") Long ignoreArchiveId,
             @PathVariable(name = "commentId") Long commentId
     ) {
-        return ResponseEntity.ok(service.find(commentId));
+        return ResponseEntity.ok(BaseResponse.success(service.find(commentId)));
     }
 }

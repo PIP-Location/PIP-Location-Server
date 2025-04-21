@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
@@ -27,22 +28,25 @@ public class FolderController {
     @Operation(summary = "폴더 생성")
     @ApiResponse(responseCode = "201")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<FolderResponse> create(
+    public ResponseEntity<BaseResponse<FolderResponse>> create(
             @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
             @RequestPart(required = false, name = "attach") MultipartFile attach
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(principal, request, attach));
+        FolderResponse response = service.create(principal, request, attach);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.success(response));
     }
 
     @Operation(summary = "폴더 리스트 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("users/{userId}")
-    public ResponseEntity<FolderCollectResponse> getFolderList(
+    public ResponseEntity<BaseResponse<FolderCollectResponse>> getFolderList(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
-        return ResponseEntity.ok(service.getFolderList(principal, userId));
+        FolderCollectResponse response = service.getFolderList(principal, userId);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
@@ -72,12 +76,13 @@ public class FolderController {
     @Operation(summary = "폴더 공개/비공개 전환")
     @ApiResponse(responseCode = "200")
     @PatchMapping("{folderId}/public/{isPublic}")
-    public ResponseEntity<Boolean> changeIsPublic(
+    public ResponseEntity<BaseResponse<Boolean>> changeIsPublic(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        return ResponseEntity.ok(service.changeIsPublic(principal, folderId, isPublic));
+        Boolean result = service.changeIsPublic(principal, folderId, isPublic);
+        return ResponseEntity.ok(BaseResponse.success(result));
     }
 
     @Operation(summary = "폴더 삭제")

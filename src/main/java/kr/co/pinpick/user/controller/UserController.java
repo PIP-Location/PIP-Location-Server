@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserSearchResponse;
@@ -32,41 +33,42 @@ public class UserController {
     @Operation(summary = "회원 검색")
     @ApiResponse(responseCode = "200")
     @GetMapping("search")
-    public ResponseEntity<UserSearchResponse> search(
+    public ResponseEntity<BaseResponse<UserSearchResponse>> search(
             @AuthenticationPrincipal User principal,
             @ModelAttribute SearchRequest request
     ) {
-        return ResponseEntity.ok(userService.search(principal, request));
+        return ResponseEntity.ok(BaseResponse.success(userService.search(principal, request)));
     }
 
     @Operation(summary = "로그인된 회원 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("@me")
-    public ResponseEntity<UserDetailResponse> me(
+    public ResponseEntity<BaseResponse<UserDetailResponse>> me(
             @AuthenticationPrincipal User principal
     ) {
-        return ResponseEntity.ok(userService.find(principal, principal.getId()));
+        return ResponseEntity.ok(BaseResponse.success(userService.find(principal, principal.getId())));
     }
+
     @Operation(summary = "회원 상세 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("{userId}")
-    public ResponseEntity<UserDetailResponse> getUserDetail(
+    public ResponseEntity<BaseResponse<UserDetailResponse>> getUserDetail(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
-        return ResponseEntity.ok(userService.find(principal, userId));
+        return ResponseEntity.ok(BaseResponse.success(userService.find(principal, userId)));
     }
     //endregion
 
     @Operation(summary = "회원정보 수정")
     @ApiResponse(responseCode = "200")
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<UserDetailResponse> update(
+    public ResponseEntity<BaseResponse<UserDetailResponse>> update(
             @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
             @RequestPart(required = false, name = "attaches") MultipartFile profileImage
     ) {
-        return ResponseEntity.ok(userService.update(principal, request, profileImage));
+        return ResponseEntity.ok(BaseResponse.success(userService.update(principal, request, profileImage)));
     }
 
     //region 차단
