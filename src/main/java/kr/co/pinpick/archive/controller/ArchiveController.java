@@ -163,7 +163,7 @@ public class ArchiveController {
             @PathVariable(name = "archiveId") long archiveId,
             @RequestPart(value = "request", name = "request") @Valid RepipArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
-    ) {
+    ) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(BaseResponse.success(archiveService.repip(principal, archiveId, request, attaches)));
     }

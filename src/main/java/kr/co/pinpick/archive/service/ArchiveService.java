@@ -8,6 +8,7 @@ import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
+import kr.co.pinpick.archive.entity.ArchiveAttach;
 import kr.co.pinpick.archive.entity.ArchiveTag;
 import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
@@ -17,6 +18,8 @@ import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
+import kr.co.pinpick.common.extension.FileExtension;
+import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
 import kr.co.pinpick.user.entity.User;
@@ -25,12 +28,14 @@ import kr.co.pinpick.user.repository.FolderRepository;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -40,6 +45,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
+@ExtensionMethod(FileExtension.class)
 public class ArchiveService {
     private final ArchiveRepository archiveRepository;
     private final ArchiveTagRepository archiveTagRepository;
@@ -49,9 +55,10 @@ public class ArchiveService {
     private final FolderRepository folderRepository;
     private final FolderArchiveRepository folderArchiveRepository;
     private final UserRepository userRepository;
+    private final IStorageManager storageManager;
 
     @Transactional
-    public ArchiveDetailResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveDetailResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) throws IOException {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }
@@ -70,7 +77,7 @@ public class ArchiveService {
 
         archiveRepository.save(archive);
 
-        // TODO: Amazon S3 save attaches
+        // 첨부 생성
         saveArchiveAttaches(archive, attaches);
 
         // 태그 저장
@@ -79,8 +86,23 @@ public class ArchiveService {
         return ArchiveDetailResponse.fromEntity(archive, false, false);
     }
 
-    private void saveArchiveAttaches(Archive archive, List<MultipartFile> attaches) {
-        archive.setArchiveAttaches(new ArrayList<>());
+    private void saveArchiveAttaches(Archive archive, List<MultipartFile> attaches) throws IOException {
+        // 첨부 생성
+        List<ArchiveAttach> attachEntities = new ArrayList<>();
+        for (byte i = 0; i < attaches.size(); i++) {
+            MultipartFile o = attaches.get(i);
+            var size = o.getImageSize();
+            ArchiveAttach build = ArchiveAttach.builder()
+                    .name(o.getOriginalFilename())
+                    .path(storageManager.upload(o, "archive"))
+                    .width(size.getLeft())
+                    .height(size.getRight())
+                    .sequence(i)
+                    .archive(archive)
+                    .build();
+            attachEntities.add(build);
+        }
+        archive.setArchiveAttaches(attachEntities);
     }
 
     private void saveArchiveTag(Archive archive, List<CreateTagRequest> tags) {
@@ -199,7 +221,7 @@ public class ArchiveService {
     }
 
     @Transactional
-    public ArchiveDetailResponse repip(User principal, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) {
+    public ArchiveDetailResponse repip(User principal, Long archiveId, RepipArchiveRequest request, List<MultipartFile> attaches) throws IOException {
         if (attaches == null) {
             attaches = new ArrayList<>();
         }

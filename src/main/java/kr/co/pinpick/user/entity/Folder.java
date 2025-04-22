@@ -23,6 +23,8 @@ public class Folder extends BaseEntity {
     @NotNull
     private String name;
 
+    private String folderImagePath;
+
     @NotNull
     @Column(name = "is_public", nullable = false)
     @Setter

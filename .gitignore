@@ -7,6 +7,7 @@ build/
 /src/main/generated/**
 /src/main/resources/application-secret.yml
 /src/main/resources/application-oauth.yml
+/src/main/resources/application-storage.yml
 
 ### STS ###
 .apt_generated

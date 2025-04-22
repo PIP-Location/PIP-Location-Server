@@ -3,7 +3,9 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import kr.co.pinpick.archive.entity.listener.ArchiveAttachListener;
 import lombok.*;
+import org.springframework.context.event.EventListener;
 
 @Getter
 @Setter
@@ -12,6 +14,7 @@ import lombok.*;
 @Table(name = "archive_attaches")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(ArchiveAttachListener.class)
 public class ArchiveAttach {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

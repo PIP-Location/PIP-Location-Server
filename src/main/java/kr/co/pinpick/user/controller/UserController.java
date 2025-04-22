@@ -20,6 +20,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -67,7 +69,7 @@ public class UserController {
             @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
             @RequestPart(required = false, name = "attaches") MultipartFile profileImage
-    ) {
+    ) throws IOException {
         return ResponseEntity.ok(BaseResponse.success(userService.update(principal, request, profileImage)));
     }
 

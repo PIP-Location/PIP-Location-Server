@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/folders")
@@ -32,10 +34,9 @@ public class FolderController {
             @AuthenticationPrincipal User principal,
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
             @RequestPart(required = false, name = "attach") MultipartFile attach
-    ) {
-        FolderResponse response = service.create(principal, request, attach);
+    ) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(BaseResponse.success(response));
+                .body(BaseResponse.success(service.create(principal, request, attach)));
     }
 
     @Operation(summary = "폴더 리스트 조회")
@@ -45,8 +46,7 @@ public class FolderController {
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
-        FolderCollectResponse response = service.getFolderList(principal, userId);
-        return ResponseEntity.ok(BaseResponse.success(response));
+        return ResponseEntity.ok(BaseResponse.success(service.getFolderList(principal, userId)));
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
@@ -81,8 +81,7 @@ public class FolderController {
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "isPublic") boolean isPublic
     ) {
-        Boolean result = service.changeIsPublic(principal, folderId, isPublic);
-        return ResponseEntity.ok(BaseResponse.success(result));
+        return ResponseEntity.ok(BaseResponse.success(service.changeIsPublic(principal, folderId, isPublic)));
     }
 
     @Operation(summary = "폴더 삭제")

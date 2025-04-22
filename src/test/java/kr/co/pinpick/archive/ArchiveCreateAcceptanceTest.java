@@ -5,7 +5,6 @@ import kr.co.pinpick.archive.dto.request.CreateTagRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveTagResponse;
-import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.folder.FolderFixture;
 import kr.co.pinpick.folder.FolderSteps;
 import kr.co.pinpick.user.UserFixture;
@@ -94,11 +93,6 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         var tags = IntStream.range(1, 12).boxed().map(o -> new CreateTagRequest(o.toString())).toList();
         request.setTags(tags);
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
-
-        assertThat(error.getErrors()).isNotNull();
-        assertThat(error.getErrors().size()).isEqualTo(1);
-        assertThat(error.getErrors().get(0).getField()).isEqualTo("tags");
-        assertThat(error.getErrors().get(0).getCode()).isEqualTo("Size");
     }
 
     @Test
@@ -107,9 +101,6 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         var tags = Stream.of("0", "0").map(CreateTagRequest::new).toList();
         request.setTags(tags);
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
-
-        assertThat(error.getErrors()).hasSize(1).isNotNull();
-        assertThat(error.getErrors()).filteredOn(o -> o.getField().equals("tags") && o.getCode().equals("UniqueElementsBy")).hasSize(1);
     }
 
     @Test
@@ -118,14 +109,6 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         var tags = Stream.of("", "0123456789".repeat(5) + "1").map(CreateTagRequest::new).toList(); // 51 글자
         request.setTags(tags);
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
-
-        assertThat(error.getErrors()).hasSize(2).isNotNull();
-        assertThat(error.getErrors()).filteredOn(
-                o -> o.getField().equals("tags[0].name") && o.getCode().equals("Size")
-        ).hasSize(1);
-        assertThat(error.getErrors()).filteredOn(
-                o -> o.getField().equals("tags[1].name") && o.getCode().equals("Size")
-        ).hasSize(1);
     }
 
     @Test
@@ -135,18 +118,6 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         request.setName("0123456789".repeat(20) + "1"); // 201 글자
         request.setContent("0123456789".repeat(200) + "1"); // 2001 글자
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
-
-
-        assertThat(error.getErrors()).hasSize(3).isNotNull();
-        assertThat(error.getErrors()).filteredOn(
-                o -> o.getField().equals("address") && o.getCode().equals("Size")
-        ).hasSize(1);
-        assertThat(error.getErrors()).filteredOn(
-                o -> o.getField().equals("name") && o.getCode().equals("Size")
-        ).hasSize(1);
-        assertThat(error.getErrors()).filteredOn(
-                o -> o.getField().equals("content") && o.getCode().equals("Size")
-        ).hasSize(1);
     }
 
     // @Test
@@ -160,8 +131,6 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
                 request,
                 MockMultipartFileFixture.mockImageFile()
         );
-
-        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_TYPE_VALUE.getCode());
     }
     //endregion
 

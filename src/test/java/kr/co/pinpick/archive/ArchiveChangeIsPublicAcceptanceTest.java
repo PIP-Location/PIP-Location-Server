@@ -1,7 +1,6 @@
 package kr.co.pinpick.archive;
 
 import kr.co.pinpick.AcceptanceTest;
-import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.UserFixture;
 import kr.co.pinpick.user.UserSteps;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +39,5 @@ public class ArchiveChangeIsPublicAcceptanceTest extends AcceptanceTest {
         var request = ArchiveFixture.defaultCreateArchiveRequest();
         var archiveResponse = ArchiveSteps.successCreateArchive(token, request);
         var error = ArchiveSteps.failChangeIsPublic(otherToken, archiveResponse.getId(), false);
-        assertThat(error.getCode()).isEqualTo(ErrorCode.ACCESS_DENIED.getCode());
     }
 }

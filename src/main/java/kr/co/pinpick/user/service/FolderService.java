@@ -4,6 +4,7 @@ import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
+import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -29,16 +31,16 @@ public class FolderService {
     private final FolderArchiveRepository folderArchiveRepository;
     private final FollowerRepository followerRepository;
     private final ArchiveRepository archiveRepository;
+    private final IStorageManager storageManager;
 
     @Transactional
-    public FolderResponse create(User principal, CreateFolderRequest request, MultipartFile attach) {
+    public FolderResponse create(User principal, CreateFolderRequest request, MultipartFile attach) throws IOException {
         var folder = Folder.builder()
                 .user(principal)
                 .name(request.getName())
+                .folderImagePath(storageManager.upload(attach, "folder"))
                 .isPublic(request.isPublic())
                 .build();
-
-        // TODO: 라이브러리 타이틀 이미지 저장
 
         return FolderResponse.fromEntity(folderRepository.save(folder));
     }
