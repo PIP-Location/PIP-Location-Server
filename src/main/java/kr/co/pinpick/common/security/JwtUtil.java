@@ -1,13 +1,10 @@
 package kr.co.pinpick.common.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.user.entity.User;
-import kr.co.pinpick.user.entity.enumerated.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +28,8 @@ public class JwtUtil {
     @Value("${jwt.expiration_time}")
     private long accessTokenValidTime;
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     private JwtParser parser;
 
     // secretKey 객체 초기화, Base64로 인코딩
@@ -41,8 +40,6 @@ public class JwtUtil {
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
-        claims.put("role", user.getRole().name());
-        claims.put("createdAt", String.valueOf(user.getCreatedAt()));
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(accessTokenValidTime);
         return Jwts.builder()
@@ -54,19 +51,42 @@ public class JwtUtil {
     }
 
     public Authentication getAuthentication(String token) {
-        var claims = parser.parseClaimsJws(token).getBody();
-        var user = User.builder()
-                .id(Long.parseLong(claims.getSubject()))
-                .role(RoleType.valueOf(claims.get("role").toString()))
-                .build();
-        return new UsernamePasswordAuthenticationToken(user , "", user.getAuthorities());
+        var user = userDetailsService.loadUserByUsername(getUserPk(token));
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    public String getUserPk(String token) {
+        return parser.setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return getAuthentication(bearerToken.substring(7));
+            return bearerToken.substring(7);
         }
         return null;
+    }
+
+    public boolean validateToken(String token, HttpServletRequest request) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("exception", ErrorCode.EXPIRED_JWT_EXCEPTION);
+            log.info("Expired JWT Token", e);
+        } catch (MalformedJwtException e) {
+            request.setAttribute("exception", ErrorCode.MALFORMED_JWT_EXCEPTION);
+            log.info("Invalid JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("exception", ErrorCode.UNSUPPORTED_JWT_EXCEPTION);
+            log.info("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("exception", ErrorCode.ILLEGAL_ARGUMENT_EXCEPTION);
+            log.info("JWT claims string is empty.", e);
+        } catch (SignatureException e) {
+            request.setAttribute("exception", ErrorCode.SIGNATURE_JWT_EXCEPTION);
+            log.info("Modulated JWT Token", e);
+        }
+        return false;
     }
 }

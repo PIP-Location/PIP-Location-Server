@@ -1,0 +1,54 @@
+package kr.co.pinpick.user.service;
+
+import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.common.dto.response.PaginateResponse;
+import kr.co.pinpick.common.storage.IStorageManager;
+import kr.co.pinpick.user.dto.request.UpdateUserRequest;
+import kr.co.pinpick.user.dto.response.UserDetailResponse;
+import kr.co.pinpick.user.dto.response.UserSearchResponse;
+import kr.co.pinpick.user.entity.User;
+import kr.co.pinpick.user.repository.FollowerRepository;
+import kr.co.pinpick.user.repository.user.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UserService {
+    private final UserRepository userRepository;
+    private final FollowerRepository followerRepository;
+    private final IStorageManager storageManager;
+
+    @Transactional(readOnly = true)
+    public UserSearchResponse search(User user, SearchRequest request) {
+        var users = userRepository.search(user, request);
+        return UserSearchResponse.builder()
+                .collect(users.stream().map(UserSearchResponse.SearchResponse::fromEntity).toList())
+                .meta(PaginateResponse.builder().count(users.size()).build())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetailResponse find(User principal, Long userId) {
+        var target = userRepository.findByIdOrElseThrow(userId);
+        var isFollow = followerRepository.existsByFollowerAndFollow(principal, target);
+        return UserDetailResponse.fromEntity(target, isFollow);
+    }
+
+    @Transactional
+    public UserDetailResponse update(User user, UpdateUserRequest request, MultipartFile profileImage) throws IOException {
+        user = userRepository.findByIdOrElseThrow(user.getId());
+        user.updateUserInfo(request);
+        user.setProfileImage(storageManager.upload(profileImage, "profile"));
+
+        // TODO: 프로필 이미지 업데이트
+
+        return UserDetailResponse.fromEntity(user, false);
+    }
+}

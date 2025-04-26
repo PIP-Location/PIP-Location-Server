@@ -1,25 +1,25 @@
 package kr.co.pinpick.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import kr.co.pinpick.common.BaseEntity;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "followers")
-@SuperBuilder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Follower extends BaseEntity {
-    @NotNull
+public class Follower {
+    @EmbeddedId
+    private FollowerId id;
+
+    @MapsId("follower")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "follower_id", nullable = false)
     private User follower;
 
-    @NotNull
+    @MapsId("follow")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "follow_id", nullable = false)
     private User follow;

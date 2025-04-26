@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="login-kakao-btn"
+        th:data-client-id="${KAKAO_CLIENT_ID}"
+        th:data-redirect-uri="${KAKAO_REDIRECT_URI}">
+    카카오로 로그인하기
+</button>
+<button id="login-google-btn"
+        th:data-client-id="${GOOGLE_CLIENT_ID}"
+        th:data-redirect-uri="${GOOGLE_REDIRECT_URI}">
+    구글로 로그인하기
+</button>
+</body>
+<script>
+    document.getElementById("login-kakao-btn").onclick = function() {
+        var clientId = this.getAttribute("data-client-id");
+        var redirectUri = this.getAttribute("data-redirect-uri");
+        var url = 'https://kauth.kakao.com/oauth/authorize?client_id=' + clientId + '&redirect_uri=' + redirectUri + '&response_type=code';
+        location.href = url;
+    };
+
+    document.getElementById("login-google-btn").onclick = function() {
+        var clientId = this.getAttribute("data-client-id");
+        var redirectUri = this.getAttribute("data-redirect-uri");
+        var url = 'https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile%20openid&response_type=code&state=security_token%3D138r5719ru3e1%26url%3Dhttps://oauth2.example.com/token&client_id=' + clientId + '&redirect_uri=' + redirectUri;
+        location.href = url;
+    };
+</script>
+</html>

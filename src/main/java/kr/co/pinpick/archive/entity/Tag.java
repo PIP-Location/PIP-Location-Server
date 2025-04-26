@@ -3,7 +3,7 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +20,9 @@ import lombok.experimental.SuperBuilder;
 public class Tag extends BaseEntity {
     @Size(max = 50)
     @NotNull
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
 
     @Column(name = "count")
     private Integer count;
-
 }

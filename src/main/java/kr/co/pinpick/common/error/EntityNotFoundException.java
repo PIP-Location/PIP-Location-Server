@@ -6,6 +6,6 @@ public class EntityNotFoundException extends BusinessException {
     }
 
     public EntityNotFoundException(ErrorCode errorCode, String target) {
-        super(target + " is not found", errorCode);
+        super(errorCode, target + " is not found");
     }
 }

@@ -3,8 +3,9 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +21,12 @@ import java.util.List;
 @Table(name = "archive_comments")
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 public class ArchiveComment extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -43,8 +45,7 @@ public class ArchiveComment extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private List<ArchiveComment> subComments = new ArrayList<>();
 
-    @NotNull
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
 

@@ -1,5 +1,6 @@
 package kr.co.pinpick.config;
 
+import kr.co.pinpick.common.security.AuthenticationEntryPointImpl;
 import kr.co.pinpick.common.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final AuthenticationEntryPointImpl authenticationEntryPoint;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,10 +40,17 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
-                        .requestMatchers(new MvcRequestMatcher(introspector, "/**")).permitAll())
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/api/auth/**")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/api-docs/**")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/swagger-ui.html")).permitAll()
+                        .requestMatchers(new MvcRequestMatcher(introspector, "/user/login")).permitAll()
+                        .anyRequest().authenticated())
                 .headers(headersConfigurer -> headersConfigurer
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
+                        .authenticationEntryPoint(authenticationEntryPoint))
                 .build();
     }
 }

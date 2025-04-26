@@ -3,12 +3,12 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import kr.co.pinpick.common.BaseEntity;
+import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.FolderArchive;
 import kr.co.pinpick.user.entity.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,11 +22,12 @@ import java.util.Set;
 @Table(name = "archives")
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Archive extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @NotNull
     @Column(columnDefinition = "geometry")
@@ -55,7 +56,11 @@ public class Archive extends BaseEntity {
     @NotNull
     @Column(name = "is_public", nullable = false)
     @Setter
-    private Boolean isPublic = false;
+    private Boolean isPublic;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repip_archive_id")
+    private Archive repipArchive;
 
     @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
@@ -65,7 +70,7 @@ public class Archive extends BaseEntity {
     private Set<ArchiveComment> archiveComments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
-    private Set<ArchiveReaction> archiveReactions = new LinkedHashSet<>();
+    private Set<ArchiveLike> archiveLikes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
