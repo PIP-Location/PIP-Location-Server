@@ -62,7 +62,7 @@ public class Archive extends BaseEntity {
     @JoinColumn(name = "repip_archive_id")
     private Archive repipArchive;
 
-    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sequence desc")
     private List<ArchiveAttach> archiveAttaches = new ArrayList<>();
 

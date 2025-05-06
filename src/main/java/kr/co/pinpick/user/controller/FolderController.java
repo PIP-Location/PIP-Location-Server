@@ -1,6 +1,7 @@
 package kr.co.pinpick.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class FolderController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BaseResponse<FolderResponse>> create(
             @AuthenticationPrincipal User principal,
+            @Parameter(description = "CreateFolderRequest")
             @RequestPart(value = "request", name = "request") @Valid CreateFolderRequest request,
             @RequestPart(required = false, name = "attach") MultipartFile attach
     ) throws IOException {

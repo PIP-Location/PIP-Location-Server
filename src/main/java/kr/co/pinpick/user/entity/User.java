@@ -37,7 +37,8 @@ public class User extends BaseEntity implements UserDetails {
 
     private String password;
 
-    private String profileImage;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserAttach userAttach;
 
     @Size(max = 50)
     @Column(name = "description", length = 200)
@@ -85,4 +86,17 @@ public class User extends BaseEntity implements UserDetails {
         this.isAgreeToTermsOfService = request.getIsAgreeToTermsOfService();
         this.isAgreeToPrivacyPolicy = request.getIsAgreeToPrivacyPolicy();
     }
+
+    public void setUserAttach(UserAttach userAttach) {
+        if (this.userAttach != null && this.userAttach != userAttach) {
+            this.userAttach.setUser(null); // 기존 관계 제거
+        }
+
+        this.userAttach = userAttach;
+
+        if (userAttach != null && userAttach.getUser() != this) {
+            userAttach.setUser(this); // 양방향 관계 설정
+        }
+    }
+
 }

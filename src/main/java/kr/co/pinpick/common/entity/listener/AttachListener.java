@@ -1,7 +1,7 @@
-package kr.co.pinpick.archive.entity.listener;
+package kr.co.pinpick.common.entity.listener;
 
 import jakarta.persistence.PreRemove;
-import kr.co.pinpick.archive.entity.ArchiveAttach;
+import kr.co.pinpick.common.entity.AttachEntity;
 import kr.co.pinpick.common.storage.IStorageManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ArchiveAttachListener {
+public class AttachListener {
     private IStorageManager storageManager;
 
     @Autowired
@@ -19,10 +19,10 @@ public class ArchiveAttachListener {
     }
 
     @PreRemove
-    public void delete(ArchiveAttach archiveAttach) {
+    public void delete(AttachEntity attachEntity) {
         log.info("start delete file from storage");
 
-        storageManager.delete(archiveAttach.getPath());
+        storageManager.delete(attachEntity.getPath());
 
         log.info("done delete file from storage");
     }

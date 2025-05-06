@@ -12,7 +12,6 @@ import kr.co.pinpick.archive.entity.ArchiveAttach;
 import kr.co.pinpick.archive.entity.ArchiveTag;
 import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
-import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
@@ -48,7 +47,6 @@ import static java.util.stream.Collectors.toSet;
 @ExtensionMethod(FileExtension.class)
 public class ArchiveService {
     private final ArchiveRepository archiveRepository;
-    private final ArchiveTagRepository archiveTagRepository;
     private final ArchiveLikeRepository archiveLikeRepository;
     private final FollowerRepository followerRepository;
     private final GeometryFactory geometryFactory;
@@ -100,6 +98,7 @@ public class ArchiveService {
                     .sequence(i)
                     .archive(archive)
                     .build();
+
             attachEntities.add(build);
         }
         archive.setArchiveAttaches(attachEntities);
@@ -116,7 +115,6 @@ public class ArchiveService {
                         .build())
                 .collect(toList());
 
-        archiveTagRepository.saveAll(archiveTags);
         archive.setTags(archiveTags);
     }
 

@@ -4,18 +4,22 @@ import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
+import kr.co.pinpick.common.extension.FileExtension;
 import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
 import kr.co.pinpick.user.entity.Folder;
 import kr.co.pinpick.user.entity.FolderArchive;
+import kr.co.pinpick.user.entity.FolderAttach;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
+import kr.co.pinpick.user.repository.FolderAttachRepository;
 import kr.co.pinpick.user.repository.FolderRepository;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +29,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@ExtensionMethod(FileExtension.class)
 public class FolderService {
     private final UserRepository userRepository;
     private final FolderRepository folderRepository;
@@ -32,17 +37,32 @@ public class FolderService {
     private final FollowerRepository followerRepository;
     private final ArchiveRepository archiveRepository;
     private final IStorageManager storageManager;
+    private final FolderAttachRepository folderAttachRepository;
 
     @Transactional
     public FolderResponse create(User principal, CreateFolderRequest request, MultipartFile attach) throws IOException {
         var folder = Folder.builder()
                 .user(principal)
                 .name(request.getName())
-                .folderImagePath(storageManager.upload(attach, "folder"))
                 .isPublic(request.isPublic())
                 .build();
 
-        return FolderResponse.fromEntity(folderRepository.save(folder));
+        folderRepository.save(folder);
+
+        if (attach != null) {
+            FolderAttach build = FolderAttach.builder()
+                    .name(attach.getOriginalFilename())
+                    .path(storageManager.upload(attach, "folder"))
+                    .width(attach.getImageSize().getLeft())
+                    .height(attach.getImageSize().getRight())
+                    .sequence((byte) 0)
+                    .folder(folder)
+                    .build();
+
+            folder.setFolderAttach(build);
+        }
+
+        return FolderResponse.fromEntity(folder);
     }
 
     @Transactional(readOnly = true)

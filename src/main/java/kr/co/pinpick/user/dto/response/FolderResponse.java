@@ -1,6 +1,8 @@
 package kr.co.pinpick.user.dto.response;
 
+import kr.co.pinpick.archive.dto.response.AttachResponse;
 import kr.co.pinpick.user.entity.Folder;
+import kr.co.pinpick.user.entity.FolderAttach;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,8 @@ public class FolderResponse {
 
     private int count;
 
+    private AttachResponse folderAttach;
+
     public static FolderResponse fromEntity(Folder folder) {
         return fromEntity(folder, builder());
     }
@@ -34,6 +38,7 @@ public class FolderResponse {
                 .count(Optional.ofNullable(folder.getFolderArchives())
                         .orElse(Collections.emptyList())
                         .size())
+                .folderAttach(folder.getFolderAttach() != null ? AttachResponse.fromEntity(folder.getFolderAttach()) : null)
                 .build();
     }
 }
