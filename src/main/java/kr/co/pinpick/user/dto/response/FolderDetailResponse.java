@@ -16,12 +16,12 @@ import java.util.Map;
 @AllArgsConstructor
 @SuperBuilder
 public class FolderDetailResponse extends FolderResponse {
-    private List<ArchiveDetailResponse> archiveDetailRespons;
+    private List<ArchiveDetailResponse> archiveDetailResponses;
 
     public static FolderDetailResponse fromEntity(Folder folder, User user, Map<Long, Boolean> isLikeMap) {
         return fromEntity(
                 folder,
-                builder().archiveDetailRespons(folder.getFolderArchives()
+                builder().archiveDetailResponses(folder.getFolderArchives()
                         .stream()
                         .map(fa -> ArchiveDetailResponse.fromEntity(
                                 fa.getArchive(),

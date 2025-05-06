@@ -1,6 +1,7 @@
 package kr.co.pinpick.archive.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -41,6 +42,7 @@ public class ArchiveController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BaseResponse<ArchiveDetailResponse>> create(
             @AuthenticationPrincipal User principal,
+            @Parameter(description = "CreateArchiveRequest")
             @RequestPart(value = "request", name = "request") @Valid CreateArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) throws IOException {

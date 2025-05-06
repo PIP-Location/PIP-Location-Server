@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "folders")
 @Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -23,7 +24,8 @@ public class Folder extends BaseEntity {
     @NotNull
     private String name;
 
-    private String folderImagePath;
+    @OneToOne(mappedBy = "folder", cascade = CascadeType.ALL)
+    private FolderAttach folderAttach;
 
     @NotNull
     @Column(name = "is_public", nullable = false)

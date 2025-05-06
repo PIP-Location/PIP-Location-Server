@@ -1,6 +1,6 @@
 package kr.co.pinpick.archive.dto.response;
 
-import kr.co.pinpick.archive.entity.ArchiveAttach;
+import kr.co.pinpick.common.entity.AttachEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class AttachResponse {
 
     private Integer height;
 
-    public static AttachResponse fromEntity(ArchiveAttach attach) {
+    public static AttachResponse fromEntity(AttachEntity attach) {
         return builder()
                 .name(attach.getName())
                 .path(attach.getPath())

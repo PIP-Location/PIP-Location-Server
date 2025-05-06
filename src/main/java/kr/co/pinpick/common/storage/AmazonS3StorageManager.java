@@ -2,7 +2,6 @@ package kr.co.pinpick.common.storage;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import kr.co.pinpick.common.extension.FileExtension;
@@ -16,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,7 +73,7 @@ public class AmazonS3StorageManager implements IStorageManager {
     public void delete(String filePath) {
         try {
             String[] temp = filePath.split(".com/");
-            String fileKey = temp[1];
+            String fileKey = URLDecoder.decode(temp[1], StandardCharsets.UTF_8);
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileKey));
         } catch (SdkClientException e) {
             e.printStackTrace();

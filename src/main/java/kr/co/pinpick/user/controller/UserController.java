@@ -1,6 +1,7 @@
 package kr.co.pinpick.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -67,10 +68,11 @@ public class UserController {
     @PatchMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BaseResponse<UserDetailResponse>> update(
             @AuthenticationPrincipal User principal,
+            @Parameter(description = "UpdateUserRequest")
             @RequestPart(value = "request", name = "request") @Valid UpdateUserRequest request,
-            @RequestPart(required = false, name = "attaches") MultipartFile profileImage
+            @RequestPart(required = false, name = "attach") MultipartFile attach
     ) throws IOException {
-        return ResponseEntity.ok(BaseResponse.success(userService.update(principal, request, profileImage)));
+        return ResponseEntity.ok(BaseResponse.success(userService.update(principal, request, attach)));
     }
 
     //region 차단

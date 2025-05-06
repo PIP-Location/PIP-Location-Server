@@ -2,14 +2,18 @@ package kr.co.pinpick.user.service;
 
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
+import kr.co.pinpick.common.extension.FileExtension;
 import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
+import kr.co.pinpick.user.entity.UserAttach;
 import kr.co.pinpick.user.repository.FollowerRepository;
+import kr.co.pinpick.user.repository.UserAttachRepository;
 import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +24,15 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@ExtensionMethod(FileExtension.class)
 public class UserService {
     private final UserRepository userRepository;
     private final FollowerRepository followerRepository;
     private final IStorageManager storageManager;
+    private final UserAttachRepository userAttachRepository;
 
     @Transactional(readOnly = true)
+
     public UserSearchResponse search(User user, SearchRequest request) {
         var users = userRepository.search(user, request);
         return UserSearchResponse.builder()
@@ -42,12 +49,29 @@ public class UserService {
     }
 
     @Transactional
-    public UserDetailResponse update(User user, UpdateUserRequest request, MultipartFile profileImage) throws IOException {
+    public UserDetailResponse update(User user, UpdateUserRequest request, MultipartFile attach) throws IOException {
         user = userRepository.findByIdOrElseThrow(user.getId());
         user.updateUserInfo(request);
-        user.setProfileImage(storageManager.upload(profileImage, "profile"));
 
-        // TODO: 프로필 이미지 업데이트
+        if (attach != null) {
+            UserAttach oldAttach = user.getUserAttach();
+            if (oldAttach != null) {
+                user.setUserAttach(null);
+                userAttachRepository.delete(oldAttach);
+                userAttachRepository.flush();
+            }
+
+            var userAttach = UserAttach.builder()
+                    .name(attach.getOriginalFilename())
+                    .path(storageManager.upload(attach, "user"))
+                    .width(attach.getImageSize().getLeft())
+                    .height(attach.getImageSize().getRight())
+                    .sequence((byte) 0)
+                    .user(user)
+                    .build();
+
+            user.setUserAttach(userAttach);
+        }
 
         return UserDetailResponse.fromEntity(user, false);
     }
