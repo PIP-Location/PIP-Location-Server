@@ -52,27 +52,27 @@ public class FolderController {
     }
 
     @Operation(summary = "아카이브 폴더에 등록")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @PostMapping("{folderId}/archives/{archiveId}")
-    public ResponseEntity<Void> addArchiveToFolder(
+    public ResponseEntity<BaseResponse<Void>> addArchiveToFolder(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         service.addArchiveToFolder(principal, folderId, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "아카이브 폴더에서 삭제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{folderId}/archives/{archiveId}")
-    public ResponseEntity<Void> removeArchiveFromFolder(
+    public ResponseEntity<BaseResponse<Void>> removeArchiveFromFolder(
             @AuthenticationPrincipal User ignorePrincipal,
             @PathVariable(name = "folderId") Long folderId,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         service.removeArchiveFromFolder(folderId, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "폴더 공개/비공개 전환")
@@ -87,13 +87,13 @@ public class FolderController {
     }
 
     @Operation(summary = "폴더 삭제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{folderId}")
-    public ResponseEntity<Void> deleteFolder(
+    public ResponseEntity<BaseResponse<Void>> deleteFolder(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId
     ) {
         service.delete(principal, folderId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 }

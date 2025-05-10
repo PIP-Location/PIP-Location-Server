@@ -100,14 +100,14 @@ public class ArchiveController {
     }
 
     @Operation(summary = "아카이브 삭제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{archiveId}")
     public ResponseEntity<BaseResponse<Void>> deleteArchive(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveService.delete(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "공개/비공개 전환")
@@ -134,25 +134,25 @@ public class ArchiveController {
     }
 
     @Operation(summary = "아카이브 좋아요")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @PostMapping("{archiveId}/like")
-    public ResponseEntity<Void> like(
+    public ResponseEntity<BaseResponse<Void>> like(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveLikeService.link(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "아카이브 좋아요 취소")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{archiveId}/like")
-    public ResponseEntity<Void> unlike(
+    public ResponseEntity<BaseResponse<Void>> unlike(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveLikeService.unlink(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
     //endregion
 
