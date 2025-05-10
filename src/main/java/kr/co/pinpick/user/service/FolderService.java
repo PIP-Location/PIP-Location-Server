@@ -7,12 +7,10 @@ import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.common.extension.FileExtension;
 import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
+import kr.co.pinpick.user.dto.request.UpdateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
-import kr.co.pinpick.user.entity.Folder;
-import kr.co.pinpick.user.entity.FolderArchive;
-import kr.co.pinpick.user.entity.FolderAttach;
-import kr.co.pinpick.user.entity.User;
+import kr.co.pinpick.user.entity.*;
 import kr.co.pinpick.user.repository.FolderArchiveRepository;
 import kr.co.pinpick.user.repository.FolderAttachRepository;
 import kr.co.pinpick.user.repository.FolderRepository;
@@ -44,7 +42,7 @@ public class FolderService {
         var folder = Folder.builder()
                 .user(principal)
                 .name(request.getName())
-                .isPublic(request.isPublic())
+                .isPublic(request.getIsPublic())
                 .build();
 
         folderRepository.save(folder);
@@ -108,11 +106,32 @@ public class FolderService {
     }
 
     @Transactional
-    public Boolean changeIsPublic(User principal, Long folderId, boolean isPublic) {
+    public FolderResponse updateFolder(User principal, Long folderId, UpdateFolderRequest request, MultipartFile attach) throws IOException {
         var folder = folderRepository.findByIdOrElseThrow(folderId);
         checkAuthorization(principal, folder);
-        folder.setPublic(isPublic);
-        return folder.isPublic();
+        folder.updateFolder(request);
+
+        if (attach != null) {
+            FolderAttach oldAttach = folder.getFolderAttach();
+            if (oldAttach != null) {
+                folder.setFolderAttach(null);
+                folderAttachRepository.delete(oldAttach);
+                folderAttachRepository.flush();
+            }
+
+            var folderAttach = FolderAttach.builder()
+                    .name(attach.getOriginalFilename())
+                    .path(storageManager.upload(attach, "folder"))
+                    .width(attach.getImageSize().getLeft())
+                    .height(attach.getImageSize().getRight())
+                    .sequence((byte) 0)
+                    .folder(folder)
+                    .build();
+
+            folder.setFolderAttach(folderAttach);
+        }
+
+        return FolderResponse.fromEntity(folder);
     }
 
     @Transactional

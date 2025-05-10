@@ -89,6 +89,6 @@ public class Archive extends BaseEntity {
         this.address = request.getAddress();
         this.name = request.getName();
         this.content = request.getContent();
-        this.isPublic = request.isPublic();
+        this.isPublic = request.getIsPublic();
     }
 }

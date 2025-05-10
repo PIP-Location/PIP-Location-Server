@@ -34,7 +34,7 @@ public class UpdateArchiveRequest {
     private String content;
 
     @Builder.Default
-    private boolean isPublic = true;
+    private Boolean isPublic = true;
 
     @Valid
     @Size(max = 10)

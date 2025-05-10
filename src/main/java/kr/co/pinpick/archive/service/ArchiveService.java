@@ -3,6 +3,7 @@ package kr.co.pinpick.archive.service;
 import kr.co.pinpick.archive.dto.request.*;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
+import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveAttach;
@@ -70,7 +71,7 @@ public class ArchiveService {
                 .address(request.getAddress())
                 .name(request.getName())
                 .content(request.getContent())
-                .isPublic(request.isPublic())
+                .isPublic(request.getIsPublic())
                 .user(principal)
                 .build();
 
@@ -199,7 +200,7 @@ public class ArchiveService {
     }
 
     @Transactional
-    public void updateArchive(User principal, Long archiveId, UpdateArchiveRequest request, List<MultipartFile> attaches) throws IOException {
+    public ArchiveDetailResponse updateArchive(User principal, Long archiveId, UpdateArchiveRequest request, List<MultipartFile> attaches) throws IOException {
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
         checkAuthorization(principal, archive);
         archiveAttachRepository.deleteAll(archive.getArchiveAttaches());
@@ -216,6 +217,8 @@ public class ArchiveService {
 
         // 태그 저장
         saveArchiveTag(archive, request.getTags());
+
+        return ArchiveDetailResponse.fromEntity(archive, false, false);
     }
 
     @Transactional

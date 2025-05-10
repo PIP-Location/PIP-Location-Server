@@ -11,6 +11,7 @@ import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
@@ -103,14 +104,15 @@ public class ArchiveController {
     @Operation(summary = "아카이브 수정")
     @ApiResponse(responseCode = "200")
     @PatchMapping(value = "{archiveId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<BaseResponse<Void>> updateArchive(
+    public ResponseEntity<BaseResponse<ArchiveDetailResponse>> updateArchive(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId,
+            @Parameter(description = "UpdateArchiveRequest")
             @RequestPart(value = "request", name = "request") @Valid UpdateArchiveRequest request,
             @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
     ) throws IOException {
-        archiveService.updateArchive(principal, archiveId, request, attaches);
-        return ResponseEntity.ok(BaseResponse.success(null));
+        return ResponseEntity
+                .ok(BaseResponse.success(archiveService.updateArchive(principal, archiveId, request, attaches)));
     }
 
     @Operation(summary = "아카이브 삭제")
