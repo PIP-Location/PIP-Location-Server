@@ -3,6 +3,7 @@ package kr.co.pinpick.archive.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import kr.co.pinpick.archive.dto.request.UpdateArchiveRequest;
 import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.FolderArchive;
 import kr.co.pinpick.user.entity.User;
@@ -62,7 +63,7 @@ public class Archive extends BaseEntity {
     @JoinColumn(name = "repip_archive_id")
     private Archive repipArchive;
 
-    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
     private List<ArchiveAttach> archiveAttaches = new ArrayList<>();
 
@@ -81,4 +82,13 @@ public class Archive extends BaseEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void updateArchive(UpdateArchiveRequest request) {
+        this.positionX = request.getPositionX();
+        this.positionY = request.getPositionY();
+        this.address = request.getAddress();
+        this.name = request.getName();
+        this.content = request.getContent();
+        this.isPublic = request.isPublic();
+    }
 }

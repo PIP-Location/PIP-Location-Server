@@ -1,15 +1,14 @@
 package kr.co.pinpick.archive.service;
 
-import kr.co.pinpick.archive.dto.request.CreateTagRequest;
-import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
+import kr.co.pinpick.archive.dto.request.*;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
-import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
-import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveAttach;
 import kr.co.pinpick.archive.entity.ArchiveTag;
+import kr.co.pinpick.archive.repository.ArchiveAttachRepository;
+import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
@@ -54,6 +53,8 @@ public class ArchiveService {
     private final FolderArchiveRepository folderArchiveRepository;
     private final UserRepository userRepository;
     private final IStorageManager storageManager;
+    private final ArchiveAttachRepository archiveAttachRepository;
+    private final ArchiveTagRepository archiveTagRepository;
 
     @Transactional
     public ArchiveDetailResponse create(User principal, CreateArchiveRequest request, List<MultipartFile> attaches) throws IOException {
@@ -195,6 +196,26 @@ public class ArchiveService {
                         .fromEntity(fa.getArchive(), !user.getId().equals(fa.getArchive().getId()), isLikeMap.containsKey(fa.getArchive().getId()))).toList())
                 .meta(PaginateResponse.builder().count(folderArchives.size()).build())
                 .build();
+    }
+
+    @Transactional
+    public void updateArchive(User principal, Long archiveId, UpdateArchiveRequest request, List<MultipartFile> attaches) throws IOException {
+        var archive = archiveRepository.findByIdOrElseThrow(archiveId);
+        checkAuthorization(principal, archive);
+        archiveAttachRepository.deleteAll(archive.getArchiveAttaches());
+        archiveTagRepository.deleteAll(archive.getTags());
+        if (attaches == null) {
+            attaches = new ArrayList<>();
+        }
+
+        // 아카이브 수정
+        archive.updateArchive(request);
+
+        // 첨부 생성
+        saveArchiveAttaches(archive, attaches);
+
+        // 태그 저장
+        saveArchiveTag(archive, request.getTags());
     }
 
     @Transactional

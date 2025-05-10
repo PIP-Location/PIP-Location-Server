@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
+import kr.co.pinpick.archive.dto.request.UpdateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
@@ -97,6 +98,19 @@ public class ArchiveController {
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "folderId") Long folderId) {
         return ResponseEntity.ok(BaseResponse.success(archiveService.getByFolder(principal, folderId)));
+    }
+
+    @Operation(summary = "아카이브 수정")
+    @ApiResponse(responseCode = "200")
+    @PatchMapping(value = "{archiveId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<BaseResponse<Void>> updateArchive(
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "archiveId") Long archiveId,
+            @RequestPart(value = "request", name = "request") @Valid UpdateArchiveRequest request,
+            @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
+    ) throws IOException {
+        archiveService.updateArchive(principal, archiveId, request, attaches);
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "아카이브 삭제")
