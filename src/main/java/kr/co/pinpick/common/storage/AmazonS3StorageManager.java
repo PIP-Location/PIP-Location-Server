@@ -42,7 +42,7 @@ public class AmazonS3StorageManager implements IStorageManager {
         String fileName = dirName + "/" + UUID.randomUUID() + "-"+ uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
-        return uploadImageUrl;
+        return URLDecoder.decode(uploadImageUrl, StandardCharsets.UTF_8);
     }
 
     private String putS3(File uploadFile, String fileName) {
@@ -73,8 +73,7 @@ public class AmazonS3StorageManager implements IStorageManager {
     public void delete(String filePath) {
         try {
             String[] temp = filePath.split(".com/");
-            String fileKey = URLDecoder.decode(temp[1], StandardCharsets.UTF_8);
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileKey));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, temp[1]));
         } catch (SdkClientException e) {
             e.printStackTrace();
         }

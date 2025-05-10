@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Setter
-public class CreateArchiveRequest {
+public class UpdateArchiveRequest {
     @NotNull
     private double positionX;
 

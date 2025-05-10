@@ -77,49 +77,49 @@ public class UserController {
 
     //region 차단
     @Operation(summary = "회원 차단")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @PostMapping("{userId}/block")
-    public ResponseEntity<Void> block(
+    public ResponseEntity<BaseResponse<Void>> block(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
         userBlockService.link(principal, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "회원 차단해제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{userId}/unblock")
-    public ResponseEntity<Void> unblock(
+    public ResponseEntity<BaseResponse<Void>> unblock(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
         userBlockService.unlink(principal, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
     //endregion
 
     //region 팔로우
     @Operation(summary = "회원 팔로우")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @PostMapping("{userId}/follow")
-    public ResponseEntity<Void> follow(
+    public ResponseEntity<BaseResponse<Void>> follow(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
         userFollowService.link(principal, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "회원 팔로우 해제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{userId}/unfollow")
-    public ResponseEntity<Void> unfollow(
+    public ResponseEntity<BaseResponse<Void>> unfollow(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "userId") Long userId
     ) {
         userFollowService.unlink(principal, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
     //endregion
 }

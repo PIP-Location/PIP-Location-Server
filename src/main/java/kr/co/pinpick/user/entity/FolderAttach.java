@@ -23,4 +23,11 @@ public class FolderAttach extends AttachEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "folder_id", nullable = false)
     private Folder folder;
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
+        if (folder != null && folder.getFolderAttach() != this) {
+            folder.setFolderAttach(this); // 양방향 유지
+        }
+    }
 }

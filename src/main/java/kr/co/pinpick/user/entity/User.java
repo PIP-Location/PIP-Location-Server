@@ -98,5 +98,4 @@ public class User extends BaseEntity implements UserDetails {
             userAttach.setUser(this); // 양방향 관계 설정
         }
     }
-
 }

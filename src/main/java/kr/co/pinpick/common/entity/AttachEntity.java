@@ -28,9 +28,9 @@ public abstract class AttachEntity {
     @Column(name = "sequence", nullable = false, length = 200)
     private byte sequence;
 
-    @Size(max = 200)
+    @Size(max = 500)
     @NotNull
-    @Column(name = "path", nullable = false, length = 200)
+    @Column(name = "path", nullable = false, length = 500)
     private String path;
 
     @Column(name = "width")

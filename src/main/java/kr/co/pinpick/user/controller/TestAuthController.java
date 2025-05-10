@@ -1,8 +1,6 @@
 package kr.co.pinpick.user.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.LoginRequest;
@@ -20,14 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
-@Tag(name = "인증 API")
+@Hidden
 public class TestAuthController {
 
     private final TestAuthService authService;
 
-    @Operation(summary = "테스트 로그인")
     @PostMapping("/testLogin")
-    @ApiResponse(responseCode = "200")
     public ResponseEntity<BaseResponse<TokenResponse>> testLogin(
             @RequestBody LoginRequest request
     ) {
@@ -35,9 +31,7 @@ public class TestAuthController {
         return ResponseEntity.ok(BaseResponse.success(response));
     }
 
-    @Operation(summary = "회원가입")
     @PostMapping("/signUp")
-    @ApiResponse(responseCode = "201")
     public ResponseEntity<BaseResponse<Long>> signUp(
             @RequestBody @Valid SignupRequest request
     ) {

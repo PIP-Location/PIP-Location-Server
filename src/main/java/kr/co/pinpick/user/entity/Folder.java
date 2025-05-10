@@ -3,6 +3,7 @@ package kr.co.pinpick.user.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import kr.co.pinpick.common.entity.BaseEntity;
+import kr.co.pinpick.user.dto.request.UpdateFolderRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -29,10 +30,26 @@ public class Folder extends BaseEntity {
 
     @NotNull
     @Column(name = "is_public", nullable = false)
-    @Setter
     @Builder.Default
     private boolean isPublic = false;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.REMOVE)
     private List<FolderArchive> folderArchives;
+
+    public void setFolderAttach(FolderAttach folderAttach) {
+        if (this.folderAttach != null && this.folderAttach != folderAttach) {
+            this.folderAttach.setFolder(null); // 기존 관계 제거
+        }
+
+        this.folderAttach = folderAttach;
+
+        if (folderAttach != null && folderAttach.getFolder() != this) {
+            folderAttach.setFolder(this); // 양방향 관계 설정
+        }
+    }
+
+    public void updateFolder(UpdateFolderRequest request) {
+        this.name = request.getName();
+        this.isPublic = request.getIsPublic();
+    }
 }

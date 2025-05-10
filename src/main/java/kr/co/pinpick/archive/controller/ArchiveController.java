@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kr.co.pinpick.archive.dto.request.RepipArchiveRequest;
+import kr.co.pinpick.archive.dto.request.UpdateArchiveRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.dto.request.CreateArchiveRequest;
+import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.service.ArchiveLikeService;
 import kr.co.pinpick.archive.service.ArchiveService;
@@ -99,15 +101,29 @@ public class ArchiveController {
         return ResponseEntity.ok(BaseResponse.success(archiveService.getByFolder(principal, folderId)));
     }
 
+    @Operation(summary = "아카이브 수정")
+    @ApiResponse(responseCode = "200")
+    @PatchMapping(value = "{archiveId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<BaseResponse<ArchiveDetailResponse>> updateArchive(
+            @AuthenticationPrincipal User principal,
+            @PathVariable(name = "archiveId") Long archiveId,
+            @Parameter(description = "UpdateArchiveRequest")
+            @RequestPart(value = "request", name = "request") @Valid UpdateArchiveRequest request,
+            @RequestPart(required = false, name = "attaches") List<MultipartFile> attaches
+    ) throws IOException {
+        return ResponseEntity
+                .ok(BaseResponse.success(archiveService.updateArchive(principal, archiveId, request, attaches)));
+    }
+
     @Operation(summary = "아카이브 삭제")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{archiveId}")
     public ResponseEntity<BaseResponse<Void>> deleteArchive(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveService.delete(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "공개/비공개 전환")
@@ -134,25 +150,25 @@ public class ArchiveController {
     }
 
     @Operation(summary = "아카이브 좋아요")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @PostMapping("{archiveId}/like")
-    public ResponseEntity<Void> like(
+    public ResponseEntity<BaseResponse<Void>> like(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveLikeService.link(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "아카이브 좋아요 취소")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "200")
     @DeleteMapping("{archiveId}/like")
-    public ResponseEntity<Void> unlike(
+    public ResponseEntity<BaseResponse<Void>> unlike(
             @AuthenticationPrincipal User principal,
             @PathVariable(name = "archiveId") Long archiveId
     ) {
         archiveLikeService.unlink(principal, archiveId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(BaseResponse.success(null));
     }
     //endregion
 
