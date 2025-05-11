@@ -24,19 +24,16 @@ public class TestAuthController {
     private final TestAuthService authService;
 
     @PostMapping("/testLogin")
-    public ResponseEntity<BaseResponse<TokenResponse>> testLogin(
+    public ResponseEntity<TokenResponse> testLogin(
             @RequestBody LoginRequest request
     ) {
-        TokenResponse response = authService.testLogin(request);
-        return ResponseEntity.ok(BaseResponse.success(response));
+        return ResponseEntity.ok(authService.testLogin(request));
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<BaseResponse<Long>> signUp(
+    public ResponseEntity<Long> signUp(
             @RequestBody @Valid SignupRequest request
     ) {
-        Long userId = authService.signUp(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(BaseResponse.success(userId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(request));
     }
 }

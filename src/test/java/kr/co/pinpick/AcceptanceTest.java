@@ -29,7 +29,7 @@ public class AcceptanceTest {
     private static MySQLContainer<?> mysql;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         databaseCleanup.execute();
 
         RestAssured.port = port;

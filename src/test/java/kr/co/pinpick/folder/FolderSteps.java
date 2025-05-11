@@ -2,7 +2,9 @@ package kr.co.pinpick.folder;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
+import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.CreateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderResponse;
@@ -25,18 +27,18 @@ public class FolderSteps {
                 .post("/api/folders")
                 .then().log().all()
                 .statusCode(201)
-                .extract().as(FolderResponse.class);
+                .extract().as(new TypeRef<BaseResponse<FolderResponse>>() {}).getData();
     }
 
-    public static FolderCollectResponse getFolderList(String token) {
+    public static FolderCollectResponse getFolderList(String token, Long userId) {
         return RestAssured
                 .given().log().all()
                 .when()
                 .auth().oauth2(token)
-                .get("/api/folders")
+                .get("/api/folders/users/{userId}", userId)
                 .then().log().all()
                 .statusCode(200)
-                .extract().as(FolderCollectResponse.class);
+                .extract().as(new TypeRef<BaseResponse<FolderCollectResponse>>() {}).getData();
     }
 
     public static void addArchiveToFolder(String token, long folderId, long archiveId) {
@@ -47,7 +49,7 @@ public class FolderSteps {
             .auth().oauth2(token)
             .post("/api/folders/{folderId}/archives/{archiveId}", folderId, archiveId)
             .then().log().all()
-            .statusCode(204)
+            .statusCode(200)
             .extract();
     }
 
@@ -59,7 +61,7 @@ public class FolderSteps {
             .auth().oauth2(token)
             .delete("/api/folders/{folderId}/archives/{archiveId}", folderId, archiveId)
             .then().log().all()
-            .statusCode(204)
+            .statusCode(200)
             .extract();
     }
 }

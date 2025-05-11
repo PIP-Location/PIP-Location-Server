@@ -5,6 +5,7 @@ import kr.co.pinpick.archive.dto.request.CreateTagRequest;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveTagResponse;
+import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.folder.FolderFixture;
 import kr.co.pinpick.folder.FolderSteps;
 import kr.co.pinpick.user.UserFixture;
@@ -13,6 +14,7 @@ import kr.co.pinpick.user.dto.response.FolderResponse;
 import kr.co.pinpick.util.MockMultipartFileFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
@@ -20,14 +22,19 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
 public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
+    @MockBean
+    IStorageManager storageManager;
+
     String token;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
-//        given(storageManager.put(anyString(), any())).willReturn("test-image-path");
+        given(storageManager.upload(any(), anyString())).willReturn("test-image-path");
         UserSteps.signUp(UserFixture.defaultSignupRequest());
         token = UserSteps.testLogin(UserFixture.defaultLoginRequest()).getAccessToken();
     }
@@ -66,14 +73,14 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         assertThat(archive.getTags().stream().map(ArchiveTagResponse::getName)).isSorted();
 
         // file 이미지 사이즈 검증, S3 저장소 구현 후 활성화
-//        var attaches = archive.getArchiveAttaches();
-//        assertThat(attaches.size()).isEqualTo(3);
-//        assertThat(attaches.get(0).getWidth()).isEqualTo(100);
-//        assertThat(attaches.get(0).getHeight()).isEqualTo(101);
-//        assertThat(attaches.get(1).getWidth()).isEqualTo(200);
-//        assertThat(attaches.get(1).getHeight()).isEqualTo(201);
-//        assertThat(attaches.get(2).getWidth()).isEqualTo(300);
-//        assertThat(attaches.get(2).getHeight()).isEqualTo(301);
+        var attaches = archive.getArchiveAttaches();
+        assertThat(attaches.size()).isEqualTo(3);
+        assertThat(attaches.get(0).getWidth()).isEqualTo(100);
+        assertThat(attaches.get(0).getHeight()).isEqualTo(101);
+        assertThat(attaches.get(1).getWidth()).isEqualTo(200);
+        assertThat(attaches.get(1).getHeight()).isEqualTo(201);
+        assertThat(attaches.get(2).getWidth()).isEqualTo(300);
+        assertThat(attaches.get(2).getHeight()).isEqualTo(301);
     }
 
     @Test
@@ -120,8 +127,7 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
     }
 
-    // @Test
-    // S3 구현 후 활성화
+     @Test
     public void failBecauseInvalidImage() throws IOException {
         var request = ArchiveFixture.defaultCreateArchiveRequest();
         var tags = IntStream.range(1, 5).boxed().map(o -> new CreateTagRequest(o.toString())).toList();

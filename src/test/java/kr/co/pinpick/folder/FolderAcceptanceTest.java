@@ -19,17 +19,23 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class FolderAcceptanceTest extends AcceptanceTest {
     String token;
 
+    Long userId;
+
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
-        UserSteps.signUp(UserFixture.defaultSignupRequest());
+        userId = UserSteps.signUp(UserFixture.defaultSignupRequest());
         token = UserSteps.testLogin(UserFixture.defaultLoginRequest()).getAccessToken();
     }
 
     @Test
     public void createFolderSuccess() throws IOException {
         // given && when
-        FolderResponse response = FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(1), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
+        FolderResponse response = FolderSteps
+                .createFolder(
+                        token, FolderFixture.defaultCreateFolderRequest(1),
+                        MockMultipartFileFixture.mockImageFile(100, 100, "jpeg")
+                );
 
         // then
         assertThat(response.getId()).isNotNull();
@@ -41,11 +47,11 @@ public class FolderAcceptanceTest extends AcceptanceTest {
     public void getFolderListSuccess() throws IOException {
         // given
         for (int i = 1; i <= 5; i++) {
-            FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(i), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
+            FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(i), MockMultipartFileFixture.mockImageFile(100, 100, "jpeg"));
         }
 
         // when
-        List<FolderResponse> folders = FolderSteps.getFolderList(token).getCollect();
+        List<FolderResponse> folders = FolderSteps.getFolderList(token, userId).getCollect();
 
         // then
         assertThat(folders.size()).isEqualTo(5);
@@ -61,7 +67,7 @@ public class FolderAcceptanceTest extends AcceptanceTest {
         // when
         FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse1.getId());
         FolderSteps.addArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse2.getId());
-        List<FolderResponse> folders = FolderSteps.getFolderList(token).getCollect();
+        List<FolderResponse> folders = FolderSteps.getFolderList(token, userId).getCollect();
 
         // then
         assertThat(folders.size()).isEqualTo(1);
@@ -79,10 +85,20 @@ public class FolderAcceptanceTest extends AcceptanceTest {
 
         // when
         FolderSteps.removeArchiveToFolder(token, folderResponse.getId(), archiveDetailResponse1.getId());
-        List<FolderResponse> folders = FolderSteps.getFolderList(token).getCollect();
+        List<FolderResponse> folders = FolderSteps.getFolderList(token, userId).getCollect();
 
         // then
         assertThat(folders.size()).isEqualTo(1);
         assertThat(folders.get(0).getCount()).isEqualTo(1);
+    }
+
+    @Test
+    public void updateFolder() throws IOException {
+
+    }
+
+    @Test
+    public void deleteFolder() throws IOException {
+
     }
 }

@@ -1,6 +1,7 @@
 package kr.co.pinpick.archive;
 
 import kr.co.pinpick.AcceptanceTest;
+import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.folder.FolderFixture;
 import kr.co.pinpick.folder.FolderSteps;
 import kr.co.pinpick.user.UserFixture;
@@ -8,18 +9,25 @@ import kr.co.pinpick.user.UserSteps;
 import kr.co.pinpick.util.MockMultipartFileFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
 public class ArchiveGetByFolderAcceptanceTest extends AcceptanceTest {
+    @MockBean
+    IStorageManager storageManager;
+
     String token;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
-//        given(storageManager.put(anyString(), any())).willReturn("test-image-path");
+        given(storageManager.upload(any(), anyString())).willReturn("test-image-path");
         UserSteps.signUp(UserFixture.defaultSignupRequest());
         token = UserSteps.testLogin(UserFixture.defaultLoginRequest()).getAccessToken();
     }
@@ -77,12 +85,12 @@ public class ArchiveGetByFolderAcceptanceTest extends AcceptanceTest {
         }
 
         var folder = ArchiveSteps.getArchivesWithFolderInfo(token, folder1.getId());
-        assertThat(folder.getArchiveDetailRespons().size()).isEqualTo(5);
+        assertThat(folder.getArchiveDetailResponses().size()).isEqualTo(5);
         for (int i = 1; i <= 5; i++) {
-            assertThat(folder.getArchiveDetailRespons().get(i - 1).getName()).isEqualTo("킨더커피" + i);
-            assertThat(folder.getArchiveDetailRespons().get(i - 1).getContent()).isEqualTo("킨더커피 크렘브륄레 마카롱 맛있어요" + i);
-            assertThat(folder.getArchiveDetailRespons().get(i - 1).getAddress()).isEqualTo("서울특별시 송파구 석촌호수로 135" + i);
-            assertThat(folder.getArchiveDetailRespons().get(i - 1).getTags().size()).isEqualTo(i);
+            assertThat(folder.getArchiveDetailResponses().get(i - 1).getName()).isEqualTo("킨더커피" + i);
+            assertThat(folder.getArchiveDetailResponses().get(i - 1).getContent()).isEqualTo("킨더커피 크렘브륄레 마카롱 맛있어요" + i);
+            assertThat(folder.getArchiveDetailResponses().get(i - 1).getAddress()).isEqualTo("서울특별시 송파구 석촌호수로 135" + i);
+            assertThat(folder.getArchiveDetailResponses().get(i - 1).getTags().size()).isEqualTo(i);
         }
     }
 }

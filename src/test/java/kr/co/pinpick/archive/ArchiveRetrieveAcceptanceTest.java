@@ -18,7 +18,7 @@ public class ArchiveRetrieveAcceptanceTest extends AcceptanceTest {
     Long blockedUserId;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
 
         UserSteps.signUp(UserFixture.defaultSignupRequest());

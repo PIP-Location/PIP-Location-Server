@@ -64,6 +64,18 @@ public class FolderController {
         return ResponseEntity.ok(BaseResponse.success(null));
     }
 
+    @Operation(summary = "아카이브 폴더에서 삭제")
+    @ApiResponse(responseCode = "200")
+    @DeleteMapping("{folderId}/archives/{archiveId}")
+    public ResponseEntity<BaseResponse<Void>> removeArchiveFromFolder(
+            @AuthenticationPrincipal User ignorePrincipal,
+            @PathVariable(name = "folderId") Long folderId,
+            @PathVariable(name = "archiveId") Long archiveId
+    ) {
+        service.removeArchiveFromFolder(folderId, archiveId);
+        return ResponseEntity.ok(BaseResponse.success(null));
+    }
+
     @Operation(summary = "폴더 수정")
     @ApiResponse(responseCode = "200")
     @PatchMapping(value = "{folderId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -75,18 +87,6 @@ public class FolderController {
             @RequestPart(required = false, name = "attach") MultipartFile attach
     ) throws IOException {
         return ResponseEntity.ok(BaseResponse.success(service.updateFolder(principal, folderId, request, attach)));
-    }
-
-    @Operation(summary = "아카이브 폴더에서 삭제")
-    @ApiResponse(responseCode = "200")
-    @DeleteMapping("{folderId}/archives/{archiveId}")
-    public ResponseEntity<BaseResponse<Void>> removeArchiveFromFolder(
-            @AuthenticationPrincipal User ignorePrincipal,
-            @PathVariable(name = "folderId") Long folderId,
-            @PathVariable(name = "archiveId") Long archiveId
-    ) {
-        service.removeArchiveFromFolder(folderId, archiveId);
-        return ResponseEntity.ok(BaseResponse.success(null));
     }
 
     @Operation(summary = "폴더 삭제")

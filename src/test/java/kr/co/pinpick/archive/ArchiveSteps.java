@@ -11,6 +11,7 @@ import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.common.dto.response.BaseResponse;
+import kr.co.pinpick.user.dto.response.FolderCollectResponse;
 import kr.co.pinpick.user.dto.response.FolderDetailResponse;
 
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public class ArchiveSteps {
     public static ArchiveDetailResponse successCreateArchive(String token, CreateArchiveRequest request, InputStream... files) {
         return createArchive(token, request, files)
                 .statusCode(201)
-                .extract().as(ArchiveDetailResponse.class);
+                .extract().as(new TypeRef<BaseResponse<ArchiveDetailResponse>>() {}).getData();
     }
 
     public static BaseResponse<Void> failCreateArchiveBecauseValidation(String token, CreateArchiveRequest request, InputStream... files) {
@@ -57,7 +58,7 @@ public class ArchiveSteps {
                 .get("/api/archives")
                 .then().log().all()
                 .statusCode(200)
-                .extract().as(ArchiveCollectResponse.class);
+                .extract().as(new TypeRef<BaseResponse<ArchiveCollectResponse>>() {}).getData();
     }
 
     public static ArchiveCollectResponse getByFolder(String token, long folderId) {
@@ -68,7 +69,7 @@ public class ArchiveSteps {
                 .get("/api/archives/folders/{folderId}", folderId)
                 .then().log().all()
                 .statusCode(200)
-                .extract().as(ArchiveCollectResponse.class);
+                .extract().as(new TypeRef<BaseResponse<ArchiveCollectResponse>>() {}).getData();
     }
 
     public static FolderDetailResponse getArchivesWithFolderInfo(String token, long folderId) {
@@ -79,7 +80,7 @@ public class ArchiveSteps {
                 .get("/api/folders/{folderId}", folderId)
                 .then().log().all()
                 .statusCode(200)
-                .extract().as(FolderDetailResponse.class);
+                .extract().as(new TypeRef<BaseResponse<FolderDetailResponse>>() {}).getData();
     }
 
     public static boolean successChangeIsPublic(String token, long archiveId) {
@@ -144,7 +145,7 @@ public class ArchiveSteps {
             .auth().oauth2(token)
             .delete("/api/archives/{archiveId}", archiveId)
             .then().log().all()
-            .statusCode(204)
+            .statusCode(200)
             .extract();
     }
 
@@ -155,7 +156,7 @@ public class ArchiveSteps {
                 .auth().oauth2(token)
                 .delete("/api/archives/{archiveId}", archiveId)
                 .then().log().all()
-                .statusCode(401)
+                .statusCode(403)
                 .extract().as(new TypeRef<BaseResponse<Void>>() {});
     }
 }
