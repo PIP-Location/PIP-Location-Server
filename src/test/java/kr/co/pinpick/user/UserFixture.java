@@ -2,6 +2,7 @@ package kr.co.pinpick.user;
 
 import kr.co.pinpick.user.dto.request.LoginRequest;
 import kr.co.pinpick.user.dto.request.SignupRequest;
+import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 
 public class UserFixture {
     public static final String DEFAULT_EMAIL = "vegielcl@gmail.com";
@@ -22,5 +23,14 @@ public class UserFixture {
 
     public static LoginRequest blockedUserLoginRequest() {
         return new LoginRequest(BLOCKED_EMAIL, DEFAULT_PASSWORD);
+    }
+
+    public static UpdateUserRequest updateUserRequest() {
+        return UpdateUserRequest.builder()
+                .nickname("keeeeeey")
+                .description("desc")
+                .isAgreeToPrivacyPolicy(true)
+                .isAgreeToTermsOfService(true)
+                .build();
     }
 }

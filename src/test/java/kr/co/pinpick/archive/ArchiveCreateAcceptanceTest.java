@@ -127,7 +127,7 @@ public class ArchiveCreateAcceptanceTest extends AcceptanceTest {
         var error = ArchiveSteps.failCreateArchiveBecauseValidation(token, request);
     }
 
-     @Test
+    @Test
     public void failBecauseInvalidImage() throws IOException {
         var request = ArchiveFixture.defaultCreateArchiveRequest();
         var tags = IntStream.range(1, 5).boxed().map(o -> new CreateTagRequest(o.toString())).toList();

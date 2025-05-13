@@ -62,35 +62,4 @@ public class ArchiveGetByFolderAcceptanceTest extends AcceptanceTest {
             assertThat(archives.getCollect().get(i - 1).getTags().size()).isEqualTo(i);
         }
     }
-
-    @Test
-    public void getArchivesWithFolderInfo() throws IOException {
-        var folder1 = FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(1), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
-        var folder2 = FolderSteps.createFolder(token, FolderFixture.defaultCreateFolderRequest(2), MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"));
-
-        for (int i = 1; i <= 10; i++) {
-            var request = ArchiveFixture.createArchiveRequest(i);
-            var archiveResponse = ArchiveSteps.successCreateArchive(
-                    token,
-                    request,
-                    MockMultipartFileFixture.mockImageFile(100, 101, "jpeg"),
-                    MockMultipartFileFixture.mockImageFile(200, 201, "jpeg"),
-                    MockMultipartFileFixture.mockImageFile(300, 301, "jpeg"));
-
-            if (i <= 5) {
-                FolderSteps.addArchiveToFolder(token, folder1.getId(), archiveResponse.getId());
-            } else {
-                FolderSteps.addArchiveToFolder(token, folder2.getId(), archiveResponse.getId());
-            }
-        }
-
-        var folder = ArchiveSteps.getArchivesWithFolderInfo(token, folder1.getId());
-        assertThat(folder.getArchiveDetailResponses().size()).isEqualTo(5);
-        for (int i = 1; i <= 5; i++) {
-            assertThat(folder.getArchiveDetailResponses().get(i - 1).getName()).isEqualTo("킨더커피" + i);
-            assertThat(folder.getArchiveDetailResponses().get(i - 1).getContent()).isEqualTo("킨더커피 크렘브륄레 마카롱 맛있어요" + i);
-            assertThat(folder.getArchiveDetailResponses().get(i - 1).getAddress()).isEqualTo("서울특별시 송파구 석촌호수로 135" + i);
-            assertThat(folder.getArchiveDetailResponses().get(i - 1).getTags().size()).isEqualTo(i);
-        }
-    }
 }

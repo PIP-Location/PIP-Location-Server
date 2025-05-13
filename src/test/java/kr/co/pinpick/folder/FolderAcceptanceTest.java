@@ -6,6 +6,7 @@ import kr.co.pinpick.archive.ArchiveSteps;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
 import kr.co.pinpick.user.UserFixture;
 import kr.co.pinpick.user.UserSteps;
+import kr.co.pinpick.user.dto.request.UpdateFolderRequest;
 import kr.co.pinpick.user.dto.response.FolderResponse;
 import kr.co.pinpick.util.MockMultipartFileFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,6 +95,7 @@ public class FolderAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void updateFolder() throws IOException {
+        var updateFolderRequest = FolderFixture.updateFolderRequest();
 
     }
 

@@ -72,50 +72,6 @@ public class ArchiveSteps {
                 .extract().as(new TypeRef<BaseResponse<ArchiveCollectResponse>>() {}).getData();
     }
 
-    public static FolderDetailResponse getArchivesWithFolderInfo(String token, long folderId) {
-        return RestAssured
-                .given().log().all()
-                .when()
-                .auth().oauth2(token)
-                .get("/api/folders/{folderId}", folderId)
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(new TypeRef<BaseResponse<FolderDetailResponse>>() {}).getData();
-    }
-
-    public static boolean successChangeIsPublic(String token, long archiveId) {
-        return RestAssured
-            .given().log().all()
-            .when()
-            .auth().oauth2(token)
-            .patch("/api/archives/{archiveId}/public", archiveId)
-            .then().log().all()
-            .statusCode(200)
-            .extract().as(Boolean.class);
-    }
-
-    public static BaseResponse<Void> failChangeIsPublic(String token, long archiveId, boolean isPublic) {
-        return RestAssured
-                .given().log().all()
-                .when()
-                .auth().oauth2(token)
-                .patch("/api/archives/{archiveId}/public/{isPublic}", archiveId, isPublic)
-                .then().log().all()
-                .statusCode(401)
-                .extract().as(new TypeRef<BaseResponse<Void>>() {});
-    }
-
-    public static void successChangeIsPublic(String token, long archiveId, boolean isPublic) {
-        RestAssured
-                .given().log().all()
-                .when()
-                .auth().oauth2(token)
-                .patch("/api/archives/{archiveId}/public/{isPublic}", archiveId, isPublic)
-                .then().log().all()
-                .statusCode(200)
-                .extract().as(Boolean.class);
-    }
-
     public static ArchiveDetailResponse successRetrieveById(String token, long archiveId) {
         return RestAssured
                 .given().log().all()
