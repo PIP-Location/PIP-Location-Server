@@ -23,7 +23,8 @@ public class ArchiveCommentRepositoryImpl implements ArchiveCommentRepositoryCus
                 .where(
                         archiveComment.archive.eq(archive),
                         archiveComment.parent.isNull(),
-                        ltArchiveCommentId(request.getLastId())
+                        ltArchiveCommentId(request.getLastId()),
+                        archiveComment.isDeleted.isFalse()
                 )
                 .limit(request.getLimit())
                 .fetch();

@@ -83,7 +83,7 @@ public class FolderService {
     public void addArchiveToFolder(User principal, Long folderId, Long archiveId) {
         var folder = folderRepository.findByIdOrElseThrow(folderId);
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
-        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
+        var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, archive.getUser());
         if (!isFollow && !principal.getId().equals(archive.getUser().getId())) {
             throw new BusinessException(ErrorCode.ONLY_ADDABLE_FOLLOWERS_ARCHIVE);
         }

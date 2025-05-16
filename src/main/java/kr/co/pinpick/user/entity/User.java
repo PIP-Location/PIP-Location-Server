@@ -54,16 +54,23 @@ public class User extends BaseEntity implements UserDetails {
     @Builder.Default
     private Boolean isAgreeToPrivacyPolicy = false;
 
-    @OneToMany(mappedBy = "user")
-    private List<Archive> archives;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Archive> archives = new ArrayList<>();
 
-    @OneToMany(mappedBy = "follow")
-    private List<Follower> followers;
+    @OneToMany(mappedBy = "follow", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Follower> followers = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false)
     @Builder.Default
     private RoleType role = RoleType.USER;
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

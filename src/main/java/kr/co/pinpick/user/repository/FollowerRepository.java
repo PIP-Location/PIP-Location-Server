@@ -12,13 +12,17 @@ import java.util.List;
 import java.util.Set;
 
 public interface FollowerRepository extends JpaRepository<Follower, FollowerId> {
-    List<Follower> findByFollowerAndFollowIdIn(User principal, Set<Long> userIds);
+    List<Follower> findByFollowerAndFollowIdInAndIsDeletedFalse(User principal, Set<Long> userIds);
 
-    boolean existsByFollowerAndFollow(User principal, User user);
+    boolean existsByFollowerAndFollowAndIsDeletedFalse(User principal, User user);
 
     int deleteByFollowerAndFollow(User source, User target);
 
-    @Query(value = "insert into followers(follower_id, follow_id) values(:followerId, :followId)", nativeQuery = true)
+    @Query(value = "insert into followers(follower_id, follow_id, is_deleted) values(:followerId, :followId, false)", nativeQuery = true)
     @Modifying
     void saveWithNativeQuery(@Param("followerId") Long followerId, @Param("followId") Long followId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Follower f set f.isDeleted = true where f.follow = :principal or f.follower = :principal")
+    void bulkUpdateIsDeleted(User principal);
 }

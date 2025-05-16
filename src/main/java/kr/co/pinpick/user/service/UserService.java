@@ -1,5 +1,7 @@
 package kr.co.pinpick.user.service;
 
+import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
+import kr.co.pinpick.archive.repository.archiveComment.ArchiveCommentRepository;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.extension.FileExtension;
@@ -26,6 +28,8 @@ import java.io.IOException;
 @Slf4j
 @ExtensionMethod(FileExtension.class)
 public class UserService {
+    private final ArchiveRepository archiveRepository;
+    private final ArchiveCommentRepository archiveCommentRepository;
     private final UserRepository userRepository;
     private final FollowerRepository followerRepository;
     private final IStorageManager storageManager;
@@ -44,7 +48,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDetailResponse find(User principal, Long userId) {
         var target = userRepository.findByIdOrElseThrow(userId);
-        var isFollow = followerRepository.existsByFollowerAndFollow(principal, target);
+        var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, target);
         return UserDetailResponse.fromEntity(target, isFollow);
     }
 
@@ -74,5 +78,14 @@ public class UserService {
         }
 
         return UserDetailResponse.fromEntity(user, false);
+    }
+
+    @Transactional
+    public void signOut(User principal) {
+        principal = userRepository.findByIdOrElseThrow(principal.getId());
+        archiveRepository.bulkUpdateIsDeleted(principal);
+        archiveCommentRepository.bulkUpdateIsDeleted(principal);
+        followerRepository.bulkUpdateIsDeleted(principal);
+
     }
 }

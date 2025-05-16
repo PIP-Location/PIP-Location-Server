@@ -34,7 +34,8 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
                         userFilter(request),
                         tagFilter(request),
                         visibilityFilter(user),
-                        ltArchiveId(request.getLastId())
+                        ltArchiveId(request.getLastId()),
+                        archive.isDeleted.isFalse()
                 )
                 .orderBy(archive.createdAt.desc());
 
@@ -118,7 +119,11 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     public List<Archive> findAllByUser(User principal, User user) {
         return queryFactory
                 .selectFrom(archive)
-                .where(archive.user.eq(user), isMe(principal, user))
+                .where(
+                        archive.user.eq(user),
+                        isMe(principal, user),
+                        archive.isDeleted.isFalse()
+                )
                 .fetch();
     }
 
@@ -130,7 +135,10 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
     public List<Archive> search(SearchRequest request) {
         return queryFactory
                 .selectFrom(archive)
-                .where(containingQ(request.getQ()))
+                .where(
+                        containingQ(request.getQ()),
+                        archive.isDeleted.isFalse()
+                )
                 .orderBy(archive.name.asc())
                 .limit(request.getLimit())
                 .fetch();
@@ -149,7 +157,10 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
                 .select(archive.user)
                 .from(archive)
                 .join(archive.repipArchive, original)
-                .where(archive.repipArchive.eq(source))
+                .where(
+                        archive.repipArchive.eq(source),
+                        archive.isDeleted.isFalse()
+                )
                 .offset(request.getPage() * request.getLimit())
                 .limit(request.getLimit())
                 .orderBy(archive.createdAt.desc())
