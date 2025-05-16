@@ -2,6 +2,7 @@ package kr.co.pinpick.user.service;
 
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.archiveComment.ArchiveCommentRepository;
+import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.extension.FileExtension;
@@ -11,6 +12,7 @@ import kr.co.pinpick.user.dto.response.UserDetailResponse;
 import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.entity.UserAttach;
+import kr.co.pinpick.user.repository.BlockRepository;
 import kr.co.pinpick.user.repository.FollowerRepository;
 import kr.co.pinpick.user.repository.UserAttachRepository;
 import kr.co.pinpick.user.repository.user.UserRepository;
@@ -34,6 +36,8 @@ public class UserService {
     private final FollowerRepository followerRepository;
     private final IStorageManager storageManager;
     private final UserAttachRepository userAttachRepository;
+    private final ArchiveLikeRepository archiveLikeRepository;
+    private final BlockRepository blockRepository;
 
     @Transactional(readOnly = true)
 
@@ -83,9 +87,11 @@ public class UserService {
     @Transactional
     public void signOut(User principal) {
         principal = userRepository.findByIdOrElseThrow(principal.getId());
+        principal.setIsDeleted(true);
         archiveRepository.bulkUpdateIsDeleted(principal);
         archiveCommentRepository.bulkUpdateIsDeleted(principal);
         followerRepository.bulkUpdateIsDeleted(principal);
-
+        archiveLikeRepository.bulkUpdateIsDeleted(principal);
+        blockRepository.bulkUpdateIsDeleted(principal);
     }
 }

@@ -9,6 +9,7 @@ import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.entity.enumerated.RoleType;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,6 +60,7 @@ public class User extends BaseEntity implements UserDetails {
     private List<Archive> archives = new ArrayList<>();
 
     @OneToMany(mappedBy = "follow", cascade = CascadeType.ALL)
+    @Where(clause = "is_deleted = false")
     @Builder.Default
     private List<Follower> followers = new ArrayList<>();
 

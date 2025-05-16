@@ -81,6 +81,7 @@ public class Archive extends BaseEntity {
     private Set<ArchiveComment> archiveComments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
+    @Where(clause = "is_deleted = false")
     @Builder.Default
     private Set<ArchiveLike> archiveLikes = new LinkedHashSet<>();
 

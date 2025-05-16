@@ -143,7 +143,7 @@ public class ArchiveService {
     }
 
     private Map<Long, Boolean> getIsLikeMap(User principal, Set<Long> archiveIds) {
-        var likes = archiveLikeRepository.findByUserAndArchiveIdIn(principal, archiveIds);
+        var likes = archiveLikeRepository.findByUserAndArchiveIdInAndIsDeletedFalse(principal, archiveIds);
         return likes.stream().collect(Collectors.toMap(k -> k.getArchive().getId(), v -> true));
     }
 
@@ -168,7 +168,7 @@ public class ArchiveService {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
         var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, archive.getUser());
-        var isLike = archiveLikeRepository.existsByUserAndArchive(principal, archive);
+        var isLike = archiveLikeRepository.existsByUserAndArchiveAndIsDeletedFalse(principal, archive);
         return ArchiveDetailResponse.fromEntity(archive, isFollow, isLike);
     }
 

@@ -22,7 +22,10 @@ public class ArchiveLikeRepositoryImpl implements ArchiveLikeRepositoryCustom {
                 .select(archiveLike.user)
                 .from(archiveLike)
                 .join(archiveLike.archive, archive)
-                .where(archiveLike.archive.eq(source))
+                .where(
+                        archiveLike.archive.eq(source),
+                        archive.isDeleted.isFalse()
+                )
                 .offset(request.getPage() * request.getLimit())
                 .limit(request.getLimit())
                 .orderBy(archiveLike.createdAt.desc())
