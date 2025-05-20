@@ -19,11 +19,14 @@ import kr.co.pinpick.user.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +43,6 @@ public class UserService {
     private final BlockRepository blockRepository;
 
     @Transactional(readOnly = true)
-
     public UserSearchResponse search(User user, SearchRequest request) {
         var users = userRepository.search(user, request);
         return UserSearchResponse.builder()
@@ -88,10 +90,19 @@ public class UserService {
     public void signOut(User principal) {
         principal = userRepository.findByIdOrElseThrow(principal.getId());
         principal.setIsDeleted(true);
+        principal.setDeletedAt(LocalDateTime.now());
         archiveRepository.bulkUpdateIsDeleted(principal);
         archiveCommentRepository.bulkUpdateIsDeleted(principal);
         followerRepository.bulkUpdateIsDeleted(principal);
         archiveLikeRepository.bulkUpdateIsDeleted(principal);
         blockRepository.bulkUpdateIsDeleted(principal);
+    }
+
+    @Scheduled(cron = "0 0 3 * * *") // 매일 새벽 3시
+    @Transactional
+    public void deleteExpiredUsers() {
+        LocalDateTime threshold = LocalDateTime.now().minusDays(30);
+        List<User> users = userRepository.findAllByIsDeletedTrueAndDeletedAtBefore(threshold);
+        userRepository.deleteAll(users);
     }
 }
