@@ -1,6 +1,7 @@
 package kr.co.pinpick.archive.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import kr.co.pinpick.user.entity.User;
 import lombok.*;
 
@@ -29,4 +30,9 @@ public class ArchiveLike {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
 }

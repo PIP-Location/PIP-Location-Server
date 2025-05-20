@@ -21,7 +21,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     public List<User> search(User principal, SearchRequest request) {
         return queryFactory
                 .selectFrom(user)
-                .where(containingQ(request.getQ()), exceptMe(principal), exceptBlock(principal))
+                .where(
+                        containingQ(request.getQ()),
+                        exceptMe(principal), exceptBlock(principal),
+                        user.isDeleted.isFalse()
+                )
                 .orderBy(user.nickname.asc())
                 .limit(request.getLimit())
                 .fetch();

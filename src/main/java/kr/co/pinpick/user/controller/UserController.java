@@ -122,4 +122,14 @@ public class UserController {
         return ResponseEntity.ok(BaseResponse.success(null));
     }
     //endregion
+
+    @Operation(summary = "회원 탈퇴")
+    @ApiResponse(responseCode = "200")
+    @DeleteMapping
+    public ResponseEntity<BaseResponse<Void>> signOut(
+            @AuthenticationPrincipal User principal
+    ) {
+        userService.signOut(principal);
+        return ResponseEntity.ok(BaseResponse.success(null));
+    }
 }

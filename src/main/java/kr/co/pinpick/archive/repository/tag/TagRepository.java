@@ -14,7 +14,10 @@ public interface TagRepository extends JpaRepository<Tag, Long>, TagRepositoryCu
     @Modifying
     @Query(nativeQuery = true, value = """
     insert into tags (`name`, `count`)
-        select `name`, count(*) as `count` from archive_tags group by `name`
+        select archive_tags.name, count(*) as `count` from archive_tags 
+        join archives on archive_tags.archive_id = archives.id
+        where archives.is_deleted = false 
+        group by archive_tags.name
         on duplicate KEY UPDATE
         `count` = values(`count`)
     """)

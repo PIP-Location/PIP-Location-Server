@@ -13,15 +13,17 @@ import java.util.List;
 import java.util.Set;
 
 public interface ArchiveLikeRepository extends JpaRepository<ArchiveLike, ArchiveLikeId>, ArchiveLikeRepositoryCustom {
-    List<ArchiveLike> findByArchive(Archive archive);
+    List<ArchiveLike> findByUserAndArchiveIdInAndIsDeletedFalse(User principal, Set<Long> archiveIds);
 
-    List<ArchiveLike> findByUserAndArchiveIdIn(User principal, Set<Long> archiveIds);
+    boolean existsByUserAndArchiveAndIsDeletedFalse(User principal, Archive archive);
 
-    boolean existsByUserAndArchive(User principal, Archive archive);
-
-    @Query(value = "insert into archive_likes(user_id, archive_id) values(:userId, :archiveId)", nativeQuery = true)
+    @Query(value = "insert into archive_likes(user_id, archive_id, is_deleted) values(:userId, :archiveId, false)", nativeQuery = true)
     @Modifying
     void saveWithNativeQuery(@Param("userId") Long userId, @Param("archiveId") Long archiveId);
 
     int deleteByUserAndArchive(User source, Archive target);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update ArchiveLike al set al.isDeleted = true where al.user = :principal")
+    void bulkUpdateIsDeleted(@Param("principal") User principal);
 }

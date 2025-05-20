@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kr.co.pinpick.common.entity.BaseEntity;
 import kr.co.pinpick.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -41,6 +38,11 @@ public class ArchiveComment extends BaseEntity {
     @NotNull
     @Column(name = "content", nullable = false, length = 200)
     private String content;
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
 
     @OneToMany(mappedBy = "parent")
     private List<ArchiveComment> subComments = new ArrayList<>();

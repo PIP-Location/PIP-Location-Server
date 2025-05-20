@@ -1,6 +1,7 @@
 package kr.co.pinpick.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -23,4 +24,9 @@ public class Block {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "block_id", nullable = false)
     private User block;
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
 }

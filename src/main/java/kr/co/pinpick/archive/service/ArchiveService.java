@@ -3,7 +3,6 @@ package kr.co.pinpick.archive.service;
 import kr.co.pinpick.archive.dto.request.*;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveAttach;
@@ -144,12 +143,12 @@ public class ArchiveService {
     }
 
     private Map<Long, Boolean> getIsLikeMap(User principal, Set<Long> archiveIds) {
-        var likes = archiveLikeRepository.findByUserAndArchiveIdIn(principal, archiveIds);
+        var likes = archiveLikeRepository.findByUserAndArchiveIdInAndIsDeletedFalse(principal, archiveIds);
         return likes.stream().collect(Collectors.toMap(k -> k.getArchive().getId(), v -> true));
     }
 
     private Map<Long, Boolean> getIsFollowMap(User principal, Set<Long> userIds) {
-        var follows = followerRepository.findByFollowerAndFollowIdIn(principal, userIds);
+        var follows = followerRepository.findByFollowerAndFollowIdInAndIsDeletedFalse(principal, userIds);
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
     }
 
@@ -168,8 +167,8 @@ public class ArchiveService {
         if (!archive.getIsPublic() && !archive.getUser().getId().equals(principal.getId())) {
             throw new BusinessException(ErrorCode.ACCESS_DENIED);
         }
-        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
-        var isLike = archiveLikeRepository.existsByUserAndArchive(principal, archive);
+        var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, archive.getUser());
+        var isLike = archiveLikeRepository.existsByUserAndArchiveAndIsDeletedFalse(principal, archive);
         return ArchiveDetailResponse.fromEntity(archive, isFollow, isLike);
     }
 
@@ -178,7 +177,7 @@ public class ArchiveService {
         var user = userRepository.findByIdOrElseThrow(userId);
         var archives = archiveRepository.findAllByUser(principal, user);
         var archiveIds = archives.stream().map(Archive::getId).collect(toSet());
-        var isFollow = followerRepository.existsByFollowerAndFollow(principal, user);
+        var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, user);
         var isLikeMap = getIsLikeMap(principal, archiveIds);
         return ArchiveCollectResponse.builder()
                 .collect(archives.stream().map(a -> ArchiveDetailResponse.fromEntity(a, isFollow, isLikeMap.containsKey(a.getId()))).toList())
@@ -250,7 +249,7 @@ public class ArchiveService {
 
         var archive = archiveRepository.findByIdOrElseThrow(archiveId);
 
-        var isFollow = followerRepository.existsByFollowerAndFollow(principal, archive.getUser());
+        var isFollow = followerRepository.existsByFollowerAndFollowAndIsDeletedFalse(principal, archive.getUser());
         if (!isFollow) throw new BusinessException(ErrorCode.ONLY_CAN_REPIP_FOLLOWS_ARCHIVE);
 
         var repipArchive = Archive.builder()

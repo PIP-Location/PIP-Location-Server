@@ -9,6 +9,7 @@ import kr.co.pinpick.user.entity.FolderArchive;
 import kr.co.pinpick.user.entity.User;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Where;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
@@ -59,25 +60,38 @@ public class Archive extends BaseEntity {
     @Setter
     private Boolean isPublic;
 
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    @Setter
+    @Builder.Default
+    private Boolean isDeleted = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repip_archive_id")
     private Archive repipArchive;
 
     @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
+    @Builder.Default
     private List<ArchiveAttach> archiveAttaches = new ArrayList<>();
 
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
+    @Where(clause = "is_deleted = false")
+    @Builder.Default
     private Set<ArchiveComment> archiveComments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
+    @Where(clause = "is_deleted = false")
+    @Builder.Default
     private Set<ArchiveLike> archiveLikes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "archive", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("sequence desc")
+    @Builder.Default
     private List<ArchiveTag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "archive", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<FolderArchive> folderArchives = new ArrayList<>();
 
     @Column(name = "updated_at")
