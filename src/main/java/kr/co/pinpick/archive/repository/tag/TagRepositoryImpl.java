@@ -3,7 +3,7 @@ package kr.co.pinpick.archive.repository.tag;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.pinpick.archive.entity.Tag;
-import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.search.dto.request.SearchRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

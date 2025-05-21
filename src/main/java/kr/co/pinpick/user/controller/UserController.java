@@ -5,11 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.BaseResponse;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
-import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.service.UserService;
 import kr.co.pinpick.user.service.UserBlockService;
@@ -33,16 +31,6 @@ public class UserController {
     private final UserBlockService userBlockService;
 
     //region 조회
-    @Operation(summary = "회원 검색")
-    @ApiResponse(responseCode = "200")
-    @GetMapping("search")
-    public ResponseEntity<BaseResponse<UserSearchResponse>> search(
-            @AuthenticationPrincipal User principal,
-            @ModelAttribute SearchRequest request
-    ) {
-        return ResponseEntity.ok(BaseResponse.success(userService.search(principal, request)));
-    }
-
     @Operation(summary = "로그인된 회원 조회")
     @ApiResponse(responseCode = "200")
     @GetMapping("@me")

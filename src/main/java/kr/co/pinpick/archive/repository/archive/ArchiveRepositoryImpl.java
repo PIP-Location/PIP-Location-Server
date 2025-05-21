@@ -2,13 +2,14 @@ package kr.co.pinpick.archive.repository.archive;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.co.pinpick.archive.dto.request.ArchiveRetrieveRequest;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.QArchive;
 import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
-import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.search.dto.request.SearchRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
@@ -131,19 +132,6 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
         return principal.getId().equals(user.getId()) ? null : archive.isPublic.isTrue();
     }
 
-    @Override
-    public List<Archive> search(SearchRequest request) {
-        return queryFactory
-                .selectFrom(archive)
-                .where(
-                        containingQ(request.getQ()),
-                        archive.isDeleted.isFalse()
-                )
-                .orderBy(archive.name.asc())
-                .limit(request.getLimit())
-                .fetch();
-    }
-
     private BooleanExpression containingQ(String q) {
         return hasText(q) ? archive.name.contains(q) : null;
     }
@@ -165,5 +153,34 @@ public class ArchiveRepositoryImpl implements ArchiveRepositoryCustom {
                 .limit(request.getLimit())
                 .orderBy(archive.createdAt.desc())
                 .fetch();
+    }
+
+    @Override
+    public List<String> searchKeyword(SearchRequest request) {
+        return queryFactory
+                .select(archive.name)
+                .from(archive)
+                .where(
+                        containingQ(request.getQ()),
+                        archive.isDeleted.isFalse()
+                )
+                .orderBy(archive.name.asc())
+                .groupBy(archive.name)
+                .limit(request.getLimit())
+                .fetch();
+    }
+
+    @Override
+    public long countContainKeyword(SearchRequest request) {
+        Long result = queryFactory
+                .select(Wildcard.count)
+                .from(archive)
+                .where(
+                        containingQ(request.getQ()),
+                        archive.isDeleted.isFalse()
+                )
+                .fetchOne();
+
+        return result != null ? result : 0L;
     }
 }

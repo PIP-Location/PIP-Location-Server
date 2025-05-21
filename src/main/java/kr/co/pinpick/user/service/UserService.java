@@ -3,13 +3,11 @@ package kr.co.pinpick.user.service;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.archive.repository.archiveComment.ArchiveCommentRepository;
 import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
-import kr.co.pinpick.common.dto.request.SearchRequest;
-import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.extension.FileExtension;
+import kr.co.pinpick.common.extension.ListExtension;
 import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.request.UpdateUserRequest;
 import kr.co.pinpick.user.dto.response.UserDetailResponse;
-import kr.co.pinpick.user.dto.response.UserSearchResponse;
 import kr.co.pinpick.user.entity.User;
 import kr.co.pinpick.user.entity.UserAttach;
 import kr.co.pinpick.user.repository.BlockRepository;
@@ -31,7 +29,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@ExtensionMethod(FileExtension.class)
+@ExtensionMethod({FileExtension.class, ListExtension.class})
 public class UserService {
     private final ArchiveRepository archiveRepository;
     private final ArchiveCommentRepository archiveCommentRepository;
@@ -41,15 +39,6 @@ public class UserService {
     private final UserAttachRepository userAttachRepository;
     private final ArchiveLikeRepository archiveLikeRepository;
     private final BlockRepository blockRepository;
-
-    @Transactional(readOnly = true)
-    public UserSearchResponse search(User user, SearchRequest request) {
-        var users = userRepository.search(user, request);
-        return UserSearchResponse.builder()
-                .collect(users.stream().map(UserSearchResponse.SearchResponse::fromEntity).toList())
-                .meta(PaginateResponse.builder().count(users.size()).build())
-                .build();
-    }
 
     @Transactional(readOnly = true)
     public UserDetailResponse find(User principal, Long userId) {

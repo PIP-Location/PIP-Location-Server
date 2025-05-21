@@ -3,7 +3,7 @@ package kr.co.pinpick.user.repository.user;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.co.pinpick.common.dto.request.SearchRequest;
+import kr.co.pinpick.search.dto.request.SearchRequest;
 import kr.co.pinpick.user.entity.User;
 import lombok.RequiredArgsConstructor;
 

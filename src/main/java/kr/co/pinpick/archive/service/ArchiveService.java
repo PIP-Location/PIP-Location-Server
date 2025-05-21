@@ -3,7 +3,6 @@ package kr.co.pinpick.archive.service;
 import kr.co.pinpick.archive.dto.request.*;
 import kr.co.pinpick.archive.dto.response.ArchiveCollectResponse;
 import kr.co.pinpick.archive.dto.response.ArchiveDetailResponse;
-import kr.co.pinpick.archive.dto.response.ArchiveSearchResponse;
 import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.ArchiveAttach;
 import kr.co.pinpick.archive.entity.ArchiveTag;
@@ -12,11 +11,11 @@ import kr.co.pinpick.archive.repository.ArchiveTagRepository;
 import kr.co.pinpick.archive.repository.archiveLike.ArchiveLikeRepository;
 import kr.co.pinpick.archive.repository.archive.ArchiveRepository;
 import kr.co.pinpick.common.dto.request.OffsetPaginateRequest;
-import kr.co.pinpick.common.dto.request.SearchRequest;
 import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.error.BusinessException;
 import kr.co.pinpick.common.error.ErrorCode;
 import kr.co.pinpick.common.extension.FileExtension;
+import kr.co.pinpick.common.extension.ListExtension;
 import kr.co.pinpick.common.storage.IStorageManager;
 import kr.co.pinpick.user.dto.response.UserCollectResponse;
 import kr.co.pinpick.user.dto.response.UserResponse;
@@ -43,7 +42,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
-@ExtensionMethod(FileExtension.class)
+@ExtensionMethod({FileExtension.class, ListExtension.class})
 public class ArchiveService {
     private final ArchiveRepository archiveRepository;
     private final ArchiveLikeRepository archiveLikeRepository;
@@ -150,15 +149,6 @@ public class ArchiveService {
     private Map<Long, Boolean> getIsFollowMap(User principal, Set<Long> userIds) {
         var follows = followerRepository.findByFollowerAndFollowIdInAndIsDeletedFalse(principal, userIds);
         return follows.stream().collect(Collectors.toMap(k -> k.getFollow().getId(), v -> true));
-    }
-
-    @Transactional(readOnly = true)
-    public ArchiveSearchResponse search(SearchRequest request) {
-        var archives = archiveRepository.search(request);
-        return ArchiveSearchResponse.builder()
-                .collect(archives.stream().map(ArchiveSearchResponse.SearchResponse::fromEntity).toList())
-                .meta(PaginateResponse.builder().count(archives.size()).build())
-                .build();
     }
 
     @Transactional(readOnly = true)

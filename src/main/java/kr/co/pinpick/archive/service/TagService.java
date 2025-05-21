@@ -1,10 +1,6 @@
 package kr.co.pinpick.archive.service;
 
-import kr.co.pinpick.archive.dto.response.TagCollectResponse;
-import kr.co.pinpick.archive.dto.response.TagResponse;
 import kr.co.pinpick.archive.repository.tag.TagRepository;
-import kr.co.pinpick.common.dto.request.SearchRequest;
-import kr.co.pinpick.common.dto.response.PaginateResponse;
 import kr.co.pinpick.common.extension.ListExtension;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
@@ -28,18 +24,5 @@ public class TagService {
         repository.collectTagCount();
 
         log.info("done collect tag count");
-    }
-
-    @Transactional(readOnly = true)
-    public TagCollectResponse search(SearchRequest request) {
-        var tags = repository.search(request);
-        // 정확히 일치하는 태그는 최상단으로 이동
-        var eq = tags.removeFirst(o -> o.getName().equals(request.getQ()));
-        if (eq != null) tags.add(0, eq);
-
-        return TagCollectResponse.builder()
-                .collect(tags.stream().map(TagResponse::fromEntity).toList())
-                .meta(PaginateResponse.builder().count(tags.size()).build())
-                .build();
     }
 }

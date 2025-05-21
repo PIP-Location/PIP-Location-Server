@@ -1,5 +1,6 @@
-package kr.co.pinpick.archive.dto.response;
+package kr.co.pinpick.search.dto.response;
 
+import kr.co.pinpick.archive.entity.Archive;
 import kr.co.pinpick.archive.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,17 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class TagResponse {
-    private Long id;
+@AllArgsConstructor
+@Builder
+public class TagSearchResponse {
     private String name;
-    private int count;
+    private long count;
 
-    public static TagResponse fromEntity(Tag tag) {
+    public static TagSearchResponse fromEntity(Tag tag) {
         return builder()
-                .id(tag.getId())
                 .name(tag.getName())
                 .count(tag.getCount())
                 .build();

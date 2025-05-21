@@ -1,4 +1,4 @@
-package kr.co.pinpick.common.dto.request;
+package kr.co.pinpick.search.dto.request;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
