@@ -23,7 +23,7 @@ import java.util.Set;
 @Entity
 @Table(name = "archives")
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Archive extends BaseEntity {
     @NotNull

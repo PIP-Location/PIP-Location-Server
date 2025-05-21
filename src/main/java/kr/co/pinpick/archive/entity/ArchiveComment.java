@@ -17,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "archive_comments")
 @SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ArchiveComment extends BaseEntity {
     @NotNull

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "archive_likes")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ArchiveLike {
     @EmbeddedId

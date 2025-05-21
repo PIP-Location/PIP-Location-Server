@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 @Builder
 @Table(name = "blocks")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Block {
     @EmbeddedId

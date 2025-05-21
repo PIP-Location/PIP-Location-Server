@@ -2,13 +2,10 @@ package kr.co.pinpick.user.dto.response;
 
 import kr.co.pinpick.archive.dto.response.AttachResponse;
 import kr.co.pinpick.user.entity.User;
-import kr.co.pinpick.user.entity.UserAttach;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Optional;
 
 @Getter
 @SuperBuilder
